@@ -1,5 +1,5 @@
 {
-  "name": "demo-ecommerce",
+  "name": "RFC2",
   "description": "AKVA is a Hydrogen starter that presents a real-world example of how Sanity and Structured Content can elevate your custom Shopify storefronts.",
   "private": true,
   "workspaces": [
@@ -12,16 +12,19 @@
     "lint": "turbo run lint",
     "lint:fix": "npm run lint -- -- --fix",
     "format": "turbo run format",
-    "typecheck": "turbo run typecheck",
-    "prepare": "husky install"
+    "typecheck": "turbo run typecheck"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.6.5",
     "@commitlint/config-conventional": "^17.6.5",
     "@turbo/gen": "^1.10.16",
-    "husky": "^8.0.3",
     "turbo": "^1.10.16",
     "vercel": "^32.5.3"
   },
-  "packageManager": "npm@10.2.3"
+  "packageManager": "npm@10.2.3",
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.5.1",
+    "@fortawesome/free-solid-svg-icons": "^6.5.1",
+    "@fortawesome/react-fontawesome": "^0.2.0"
+  }
 }
