@@ -206,14 +206,7 @@ export default defineType({
               type: 'collection',
             },
           ],
-        }),
-        // Color theme
-        defineField({
-          name: 'colorTheme',
-          title: 'Color theme',
-          type: 'reference',
-          to: [{type: 'colorTheme'}],
-        }),
+        })
       ],
     }),
     // SEO

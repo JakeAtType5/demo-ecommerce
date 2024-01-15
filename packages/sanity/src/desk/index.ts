@@ -5,10 +5,8 @@
 import {ListItemBuilder, StructureResolver} from 'sanity/desk'
 
 import collections from './collections'
-import colorThemes from './colorThemes'
-import guides from './guides'
+import drops from './drops'
 import home from './home'
-import materials from './materials'
 import pages from './pages'
 import people from './people'
 import products from './products'
@@ -30,10 +28,9 @@ import settings from './settings'
 // If you add document types to desk structure manually, you can add them to this array to prevent duplicates in the root pane
 const DOCUMENT_TYPES_IN_STRUCTURE = [
   'collection',
-  'colorTheme',
+  'drop',
   'guide',
   'home',
-  'material',
   'media.tag',
   'page',
   'person',
@@ -50,14 +47,12 @@ export const structure: StructureResolver = (S, context) =>
     .items([
       home(S, context),
       pages(S, context),
-      guides(S, context),
       S.divider(),
-      collections(S, context),
+      drops(S, context),
+      // collections(S, context),
       products(S, context),
       S.divider(),
       people(S, context),
-      materials(S, context),
-      colorThemes(S, context),
       S.divider(),
       settings(S, context),
       S.divider(),

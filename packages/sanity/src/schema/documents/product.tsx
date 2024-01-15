@@ -9,20 +9,33 @@ import {getPriceRange} from '../../utils/getPriceRange'
 
 const GROUPS = [
   {
-    name: 'editorial',
-    title: 'Editorial',
-    default: true,
+    name: 'hero',
+    title: 'Hero',
+    default: true
+  },
+  {
+    name: 'story',
+    title: 'Story'
+  },
+  {
+    name: 'drop',
+    title: 'Drop'
   },
   {
     name: 'shopifySync',
-    title: 'Shopify sync',
+    title: 'Shopify',
     icon: ShopifyIcon,
   },
   {
     name: 'seo',
     title: 'SEO',
   },
+  {
+    name: 'manufacturing',
+    title: 'Manufacture',
+  },
 ]
+
 
 export default defineType({
   name: 'product',
@@ -44,55 +57,85 @@ export default defineType({
         return !parent?.store || (isActive && !isDeleted)
       },
     }),
-    // Title (proxy)
-    defineField({
+
+     // Hero
+     defineField({
+      name: 'printImage',
+      title: 'High-res image',
+      type: 'image',
+      group: 'hero',
+    }),
+     defineField({
       name: 'titleProxy',
       title: 'Title',
       type: 'proxyString',
       options: {field: 'store.title'},
+      group: 'hero',
     }),
-    // Slug (proxy)
     defineField({
-      name: 'slugProxy',
-      title: 'Slug',
+      name: 'artistProxy',
+      title: 'Artist',
       type: 'proxyString',
-      options: {field: 'store.slug.current'},
+      options: {field: 'store.vendor'},
+      group: 'hero',
     }),
-    // Color theme
     defineField({
-      name: 'colorTheme',
-      title: 'Color theme',
-      type: 'reference',
-      to: [{type: 'colorTheme'}],
-      group: 'editorial',
+      name: 'description',
+      title: 'Description',
+      type: 'text',
+      group: 'hero',
     }),
+
+    // drop
+    defineField({
+      title: 'Drop',
+      name: 'drop',
+      group: 'drop',
+      type: 'reference',
+      to: [
+          { type: 'drop' }
+      ],
+      weak: true,
+      options: {
+        disableNew: true,
+      }
+    }),
+
+    // manufacture
+    defineField({
+      name: 'maxUnits',
+      title: 'Maximum Units',
+      type: 'number',
+      group: 'manufacturing',
+      validation: (Rule) => Rule.positive().integer(),
+    }),
+
+    // story
+    defineField({
+      name: 'story',
+      title: 'Story',
+      type: 'body',
+      group: 'story',
+    }),
+
     defineField({
       name: 'body',
       title: 'Body',
       type: 'internationalizedArrayBody',
-      group: 'editorial',
     }),
     defineField({
       name: 'creators',
       title: 'Creators',
       type: 'array',
-      group: 'editorial',
       of: [{type: 'creator'}],
       validation: (rule) => rule.max(1),
-    }),
-    defineField({
-      name: 'composition',
-      title: 'Composition',
-      type: 'array',
-      group: 'editorial',
-      of: [{type: 'reference', to: [{type: 'material'}]}],
     }),
     defineField({
       name: 'faqs',
       title: 'FAQs',
       description: 'Shown in addition to any material FAQs',
       type: 'internationalizedArrayFaqs',
-      group: 'editorial',
+
     }),
     defineField({
       name: 'store',
@@ -105,6 +148,13 @@ export default defineType({
       name: 'seo',
       title: 'SEO',
       type: 'seo.shopify',
+      group: 'seo',
+    }),
+    defineField({
+      name: 'slugProxy',
+      title: 'Slug',
+      type: 'proxyString',
+      options: {field: 'store.slug.current'},
       group: 'seo',
     }),
   ],

@@ -39,14 +39,6 @@ export default defineField({
       // @ts-expect-error - TODO - fix this TS error
       validation: validateSlug,
     }),
-    // Color theme
-    defineField({
-      name: 'colorTheme',
-      title: 'Color theme',
-      type: 'reference',
-      to: [{type: 'colorTheme'}],
-      group: 'theme',
-    }),
     // Show hero
     defineField({
       name: 'showHero',
