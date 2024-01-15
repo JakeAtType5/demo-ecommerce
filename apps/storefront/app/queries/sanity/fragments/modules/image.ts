@@ -20,11 +20,20 @@ export const MODULE_IMAGE = groq`
           ${LINK_INTERNAL}
         },
       },
-      title,
+      title
     }
   },
   (variant == 'caption') => {
-    caption,
+    caption
+  },
+  contentPosition,
+  position,
+  (variant == 'quote' || variant == 'quoteAndText') => {
+    quote
+  },
+  size,
+  (variant == 'text' || variant == 'quoteAndText') => {
+    text
   },
   (variant == 'productHotspots') => {
     productHotspots[] {
@@ -38,5 +47,5 @@ export const MODULE_IMAGE = groq`
       ...${PRODUCT_WITH_VARIANT}
     },
   },
-  variant,
+  variant
 `;

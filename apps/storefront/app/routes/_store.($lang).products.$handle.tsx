@@ -30,11 +30,10 @@ import { Label } from "~/components/global/Label";
 import AccordionBlock from "~/components/portableText/blocks/Accordion";
 import PortableText from "~/components/portableText/PortableText";
 import ProductDetails from "~/components/product/Details";
-import Magazine from "~/components/product/Magazine";
 import RelatedProducts from "~/components/product/RelatedProducts";
+import StickyProductHeader from "~/components/product/StickyHeader";
 import { baseLanguage } from "~/data/countries";
 import type { SanityFaqs, SanityProductPage } from "~/lib/sanity";
-import { ColorTheme } from "~/lib/theme";
 import { fetchGids, notFound, validateLocale } from "~/lib/utils";
 import { PRODUCT_PAGE_QUERY } from "~/queries/sanity/product";
 import {
@@ -113,9 +112,9 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
     throw notFound();
   }
 
-  if (!product.selectedVariant) {
-    return redirectToFirstVariant({ product, request });
-  }
+  // if (!product.selectedVariant) {
+  //   return redirectToFirstVariant({ product, request });
+  // }
 
   // Resolve any references to products on the Storefront API
   const gids = fetchGids({ page, context });
@@ -181,6 +180,29 @@ function redirectToFirstVariant({
   throw redirect(`${url.pathname}?${searchParams.toString()}`, 302);
 }
 
+const SECTIONS = [
+  {
+    label: "The Art",
+    target: "the-art",
+  },
+  {
+    label: "The Story",
+    target: "the-story",
+  },
+  {
+    label: "The Drop",
+    target: "the-drop",
+  },
+  {
+    label: "Materials",
+    target: "materials",
+  },
+  {
+    label: "More from this drop",
+    target: "more-prints",
+  },
+];
+
 export default function ProductHandle() {
   const {
     language,
@@ -201,100 +223,96 @@ export default function ProductHandle() {
       params={{ slug: handle, language, baseLanguage }}
     >
       {(page) => (
-        <ColorTheme value={page?.colorTheme}>
-          <div className="relative w-full">
-            <Suspense
-              fallback={
+        <>
+          <StickyProductHeader
+            sections={SECTIONS}
+            isVisible={true}
+          />
+
+          <Suspense
+            fallback={
+              <ProductDetails
+                selectedVariant={selectedVariant}
+                sanityProduct={page as SanityProductPage}
+                storefrontProduct={product}
+                storefrontVariants={[]}
+                analytics={analytics as ShopifyAnalyticsPayload}
+                anchorLinkID={"the-art"}
+              />
+            }
+          >
+            <Await
+              errorElement="There was a problem loading related products"
+              resolve={variants}
+            >
+              {(resp) => (
                 <ProductDetails
                   selectedVariant={selectedVariant}
                   sanityProduct={page as SanityProductPage}
                   storefrontProduct={product}
-                  storefrontVariants={[]}
+                  storefrontVariants={resp.product?.variants.nodes || []}
                   analytics={analytics as ShopifyAnalyticsPayload}
+                  anchorLinkID={"the-art"}
                 />
-              }
-            >
-              <Await
-                errorElement="There was a problem loading related products"
-                resolve={variants}
+              )}
+            </Await>
+          </Suspense>
+
+          <Suspense>
+            <Await resolve={gids}>
+              {/* Story */}
+              <p className="semi-bold-24" id="the-story">
+                The story
+              </p>
+              {page?.story && <PortableText blocks={page.story} />}
+
+              {/* <Magazine page={page as SanityProductPage} product={product} /> */}
+
+              {/* Shipping info and FAQs */}
+              <div
+                className={clsx(
+                  "w-full", //
+                  "lg:w-[calc(100%-315px)]",
+                  "mb-10 mt-8 p-5"
+                )}
               >
-                {(resp) => (
-                  <ProductDetails
-                    selectedVariant={selectedVariant}
-                    sanityProduct={page as SanityProductPage}
-                    storefrontProduct={product}
-                    storefrontVariants={resp.product?.variants.nodes || []}
-                    analytics={analytics as ShopifyAnalyticsPayload}
-                  />
-                )}
-              </Await>
-            </Suspense>
-
-            <Suspense>
-              <Await resolve={gids}>
-                {/* Body */}
-                {page?.body && (
-                  <div
-                    className={clsx(
-                      "w-full", //
-                      "lg:w-[calc(100%-315px)]",
-                      "mb-10 mt-8 p-5"
+                <div className="mb-10 grid grid-cols-3 gap-10 md:grid-cols-4 lg:grid-cols-6">
+                  <div className="hidden aspect-square xl:block" />
+                  <div className="col-span-3 md:col-span-4 lg:col-span-3 xl:col-span-2">
+                    {page?.sharedText?.deliveryAndReturns && (
+                      <SanityProductShipping
+                        blocks={page?.sharedText?.deliveryAndReturns}
+                      />
                     )}
-                  >
-                    <div className="grid grid-cols-3 gap-10 md:grid-cols-4 lg:grid-cols-6">
-                      <div className="hidden xl:block" />
-                      <div className="col-span-6 xl:col-span-5">
-                        <PortableText blocks={page.body} />
-                      </div>
-                    </div>
                   </div>
-                )}
-
-                {/* Magazine */}
-                <Magazine page={page as SanityProductPage} product={product} />
-
-                {/* Shipping info and FAQs */}
-                <div
-                  className={clsx(
-                    "w-full", //
-                    "lg:w-[calc(100%-315px)]",
-                    "mb-10 mt-8 p-5"
-                  )}
-                >
-                  <div className="mb-10 grid grid-cols-3 gap-10 md:grid-cols-4 lg:grid-cols-6">
-                    <div className="hidden aspect-square xl:block" />
-                    <div className="col-span-3 md:col-span-4 lg:col-span-3 xl:col-span-2">
-                      {page?.sharedText?.deliveryAndReturns && (
-                        <SanityProductShipping
-                          blocks={page?.sharedText?.deliveryAndReturns}
-                        />
-                      )}
-                    </div>
-                    <div className="col-span-3 md:col-span-4 lg:col-span-3">
-                      {page?.faqs?.groups && page?.faqs?.groups.length > 0 && (
-                        <SanityProductFaqs faqs={page.faqs} />
-                      )}
-                    </div>
+                  <div className="col-span-3 md:col-span-4 lg:col-span-3">
+                    {page?.faqs?.groups && page?.faqs?.groups.length > 0 && (
+                      <SanityProductFaqs faqs={page.faqs} />
+                    )}
                   </div>
                 </div>
-              </Await>
-            </Suspense>
-          </div>
+              </div>
+            </Await>
+          </Suspense>
 
           {/* Related products */}
-          <Suspense>
+          {/* <Suspense>
             <Await
               errorElement="There was a problem loading related products"
               resolve={recommended}
             >
+              <p className="semi-bold-24" id="more-prints">
+                More from this drop
+              </p>
+
               {(products) => (
                 <RelatedProducts
                   relatedProducts={products.productRecommendations}
                 />
               )}
             </Await>
-          </Suspense>
-        </ColorTheme>
+          </Suspense> */}
+        </>
       )}
     </SanityPreview>
   );

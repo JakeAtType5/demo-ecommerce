@@ -9,34 +9,60 @@ import type { SanityModuleImage } from "~/lib/sanity";
 import { useRootLoaderData } from "~/root";
 
 type Props = {
-  module: SanityModuleImage;
+  value: SanityModuleImage;
 };
 
-export default function ImageModule({ module }: Props) {
-  if (!module.image) {
+export default function ImageModule({ value }: Props) {
+  if (!value.image) {
     return null;
   }
 
+  const hyphenatedVariant =
+    value && value.variant
+      ? value.variant
+          .split(/(?=[A-Z])/)
+          .join("-")
+          .toLowerCase()
+      : "";
+
+  const hyphenatedContentPosition =
+    value && value.contentPosition
+      ? value.contentPosition
+          .split(/(?=[A-Z])/)
+          .join("-")
+          .toLowerCase()
+      : "";
+
   return (
-    <div className="relative">
-      {module.variant === "callToAction" && module.callToAction?.link ? (
-        <Link className="group" link={module.callToAction.link}>
-          <ImageContent module={module} />
+    <div
+      className={clsx(
+        "story-image",
+        value.size && value.size === "halfWidth"
+          ? "--half-width"
+          : "--full-width",
+        value.position ? `--${value.position}-aligned` : "",
+        value.variant ? `--${hyphenatedVariant}-variant` : "",
+        value.contentPosition ? `--content-${hyphenatedContentPosition}` : ""
+      )}
+    >
+      {value.variant === "callToAction" && value.callToAction?.link ? (
+        <Link className="group" link={value.callToAction.link}>
+          <ImageContent value={value} />
         </Link>
       ) : (
-        <ImageContent module={module} />
+        <ImageContent value={value} />
       )}
 
       {/* Caption */}
-      {module.variant === "caption" && module.caption && (
+      {value.variant === "caption" && value.caption && (
         <div className="mt-2 max-w-[35rem] text-sm leading-caption text-darkGray">
-          {module.caption}
+          {value.caption}
         </div>
       )}
       {/* Product hotspots */}
-      {module.variant === "productHotspots" && (
+      {value.variant === "productHotspots" && (
         <>
-          {module.productHotspots?.map((hotspot) => {
+          {value.productHotspots?.map((hotspot) => {
             if (!hotspot?.product?.gid) {
               return null;
             }
@@ -54,9 +80,9 @@ export default function ImageModule({ module }: Props) {
         </>
       )}
       {/* Product tags */}
-      {module.variant === "productTags" && (
+      {value.variant === "productTags" && (
         <div className="mt-2 flex flex-wrap gap-x-1 gap-y-2">
-          {module.productTags?.map((tag) => {
+          {value.productTags?.map((tag) => {
             if (!tag?.gid) {
               return null;
             }
@@ -75,29 +101,28 @@ export default function ImageModule({ module }: Props) {
   );
 }
 
-const ImageContent = ({ module }: Props) => {
-  const image = module.image;
+const ImageContent = ({ value }: Props) => {
+  const image = value.image;
   const { sanityDataset, sanityProjectID } = useRootLoaderData();
 
   return (
-    <div
-      className={clsx(
-        "relative overflow-hidden rounded transition-[border-radius] duration-500 ease-out",
-        "group-hover:rounded-xl"
-      )}
-    >
-      <SanityImage
-        crop={image?.crop}
-        dataset={sanityDataset}
-        hotspot={image?.hotspot}
-        layout="responsive"
-        projectId={sanityProjectID}
-        sizes={["50vw, 100vw"]}
-        src={image?.asset?._ref}
-      />
+    <>
+      <div className="image-container">
+        <SanityImage
+          crop={image?.crop}
+          dataset={sanityDataset}
+          hotspot={image?.hotspot}
+          layout="responsive"
+          projectId={sanityProjectID}
+          sizes={["50vw, 100vw"]}
+          src={image?.asset?._ref}
+        />
+      </div>
+
+      {/* JL to look at why some are called here, and some in the above function */}
 
       {/* Call to action */}
-      {module.variant === "callToAction" && (
+      {value.variant === "callToAction" && (
         <div
           className={clsx(
             "absolute left-0 top-0 flex h-full w-full items-center justify-center bg-black bg-opacity-20 duration-500 ease-out",
@@ -108,25 +133,33 @@ const ImageContent = ({ module }: Props) => {
             {/* Title */}
             <div
               className={clsx(
-                "max-w-[30rem] text-xl text-white", //
+                "max-w-[30rem] text-xl text-white",
                 "lg:text-2xl",
                 "xl:text-3xl"
               )}
             >
-              {module.callToAction?.title}
+              {value.callToAction?.title}
             </div>
 
             {/* Button */}
-            {module.callToAction?.link && (
+            {value.callToAction?.link && (
               <Button
                 className={clsx("pointer-events-none bg-white text-offBlack")}
               >
-                {module.callToAction.title}
+                {value.callToAction.title}
               </Button>
             )}
           </div>
         </div>
       )}
-    </div>
+
+      {/* Quote */}
+      {(value.variant === "quote" || value.variant === "quoteAndText") &&
+        value.quote && <p className="bold-56 quote">{value.quote}</p>}
+
+      {/* Text */}
+      {(value.variant === "text" || value.variant === "quoteAndText") &&
+        value.text && <p className="semi-bold-16 text">{value.text}</p>}
+    </>
   );
 };

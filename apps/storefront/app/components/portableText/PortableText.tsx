@@ -6,6 +6,7 @@ import { PortableTextBlock } from "@portabletext/types";
 import clsx from "clsx";
 import { useMemo } from "react";
 
+import ImageModule from "~/components/modules/Image";
 import LinkEmailAnnotation from "~/components/portableText/annotations/LinkEmail";
 import LinkExternalAnnotation from "~/components/portableText/annotations/LinkExternal";
 import LinkInternalAnnotation from "~/components/portableText/annotations/LinkInternal";
@@ -53,9 +54,10 @@ export default function PortableText({ blocks, centered, className }: Props) {
         <CalloutBlock centered={centered} {...props} />
       ),
       "module.grid": GridBlock,
-      "module.images": (props: any) => (
-        <ImagesBlock centered={centered} {...props} />
-      ),
+      // "module.images": (props: any) => (
+      //   <ImagesBlock centered={centered} {...props} />
+      // ),
+      "module.image": (props: any) => <ImageModule {...props} />,
       "module.instagram": InstagramBlock,
       "module.products": ProductsBlock,
       "module.taggedProducts": TaggedProductsBlock,
@@ -64,7 +66,7 @@ export default function PortableText({ blocks, centered, className }: Props) {
 
   const portableText = useMemo(() => {
     return (
-      <div className={clsx("portableText", className)}>
+      <div className={clsx("story", className)}>
         <PortableTextReact value={blocks} components={components} />
       </div>
     );

@@ -9,6 +9,7 @@ export interface SanityAssetImage extends Image {
   altText?: string;
   blurDataURL: string;
   height: number;
+  palette: object;
   url: string;
   width: number;
 }
@@ -188,29 +189,29 @@ export type SanityModuleCollection = {
   showBackground?: boolean;
 };
 
+// IMAGES
 export type SanityModuleImage =
   | SanityModuleImageCallToAction
   | SanityModuleImageCaption
   | SanityModuleImageProductHotspots
-  | SanityModuleImageProductTags;
-
-export type SanityModuleGrid = {
-  _key?: string;
-  _type: "module.grid";
-  items: {
-    _key: string;
-    _type: "items";
-    body: PortableTextBlock[];
-    image: SanityAssetImage;
-    title: string;
-  }[];
-};
+  | SanityModuleImageProductTags
+  | SanityModuleImageTextContent;
 
 export type SanityModuleImageBase = {
   _key?: string;
   _type: "module.image";
   image: SanityAssetImage;
+  size?: "fullWidth" | "halfWidth";
+  position?: "right" | "center" | "left";
+  contentPosition?: "left-of-image" | "centered" | "right-of-image";
 };
+
+export interface SanityModuleImageTextContent extends SanityModuleImageBase {
+  _key?: string;
+  text?: string;
+  quote?: string;
+  variant: "quoteAndText" | "text" | "quote";
+}
 
 export interface SanityModuleImageCallToAction extends SanityModuleImageBase {
   _key?: string;
@@ -251,6 +252,18 @@ export type SanityModuleInstagram = {
   _key?: string;
   _type: "module.instagram";
   url: string;
+};
+
+export type SanityModuleGrid = {
+  _key?: string;
+  _type: "module.grid";
+  items: {
+    _key: string;
+    _type: "items";
+    body: PortableTextBlock[];
+    image: SanityAssetImage;
+    title: string;
+  }[];
 };
 
 export type SanityModuleProduct = {
@@ -310,17 +323,19 @@ export type SanityProductWithVariant = {
 export type SanityProductPage = {
   _id: string;
   available: boolean;
-  body: PortableTextBlock[];
-  colorTheme?: SanityColorTheme;
+  // body: PortableTextBlock[];
   customProductOptions?: SanityCustomProductOption[];
+  description: string;
+  drop?: SanityDrop;
   gid: string;
-  slug?: string;
+  maxUnits: number;
+  printImage: SanityAssetImage;
+  slug: string;
   seo: SanitySeo;
-  creators: SanityCreator[];
-  composition: SanityComposition[];
+  story: PortableTextBlock[];
+  // creators: SanityCreator[];
   faqs: SanityFaqs;
-  guide: SanityGuideProducts;
-  materialUpsells: SanityModuleProduct[];
+  // guide: SanityGuideProducts;
   sharedText: {
     deliveryAndReturns: PortableTextBlock[];
     deliverySummary: string;
@@ -332,6 +347,17 @@ export type SanitySeo = {
   description?: string;
   image?: SanityAssetImage;
   title: string;
+};
+
+export type SanityDrop = {
+  _id: string;
+  title: string;
+  number?: number;
+  description?: string;
+  release_date?: Date;
+  location?: string;
+  seo: SanitySeo;
+  slug: string;
 };
 
 export type SanityPerson = {
@@ -353,10 +379,6 @@ export type SanityCreator = {
   person: SanityPerson;
 };
 
-export type SanityMaterialAttributes = {
-  environmentallyFriendly: boolean;
-  dishwasherSafe: boolean;
-};
 
 export type SanityFaq = {
   _key: string;
@@ -370,16 +392,7 @@ export type SanityFaqs = {
   _type: "module.accordion";
 };
 
-export type SanityMaterial = {
-  name: string;
-  attributes: SanityMaterialAttributes;
-  story: PortableTextBlock[];
-};
 
-export type SanityComposition = {
-  _key: string;
-  material: SanityMaterial;
-};
 
 export type SanityGuide = SanityPage;
 

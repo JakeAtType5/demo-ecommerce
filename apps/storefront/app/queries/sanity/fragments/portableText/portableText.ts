@@ -3,6 +3,7 @@ import groq from "groq";
 import { MODULE_ACCORDION } from "../modules/accordion";
 import { MODULE_CALLOUT } from "../modules/callout";
 import { MODULE_GRID } from "../modules/grid";
+import { MODULE_IMAGE } from "../modules/image";
 import { MODULE_IMAGES } from "../modules/images";
 import { MODULE_INSTAGRAM } from "../modules/instagram";
 import { MODULE_PRODUCTS } from "../modules/products";
@@ -27,6 +28,10 @@ export const PORTABLE_TEXT = groq`
   (_type == 'blockImages' || _type == 'module.images') => {
     '_type': 'module.images',
     ${MODULE_IMAGES}
+  },
+  (_type == 'blockImage' || _type == 'module.image') => {
+    '_type': 'module.image',
+    ${MODULE_IMAGE}
   },
   (_type == 'blockInstagram' || _type == 'module.instagram') => {
     '_type': 'module.instagram',

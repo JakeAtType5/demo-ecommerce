@@ -10,6 +10,9 @@ import type { SanityProductPage } from "~/lib/sanity";
 
 import { Label } from "../global/Label";
 
+import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 type Props = {
   sanityProduct: SanityProductPage;
   storefrontProduct: Product;
@@ -55,57 +58,78 @@ export default function ProductWidget({
   }
 
   return (
-    <div
-      className={clsx(
-        "pointer-events-auto z-10 ml-auto rounded bg-white px-4 py-6 shadow",
-        "md:px-6"
-      )}
-    >
-      {/* Sold out */}
-      {!availableForSale && (
-        <div className="mb-3 text-xs font-bold uppercase text-darkGray">
-          <Label _key="product.soldOut" />
-        </div>
-      )}
-
-      {/* Sale */}
-      {availableForSale && selectedVariant?.compareAtPrice && (
-        <div className="mb-3 text-xs font-bold uppercase text-red">
-          <Label _key="product.sale" />
-        </div>
-      )}
-
+    <div className="product-details">
       {/* Title */}
       {storefrontProduct?.title && (
-        <h1 className="text-md font-bold uppercase">
-          {storefrontProduct.title}
-        </h1>
+        <h1 className="bold-56 product-title">{storefrontProduct.title}</h1>
       )}
 
-      {/* Vendor */}
+      {/* Artist */}
       {storefrontProduct?.vendor && (
-        <div className="mt-1 text-md text-darkGray">
-          {storefrontProduct.vendor}
-        </div>
+        <p className="semi-bold-24 product-artist">
+          by {storefrontProduct.vendor}
+        </p>
       )}
 
-      {/* Prices */}
-      <ProductPrices
-        storefrontProduct={storefrontProduct}
-        selectedVariant={selectedVariant}
-      />
+      {/* Description */}
+      {sanityProduct?.description && (
+        <p className="semi-bold-16 product-description">
+          {sanityProduct.description}
+        </p>
+      )}
 
-      {/* Divider */}
-      <div className="my-4 w-full border-b border-gray" />
-
-      {/* Product options */}
-      <ProductForm
-        product={storefrontProduct}
-        variants={storefrontVariants}
-        selectedVariant={selectedVariant}
-        analytics={analytics}
-        customProductOptions={sanityProduct.customProductOptions}
-      />
+      {/* Messages */}
+      <div className="semi-bold-16 product-messages">
+        <div className="product-message">
+          <FontAwesomeIcon icon={faCheck} />
+          <p>1 of just {sanityProduct.maxUnits}</p>
+        </div>
+        <div className="product-message">
+          <FontAwesomeIcon icon={faCheck} />
+          <p>Delivered to ?? by ??</p>
+        </div>
+        <div className="product-message">
+          <FontAwesomeIcon icon={faCheck} />
+          <p>14 days return.</p>
+        </div>
+      </div>
     </div>
   );
 }
+
+// const neededInFuture = () => {
+//   return (
+
+//       {/* Sold out */}
+//       {!availableForSale && (
+//         <div className="mb-3 text-xs font-bold uppercase text-darkGray">
+//           <Label _key="product.soldOut" />
+//         </div>
+//       )}
+
+//       {/* Sale */}
+//       {availableForSale && selectedVariant?.compareAtPrice && (
+//         <div className="mb-3 text-xs font-bold uppercase text-red">
+//           <Label _key="product.sale" />
+//         </div>
+//       )}
+
+//       {/* Prices */}
+//       <ProductPrices
+//         storefrontProduct={storefrontProduct}
+//         selectedVariant={selectedVariant}
+//       />
+
+//       {/* Divider */}
+//       <div className="my-4 w-full border-b border-gray" />
+
+//       {/* Product options */}
+//       <ProductForm
+//         product={storefrontProduct}
+//         variants={storefrontVariants}
+//         selectedVariant={selectedVariant}
+//         analytics={analytics}
+//         customProductOptions={sanityProduct.customProductOptions}
+//       />
+//   );
+// }
