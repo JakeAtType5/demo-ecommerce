@@ -1,3 +1,5 @@
+import { faMagnifyingGlass, faUser } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Await } from "@remix-run/react";
 import { CartForm } from "@shopify/hydrogen";
 import { Cart } from "@shopify/hydrogen/storefront-api-types";
@@ -7,7 +9,6 @@ import { useEffect } from "react";
 import { CartDrawer, useDrawer } from "~/components/cart/CartDrawer";
 import CartToggle from "~/components/cart/CartToggle";
 import { CountrySelector } from "~/components/global/CountrySelector";
-import { UserIcon } from "~/components/icons/User";
 import { Link } from "~/components/Link";
 import { useCartFetchers } from "~/hooks/useCartFetchers";
 import { useRootLoaderData } from "~/root";
@@ -32,13 +33,8 @@ export default function HeaderActions() {
 
   return (
     <>
-      <div
-        className={clsx(
-          "absolute right-0 flex h-full items-center", //
-          "md:mr-4"
-        )}
-      >
-        {/* Country select */}
+      <div className="navigation-actions">
+        {/* Country select
         <div
           className={clsx(
             "hidden", //
@@ -46,7 +42,11 @@ export default function HeaderActions() {
           )}
         >
           <CountrySelector />
-        </div>
+        </div> */}
+
+        {/* Search */}
+        <FontAwesomeIcon icon={faMagnifyingGlass} />
+
         {/* Account */}
         <Link
           className={clsx([
@@ -56,8 +56,9 @@ export default function HeaderActions() {
           ])}
           to="/account"
         >
-          <UserIcon />
+          <FontAwesomeIcon icon={faUser} />
         </Link>
+
         {/* Cart */}
         <div className="ml-2 mr-4 flex h-full items-center justify-center py-4">
           <Await resolve={cart}>

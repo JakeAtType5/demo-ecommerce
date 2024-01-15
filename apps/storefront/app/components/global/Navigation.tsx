@@ -34,16 +34,15 @@ export default function Navigation({ menuLinks }: Props) {
         );
       }
       if (link._type === "linkInternal") {
-        if (!link.slug) {
-          return null;
-        }
+        // if (!link.slug) {
+        //   return null;
+        // }
 
         return (
-          <div className="flex items-center" key={link._key}>
-            <Link className="linkTextNavigation" to={link.slug}>
-              {link.title}
-            </Link>
-          </div>
+          // <Link className="" to={link.slug} key={link._key}>
+          <Link className="" to="/account/login" key={link._key}>
+            {link.title}
+          </Link>
         );
       }
 
@@ -51,14 +50,5 @@ export default function Navigation({ menuLinks }: Props) {
     });
   }, [menuLinks]);
 
-  return (
-    <nav
-      className={clsx(
-        "relative hidden items-stretch justify-start gap-6 text-sm font-bold",
-        "lg:flex"
-      )}
-    >
-      {renderLinks()}
-    </nav>
-  );
+  return <nav className="navigation-links">{renderLinks()}</nav>;
 }
