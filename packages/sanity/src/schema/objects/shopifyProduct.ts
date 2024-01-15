@@ -67,6 +67,7 @@ export default defineField({
     defineField({
       name: 'title',
       title: 'Title',
+      hidden: true,
       type: 'string',
       description: 'Title displayed in both cart and checkout',
     }),
@@ -88,16 +89,11 @@ export default defineField({
     defineField({
       name: 'slug',
       title: 'Slug',
+      hidden: true,
       type: 'slug',
       description: 'Shopify Product handle',
     }),
-    // Description
-    defineField({
-      name: 'descriptionHtml',
-      title: 'HTML Description',
-      type: 'text',
-      rows: 5,
-    }),
+
     // Product Type
     defineField({
       fieldset: 'organization',
@@ -110,6 +106,7 @@ export default defineField({
       fieldset: 'organization',
       name: 'vendor',
       title: 'Vendor',
+      hidden: true,
       type: 'string',
     }),
     // Tags
