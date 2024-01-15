@@ -1,5 +1,5 @@
 {
-  "name": "@demo-ecommerce/sanity",
+  "name": "RFC API",
   "private": true,
   "type": "module",
   "main": "src/index.ts",

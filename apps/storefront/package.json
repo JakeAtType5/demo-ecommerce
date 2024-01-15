@@ -1,11 +1,11 @@
 {
-  "name": "storefront",
+  "name": "rfc-store",
   "description": "AKVA is our customized Hydrogen starter that presents a real-world example of how Sanity and Structured Content can elevate your custom Shopify storefronts.",
   "private": true,
   "sideEffects": false,
   "version": "1.0.0",
   "license": "MIT",
-  "author": "Sanity.io <hello@sanity.io>",
+  "author": "Jake Lazarus <jake@type5.co.uk>",
   "scripts": {
     "build": "shopify hydrogen build --no-lockfile-check",
     "dev": "shopify hydrogen dev",
