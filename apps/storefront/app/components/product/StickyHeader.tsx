@@ -1,18 +1,19 @@
 import clsx from "clsx";
-import { useEffect, useState } from "react";
-
-import { Link } from "../Link";
+import { useEffect, useRef, useState } from "react";
 
 type Props = {
-  isVisible?: boolean;
   sections?: []; // type?
 };
 
-export default function StickyProductHeader({ isVisible, sections }: Props) {
-  const [scrolledDown, setScrolledDown] = useState(false);
+export default function StickyProductHeader({ sections }: Props) {
+  const [stickHeader, setStickHeader] = useState(false);
+  const headerElement = useRef(null);
+  const headerElementYPos = headerElement?.current?.offsetTop;
 
+  /* Ensures element is always visible */
   const handleScroll = () => {
-    setScrolledDown(window.scrollY > window.innerHeight);
+    setStickHeader(window.scrollY > headerElementYPos);
+    console.log('no I don');
   };
 
   useEffect(() => {
@@ -22,13 +23,14 @@ export default function StickyProductHeader({ isVisible, sections }: Props) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  /** Scrolls to section */
   const handleClickEvent = (event: Event, target: string) => {
     event.preventDefault();
 
     const element = document.getElementById(target);
 
     if (element) {
-      const yOffset = -60;
+      const yOffset = stickHeader ? -120 : -60;
       const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
 
       window.scrollTo({ top: y, behavior: "smooth" });
@@ -39,8 +41,9 @@ export default function StickyProductHeader({ isVisible, sections }: Props) {
     <div
       className={clsx([
         "sticky-product-header",
-        scrolledDown ? "--is-visible" : "",
+        stickHeader ? "--is-stuck" : "",
       ])}
+      ref={headerElement}
     >
       <div className="content-wrapper">
         {sections.map((section) => (
