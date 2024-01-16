@@ -8,17 +8,24 @@ type Props = {
 export default function StickyProductHeader({ sections }: Props) {
   /* Sticks header when it is no longer in the viewport */
   const [stickHeader, setStickHeader] = useState(false);
+  const [headerYPos, setHeaderYPos] = useState(false);
+
   const headerElement = useRef();
 
   const handleScroll = useCallback(() => {
-    const headerElementYPos = headerElement?.current?.offsetTop;
-    setStickHeader(window.scrollY > headerElementYPos);
-  }, [headerElement]);
+    setStickHeader(headerYPos ? window.scrollY > headerYPos : false);
+  }, [headerYPos]);
 
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
+    if (!headerYPos) {
+      setHeaderYPos(headerElement?.current?.offsetTop);
+    }
+
     // Trigger handler on mount to account for reloads
     handleScroll();
+
+    window.addEventListener("scroll", handleScroll);
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, [handleScroll]);
 
