@@ -320,3 +320,91 @@ export function isLocalPath(request: Request, url: string) {
   // If the origins don't match the slug is not on our domain.
   return currentUrl.origin === urlToCheck.origin;
 }
+
+/**
+ * Convert from timestamp to human readable format
+ */
+export const formatDate = ({
+  value,
+  format = "d/m/y",
+}: {
+  value: string;
+  format: string;
+}) => {
+  const date = new Date(value);
+
+  let result = "";
+
+  for (let i = 0; i < format.length; i++) {
+    result += parseDateFormat({
+      char: format.charAt(i),
+      date,
+    });
+  }
+
+  return result;
+};
+
+/**
+ * Parse and return requested date format
+ *
+ * y -> yyyy
+ * m -> mm
+ * d -> dd
+ * h -> hh
+ * i -> ii
+ * s -> ss
+ * o -> 1st / 2nd etc.
+ */
+export const parseDateFormat = ({
+  date,
+  char,
+}: {
+  date: Date;
+  char: string;
+}) => {
+  if (char === "/" || char === ":" || char === " " || char === "-") {
+    return char;
+  }
+
+  switch (true) {
+    case char === "o": {
+      const dayOfMonth = date.getDate();
+      let selector;
+
+      if (dayOfMonth <= 0) {
+        selector = 4;
+      } else if ((dayOfMonth > 3 && dayOfMonth < 21) || dayOfMonth % 10 > 3) {
+        selector = 0;
+      } else {
+        selector = dayOfMonth % 10;
+      }
+
+      return ["th", "st", "nd", "rd", ""][selector];
+    }
+
+    case char === "y":
+      return date.getFullYear();
+    case char === "m": {
+      return date.toLocaleString("default", { month: "short" });
+    }
+    case char === "d": {
+      const day = date.getDate();
+      return day;
+    }
+    case char === "h": {
+      const hours = date.getHours();
+      return hours < 10 ? `0${hours}` : hours;
+    }
+    case char === "i": {
+      const minutes = date.getMinutes();
+      return minutes < 10 ? `0${minutes}` : minutes;
+    }
+    case char === "s": {
+      const seconds = date.getSeconds();
+      return seconds < 10 ? `0${seconds}` : seconds;
+    }
+    default:
+      return char;
+  }
+};

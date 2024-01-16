@@ -1,11 +1,10 @@
 import groq from "groq";
 
-import { CREATOR } from "../creator";
 import { CUSTOM_PRODUCT_OPTIONS } from "../customProductOptions";
+import { DROP } from "../drop";
 import { IMAGE } from "../image";
 import { PORTABLE_TEXT } from "../portableText/portableText";
 import { PRODUCT_FAQS } from "../productFaqs";
-import { PRODUCT_GUIDE } from "../productGuide";
 import { SEO_SHOPIFY } from "../seoShopify";
 import { SHARED_TEXT } from "../sharedText";
 
@@ -15,10 +14,8 @@ export const PRODUCT_PAGE = groq`
   "body": coalesce(body[_key == $language][0].value, body[_key == $baseLanguage][0].value)[] {
     ${PORTABLE_TEXT}
   },
-  creators[]{
-    ${CREATOR}
-  },
   description,
+  ${DROP},
   ${PRODUCT_FAQS},
   maxUnits,
   "printImage": printImage {

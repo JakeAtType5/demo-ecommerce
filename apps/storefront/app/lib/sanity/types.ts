@@ -333,7 +333,6 @@ export type SanityProductPage = {
   slug: string;
   seo: SanitySeo;
   story: PortableTextBlock[];
-  // creators: SanityCreator[];
   faqs: SanityFaqs;
   // guide: SanityGuideProducts;
   sharedText: {
@@ -350,7 +349,6 @@ export type SanitySeo = {
 };
 
 export type SanityDrop = {
-  _id: string;
   title: string;
   number?: number;
   description?: string;
@@ -372,13 +370,6 @@ export type SanityPersonPage = SanityPerson & {
   seo: SanitySeo;
   products: SanityModuleProduct[];
 };
-
-export type SanityCreator = {
-  _key: string;
-  role: string;
-  person: SanityPerson;
-};
-
 
 export type SanityFaq = {
   _key: string;

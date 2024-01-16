@@ -26,6 +26,7 @@ import { SanityPreview } from "hydrogen-sanity";
 import { Suspense } from "react";
 import invariant from "tiny-invariant";
 
+import DropPreview from "~/components/drop/Preview";
 import { Label } from "~/components/global/Label";
 import AccordionBlock from "~/components/portableText/blocks/Accordion";
 import PortableText from "~/components/portableText/PortableText";
@@ -224,11 +225,6 @@ export default function ProductHandle() {
     >
       {(page) => (
         <>
-          <StickyProductHeader
-            sections={SECTIONS}
-            isVisible={true}
-          />
-
           <Suspense
             fallback={
               <ProductDetails
@@ -242,7 +238,7 @@ export default function ProductHandle() {
             }
           >
             <Await
-              errorElement="There was a problem loading related products"
+              errorElement="There was a problem loading product variants"
               resolve={variants}
             >
               {(resp) => (
@@ -258,15 +254,22 @@ export default function ProductHandle() {
             </Await>
           </Suspense>
 
+          <StickyProductHeader sections={SECTIONS} />
+
           <Suspense>
             <Await resolve={gids}>
               {/* Story */}
-              <p className="semi-bold-24" id="the-story">
-                The story
-              </p>
-              {page?.story && <PortableText blocks={page.story} />}
+              <section className="product-section" id="the-story">
+                <p className="semi-bold-24 section-header">The story</p>
+                {page?.story && <PortableText blocks={page.story} />}
+              </section>
 
-              {/* <Magazine page={page as SanityProductPage} product={product} /> */}
+              {/* The Drop */}
+              <section className="product-section" id="the-drop">
+                {page?.drop && (
+                  <DropPreview drop={page.drop} sectionTitle="Featured in" />
+                )}
+              </section>
 
               {/* Shipping info and FAQs */}
               <div
