@@ -30,7 +30,6 @@ const DOCUMENT_TYPES_IN_STRUCTURE = [
   'collection',
   'drop',
   'episode',
-  'guide',
   'home',
   'media.tag',
   'page',

@@ -70,7 +70,7 @@ export function defineSanityConfig(config: SanityConfig) {
       visionTool(),
       documentInternationalization({
         supportedLanguages: LANGUAGES,
-        schemaTypes: ['guide', 'page'],
+        schemaTypes: ['page'],
       }),
       internationalizedArray({
         languages: LANGUAGES,
@@ -112,15 +112,6 @@ export function defineSanityConfig(config: SanityConfig) {
         return [
           ...prevFiltered,
           {
-            id: 'guide-language',
-            title: 'Guide with Language',
-            schemaType: 'guide',
-            parameters: [{name: 'language', type: 'string'}],
-            value: (params: {language: string}) => ({
-              language: params.language,
-            }),
-          },
-          {
             id: 'page-language',
             title: 'Page with Language',
             schemaType: 'page',
@@ -129,7 +120,7 @@ export function defineSanityConfig(config: SanityConfig) {
               language: params.language,
             }),
           },
-        ].filter((template) => !['guide', 'page', 'translation.metadata'].includes(template.id))
+        ].filter((template) => !['page', 'translation.metadata'].includes(template.id))
       },
     },
 
