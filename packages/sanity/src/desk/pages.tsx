@@ -60,7 +60,7 @@ export default defineStructure<ListItemBuilder>((S) =>
                 .filter('_type == "page"')
                 .apiVersion(SANITY_API_VERSION)
                 .canHandleIntent(
-                  (intentName, params) => intentName === 'edit' || params.template === `guide`
+                  (intentName, params) => intentName === 'edit' || params.template === `page`
                 )
             ),
         ])

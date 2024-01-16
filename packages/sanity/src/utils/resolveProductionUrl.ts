@@ -35,13 +35,8 @@ export const resolvePreviewUrl = (document: SanityDocumentLike) => {
       path = slug == null ? '/' : `/products/${slug}`
       break
     }
-
-    case 'guide': {
-      const slug = (document?.slug as Slug)?.current
-      path = slug == null ? '/' : `/guides/${slug}`
-      break
-    }
-
+    
+    // JL: add drop, episode
     case 'collection': {
       const slug = (document?.store as store)?.slug?.current
       path = slug == null ? '/' : `/collections/${slug}`
