@@ -57,6 +57,18 @@ export default defineType({
       group: 'content',
       title: 'Location'
     },
+
+    // Episode
+    defineField({
+      title: 'Episode',
+      name: 'episode',
+      group: 'content',
+      type: 'reference',
+      to: {
+        type: 'episode',
+      },
+    }),
+
     // Prints
     defineField({
       title: 'Prints',
@@ -168,18 +180,3 @@ export default defineType({
   // },
 })
 
-
-
-// {
-//   name: 'linkedVideo',
-//   type: 'reference',
-//   group: 'context',
-//   title: 'Video',
-//   to: [
-//     { type: 'video' }
-//   ],
-//   weak: true,
-//   options: {
-//     disableNew: true,
-//   }
-// },

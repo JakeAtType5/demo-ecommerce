@@ -1,15 +1,17 @@
 import groq from "groq";
 
-import { SEO_SHOPIFY } from "./seoShopify";
+import { EPISODE } from "./episode";
+import { SEO } from "./seo";
 
 export const DROP = groq`
-  drop->{
-    title,
-    number,
-    description,
-    release_date,
-    location,
-    "slug": "/drops/" + slug.current,
-    ${SEO_SHOPIFY}
-  }
+  title,
+  episode -> {
+    ${EPISODE}
+  },
+  number,
+  description,
+  release_date,
+  location,
+  "slug": "/drops/" + slug.current,
+  ${SEO},
 `;

@@ -15,7 +15,9 @@ export const PRODUCT_PAGE = groq`
     ${PORTABLE_TEXT}
   },
   description,
-  ${DROP},
+  drop->{
+    ${DROP}
+  },
   ${PRODUCT_FAQS},
   maxUnits,
   "printImage": printImage {
