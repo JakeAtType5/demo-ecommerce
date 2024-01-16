@@ -1,27 +1,26 @@
 import clsx from "clsx";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type Props = {
   sections?: []; // type?
 };
 
 export default function StickyProductHeader({ sections }: Props) {
+  /* Sticks header when it is no longer in the viewport */
   const [stickHeader, setStickHeader] = useState(false);
-  const headerElement = useRef(null);
-  const headerElementYPos = headerElement?.current?.offsetTop;
+  const headerElement = useRef();
 
-  /* Ensures element is always visible */
-  const handleScroll = () => {
+  const handleScroll = useCallback(() => {
+    const headerElementYPos = headerElement?.current?.offsetTop;
     setStickHeader(window.scrollY > headerElementYPos);
-    console.log('no I don');
-  };
+  }, [headerElement]);
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
     // Trigger handler on mount to account for reloads
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [handleScroll]);
 
   /** Scrolls to section */
   const handleClickEvent = (event: Event, target: string) => {
