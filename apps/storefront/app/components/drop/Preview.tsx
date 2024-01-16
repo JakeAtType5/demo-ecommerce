@@ -52,12 +52,12 @@ export default function DropPreview({ drop, sectionTitle }: Props) {
 
         <button className="button--small semi-bold-16">watch the drop</button>
       </div>
-
+{/* 
       <VideoPlayer
         size={"preview"}
         file={}
         autoPlayOnEntry={"muted"}
-      ></VideoPlayer>
+      ></VideoPlayer> */}
 
       <div className="video-player"></div>
     </div>
