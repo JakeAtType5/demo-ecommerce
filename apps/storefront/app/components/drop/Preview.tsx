@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { SanityDrop } from "~/lib/sanity";
 
 import { formatDate } from "../../lib/utils";
+import VideoPlayerPreview from "../video/PreviewPlayer";
 
 type Props = {
   drop: SanityDrop;
@@ -14,6 +15,7 @@ type Props = {
 };
 
 export default function DropPreview({ drop, sectionTitle }: Props) {
+
   const formattedDate = formatDate({
     value: drop.release_date,
     format: "do m y",
@@ -50,16 +52,15 @@ export default function DropPreview({ drop, sectionTitle }: Props) {
           <p className="semi-bold-16 drop-description">{drop.description}</p>
         )}
 
-        <button className="button--small semi-bold-16">watch the drop</button>
+        <button className="button--small semi-bold-16">watch the episode</button>
       </div>
-{/* 
-      <VideoPlayer
-        size={"preview"}
-        file={}
-        autoPlayOnEntry={"muted"}
-      ></VideoPlayer> */}
 
-      <div className="video-player"></div>
+      <VideoPlayerPreview
+        playbackId={drop.episode.playbackId}
+        assetId={drop.episode.assetId}
+        duration={drop.episode.duration}
+        // startTime
+      />
     </div>
   );
 }
