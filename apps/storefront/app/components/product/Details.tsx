@@ -67,7 +67,7 @@ export default function ProductDetails({
         }}
       ></div>
 
-      <div className="product-hero" id={anchorLinkID}>
+      <section className="product-hero" id={anchorLinkID}>
         <div className="image-container">
           <SanityImage
             // crop={image?.crop}
@@ -115,7 +115,7 @@ export default function ProductDetails({
             </div>
           </div>
         </div>
-      </div>
+      </section>
     </>
   );
 }
