@@ -14,13 +14,14 @@ const annotations = [
 // Document types
 import collection from './documents/collection'
 import drop from './documents/drop'
+import episode from './documents/episode'
 import guide from './documents/guide'
 import page from './documents/page'
 import person from './documents/person'
 import product from './documents/product'
 import productVariant from './documents/productVariant'
 
-const documents = [collection, drop, guide, page, product, productVariant, person]
+const documents = [collection, drop, episode, guide, page, product, productVariant, person]
 
 // Singleton document types
 import home from './singletons/home'

@@ -7,6 +7,7 @@ import {deskTool} from 'sanity/desk'
 import {imageHotspotArrayPlugin} from 'sanity-plugin-hotspot-array'
 import {internationalizedArray} from 'sanity-plugin-internationalized-array'
 import {media, mediaAssetSource} from 'sanity-plugin-media'
+import {muxInput} from 'sanity-plugin-mux-input'
 
 import Logo from './components/studio/Logo'
 import Navbar from './components/studio/Navbar'
@@ -65,6 +66,7 @@ export function defineSanityConfig(config: SanityConfig) {
       imageHotspotArrayPlugin(),
       customDocumentActions(),
       media(),
+      muxInput(),
       visionTool(),
       documentInternationalization({
         supportedLanguages: LANGUAGES,

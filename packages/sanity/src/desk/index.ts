@@ -4,8 +4,8 @@
 
 import {ListItemBuilder, StructureResolver} from 'sanity/desk'
 
-import collections from './collections'
 import drops from './drops'
+import episodes from './episodes'
 import home from './home'
 import pages from './pages'
 import people from './people'
@@ -29,6 +29,7 @@ import settings from './settings'
 const DOCUMENT_TYPES_IN_STRUCTURE = [
   'collection',
   'drop',
+  'episode',
   'guide',
   'home',
   'media.tag',
@@ -49,6 +50,8 @@ export const structure: StructureResolver = (S, context) =>
       pages(S, context),
       S.divider(),
       drops(S, context),
+      episodes(S, context),
+      S.divider(),
       // collections(S, context),
       products(S, context),
       S.divider(),
