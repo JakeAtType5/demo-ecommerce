@@ -35,6 +35,20 @@ export const PRODUCT_PAGE = groq`
   ${SHARED_TEXT},
 `;
 
+export const PRODUCT_PREVIEW = groq`
+  _id,
+  "available": !store.isDeleted && store.status == 'active',
+  description,
+  maxUnits,
+  "printImage": printImage {
+    ${IMAGE}
+  },
+  "gid": store.gid,
+  "slug": store.slug.current,
+  "title": store.title,
+  "vendor": store.vendor
+`;
+
 // export const PRODUCT_PAGE = groq`
 //   "body": coalesce(body[_key == $language][0].value, body[_key == $baseLanguage][0].value)[] {
 //     ${PORTABLE_TEXT}

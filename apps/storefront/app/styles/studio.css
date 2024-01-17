@@ -60,6 +60,7 @@ body {
 .bold-24 {
   font: 1.5rem "General Sans";
   font-weight: 700;
+  letter-spacing: -0.6px;
 }
 
 .bold-56 {
@@ -482,4 +483,41 @@ body {
   border-radius: 5px;
   position: relative;
   box-shadow: 0px 1px 1px 0px rgba(255, 255, 255, 0.10) inset, 0px 50px 100px -20px rgba(50, 50, 93, 0.25), 0px 30px 60px -30px rgba(0, 0, 0, 0.30);
+}
+
+
+/* Product collection */
+.product-collection {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 80px;
+  margin-top: 24px;
+}
+
+.product-card {
+  background-color: var(--product-primary-color);
+  padding: 12px 16px;
+}
+
+.product-card img {
+  box-shadow: 0 1px 1px #ffffff1a inset, 0 50px 100px -20px #32325d40, 0 30px 60px -30px #0000004d;
+  object-fit: fill;
+  transition: 0.2s ease-in-out;
+}
+
+.product-card .product-title {
+  line-height: 1;
+  margin:12px 0 4px 0;
+}
+
+.product-card .artist-title {
+  color: var(--dark-grey);
+}
+
+.product-card:hover img {
+  transform: scale(0.98);
+}
+
+.product-card:hover .product-title {
+  text-decoration: underline;
 }

@@ -1,5 +1,5 @@
 import type { PortableTextBlock } from "@portabletext/types";
-import type { Image } from "@sanity/types";
+import type { Image, Reference } from "@sanity/types";
 
 import type { SanityColorTheme } from "~/lib/theme";
 import type { ProductWithNodes } from "~/types/shopify";
@@ -334,12 +334,22 @@ export type SanityProductPage = {
   seo: SanitySeo;
   story: PortableTextBlock[];
   faqs: SanityFaqs;
-  // guide: SanityGuideProducts;
   sharedText: {
     deliveryAndReturns: PortableTextBlock[];
     deliverySummary: string;
     environmentallyFriendly: string;
   };
+};
+
+export type SanityProductPreview = {
+  _id: string;
+  available: boolean;
+  description: string;
+  gid: string;
+  printImage: SanityAssetImage;
+  slug: string;
+  title: string;
+  vendor: string;
 };
 
 export type SanitySeo = {
@@ -348,7 +358,9 @@ export type SanitySeo = {
   title: string;
 };
 
+// DROPS
 export type SanityDrop = {
+  _id: string;
   title: string;
   number?: number;
   description?: string;
@@ -356,6 +368,20 @@ export type SanityDrop = {
   location?: string;
   seo: SanitySeo;
   slug: string;
+  episode: any; //temp
+  video: SanityVideo;
+};
+
+export type SanityVideo = {
+  playbackId: string;
+  assetId: string;
+  title?: string;
+  duration: number;
+  startTime?: number;
+  muted?: boolean;
+  autoPlay?: "muted" | "any" | "none";
+  theme?: "microvideo" | "classic";
+  playerReference?: any;
 };
 
 export type SanityPerson = {
@@ -381,14 +407,4 @@ export type SanityFaq = {
 export type SanityFaqs = {
   groups: SanityFaq[];
   _type: "module.accordion";
-};
-
-
-
-export type SanityGuide = SanityPage;
-
-export type SanityGuideProducts = {
-  title: string;
-  slug: string;
-  images: SanityModuleImage[];
 };
