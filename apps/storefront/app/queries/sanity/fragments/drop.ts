@@ -4,6 +4,7 @@ import { EPISODE } from "./episode";
 import { SEO } from "./seo";
 
 export const DROP = groq`
+  _id,
   title,
   episode -> {
     ${EPISODE}
