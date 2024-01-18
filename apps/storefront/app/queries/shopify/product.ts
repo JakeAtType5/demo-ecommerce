@@ -36,6 +36,7 @@ export const PRODUCT_VARIANT_FIELDS = `
 
 export const PRODUCT_FIELDS = `
   fragment ProductFields on Product {
+    availableForSale,
     handle
     id
     options {
@@ -44,6 +45,14 @@ export const PRODUCT_FIELDS = `
     }
     title
     vendor
+  }
+`;
+
+export const INVENTORY_FIELDS = `
+  fragment ProductFields on Product {
+    availableForSale,
+    handle
+    id
   }
 `;
 
@@ -90,6 +99,22 @@ export const PRODUCT_QUERY = `#graphql
   }
 `;
 
+export const INVENTORY_BY_PRODUCT_IDS = `#graphql
+  ${INVENTORY_FIELDS}
+
+  query products(
+    $country: CountryCode
+    $language: LanguageCode
+    $ids: [ID!]!
+  ) @inContext(country: $country, language: $language) {
+    products: nodes(ids: $ids) {
+      ... on Product {
+        ...ProductFields
+      }
+    }
+  }
+`;
+
 export const PRODUCTS_AND_VARIANTS = `#graphql
   ${PRODUCT_FIELDS}
   ${PRODUCT_VARIANT_FIELDS}
@@ -103,6 +128,7 @@ export const PRODUCTS_AND_VARIANTS = `#graphql
     products: nodes(ids: $ids) {
       ... on Product {
         ...ProductFields
+        
       }
     }
     productVariants: nodes(ids: $variantIds) {

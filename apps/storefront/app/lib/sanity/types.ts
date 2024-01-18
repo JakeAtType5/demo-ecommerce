@@ -2,7 +2,7 @@ import type { PortableTextBlock } from "@portabletext/types";
 import type { Image, Reference } from "@sanity/types";
 
 import type { SanityColorTheme } from "~/lib/theme";
-import type { ProductWithNodes } from "~/types/shopify";
+import type { ProductInventory, ProductWithNodes } from "~/types/shopify";
 
 export interface SanityAssetImage extends Image {
   _type: "image";
@@ -322,8 +322,6 @@ export type SanityProductWithVariant = {
 
 export type SanityProductPage = {
   _id: string;
-  available: boolean;
-  // body: PortableTextBlock[];
   customProductOptions?: SanityCustomProductOption[];
   description: string;
   drop?: SanityDrop;
@@ -343,14 +341,17 @@ export type SanityProductPage = {
 
 export type SanityProductPreview = {
   _id: string;
-  available: boolean;
   description: string;
   gid: string;
+  inventory: ProductInventory;
   printImage: SanityAssetImage;
+  release_date?: Date;
   slug: string;
+  status?: string;
   title: string;
   vendor: string;
 };
+
 
 export type SanitySeo = {
   description?: string;

@@ -21,3 +21,9 @@ export const PRODUCTS_IN_DROP_QUERY = groq`
     }
   }
 `;
+
+export const ALL_PRODUCTS_QUERY = groq`
+  *[_type == 'product' && !store.isDeleted && store.status == 'active' ] | order(drop->release_date desc) {
+    ${PRODUCT_PREVIEW}
+  }
+`;

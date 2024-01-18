@@ -15,7 +15,11 @@ export default function ProductCard({ product, style }: Props) {
 
   return (
     <div
-      className="product-card"
+      className={clsx(
+        "product-card",
+        product.status === "upcoming" ? "--is-upcoming" : "",
+        product.status === "unavailable" ? "--is-sold-out" : ""
+      )}
       style={{
         "--product-primary-color": `${product.printImage?.palette.vibrant.background}1f`,
       }}

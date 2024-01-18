@@ -66,6 +66,12 @@ export type ProductWithNodes = Partial<Omit<Product, "media" | "variants">> & {
   };
 };
 
+export type ProductInventory = {
+  availableForSale?: boolean;
+  handle: string;
+  id: string;
+}
+
 export type EnvironmentOptions = {
   /**
    * A Cache API instance.
