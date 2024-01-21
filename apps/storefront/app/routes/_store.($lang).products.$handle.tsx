@@ -1,3 +1,4 @@
+import shopify from "@demo-ecommerce/sanity/src/schema/objects/seo/shopify";
 import type { PortableTextBlock } from "@portabletext/types";
 import { Await, useLoaderData, useParams } from "@remix-run/react";
 import type { ShopifyAnalyticsPayload } from "@shopify/hydrogen";
@@ -23,23 +24,36 @@ import {
 } from "@shopify/remix-oxygen";
 import clsx from "clsx";
 import { SanityPreview } from "hydrogen-sanity";
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
 import invariant from "tiny-invariant";
 
 import DropPreview from "~/components/drop/Preview";
-import { Label } from "~/components/global/Label";
 import AccordionBlock from "~/components/portableText/blocks/Accordion";
 import PortableText from "~/components/portableText/PortableText";
+import CustomiseProduct from "~/components/product/Customise";
 import ProductDetails from "~/components/product/Details";
-import RelatedProducts from "~/components/product/RelatedProducts";
+import ProductCollection from "~/components/product/ProductCollection";
 import StickyProductHeader from "~/components/product/StickyHeader";
 import { baseLanguage } from "~/data/countries";
-import type { SanityFaqs, SanityProductPage } from "~/lib/sanity";
-import { fetchGids, notFound, validateLocale } from "~/lib/utils";
-import { PRODUCT_PAGE_QUERY } from "~/queries/sanity/product";
+import type {
+  SanityFaqs,
+  SanityProductPage,
+  SanityProductPreview,
+} from "~/lib/sanity";
+import {
+  fetchGids,
+  fetchGidsForProductIds,
+  notFound,
+  useGids,
+  validateLocale,
+} from "~/lib/utils";
+import {
+  PRODUCT_PAGE_QUERY,
+  PRODUCTS_IN_DROP_QUERY,
+} from "~/queries/sanity/product";
 import {
   PRODUCT_QUERY,
-  RECOMMENDED_PRODUCTS_QUERY,
+  PRODUCTS_QUERY,
   VARIANTS_QUERY,
 } from "~/queries/shopify/product";
 
@@ -128,12 +142,35 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
     },
   });
 
-  // Get recommended products from Shopify
-  const recommended = context.storefront.query(RECOMMENDED_PRODUCTS_QUERY, {
-    variables: {
-      productId: product.id,
-    },
-  });
+  // Fetch related print IDs from this drop
+  const relatedProducts =
+    page && page.drop && page.drop._id
+      ? await context.sanity.query<SanityProductPreview>({
+          query: PRODUCTS_IN_DROP_QUERY,
+          params: {
+            dropId: page?.drop?._id,
+            slug: page.slug,
+          },
+        })
+      : {
+          products: [],
+        };
+
+  // // Fetch related print IDs from this drop
+  // const shopifyRelatedProducts = await context.storefront.query(
+  //   PRODUCTS_QUERY,
+  //   {
+  //     variables: {
+  //       ids: sanityRelatedProducts?.map((product) => product.gid),
+  //     },
+  //   }
+  // );
+
+  //  // Fetch related print IDs from this drop
+  //  const shopifyRelatedProducts = await fetchGidsForProductIds({
+  //   ids: sanityRelatedProducts?.map((product) => product.gid),
+  //   context,
+  // });
 
   const firstVariant = product.variants.nodes[0];
   const selectedVariant = product.selectedVariant ?? firstVariant;
@@ -152,9 +189,9 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
     page,
     product,
     variants,
-    gids,
+    // gids,
     selectedVariant,
-    recommended,
+    relatedProducts,
     analytics: {
       pageType: AnalyticsPageType.product,
       resourceId: product.id,
@@ -191,12 +228,12 @@ const SECTIONS = [
     target: "the-story",
   },
   {
-    label: "The Drop",
-    target: "the-drop",
-  },
-  {
     label: "Materials",
     target: "materials",
+  },
+  {
+    label: "The Drop",
+    target: "the-drop",
   },
   {
     label: "More from this drop",
@@ -212,9 +249,9 @@ export default function ProductHandle() {
     variants,
     selectedVariant,
     analytics,
-    recommended,
-    gids,
+    relatedProducts,
   } = useLoaderData<typeof loader>();
+
   const { handle } = useParams();
 
   return (
@@ -256,99 +293,115 @@ export default function ProductHandle() {
 
           <StickyProductHeader sections={SECTIONS} />
 
-          <Suspense>
-            <Await resolve={gids}>
-              {/* Story */}
-              <section className="product-section" id="the-story">
-                <p className="semi-bold-24 section-header">The story</p>
-                {page?.story && <PortableText blocks={page.story} />}
-              </section>
+          {/* Story */}
+          <section className="product-section" id="the-story">
+            <p className="semi-bold-24 section-header">The story</p>
+            {page?.story && <PortableText blocks={page.story} />}
+          </section>
 
-              {/* The Drop */}
-              <section className="product-section" id="the-drop">
-                {page?.drop && (
-                  <DropPreview drop={page.drop} sectionTitle="Featured in" />
-                )}
-              </section>
+          {/* The Drop */}
+          <section className="product-section" id="the-drop">
+            {page?.drop && (
+              <DropPreview drop={page.drop} sectionTitle="Featured in" />
+            )}
+          </section>
 
-              {/* Shipping info and FAQs */}
-              <div
-                className={clsx(
-                  "w-full", //
-                  "lg:w-[calc(100%-315px)]",
-                  "mb-10 mt-8 p-5"
+          {/* Shipping info and FAQs
+          <div
+            className={clsx(
+              "w-full", //
+              "lg:w-[calc(100%-315px)]",
+              "mb-10 mt-8 p-5"
+            )}
+          >
+            <div className="mb-10 grid grid-cols-3 gap-10 md:grid-cols-4 lg:grid-cols-6">
+              <div className="hidden aspect-square xl:block" />
+              <div className="col-span-3 md:col-span-4 lg:col-span-3 xl:col-span-2">
+                {page?.sharedText?.deliveryAndReturns && (
+                  <SanityProductShipping
+                    blocks={page?.sharedText?.deliveryAndReturns}
+                  />
                 )}
-              >
-                <div className="mb-10 grid grid-cols-3 gap-10 md:grid-cols-4 lg:grid-cols-6">
-                  <div className="hidden aspect-square xl:block" />
-                  <div className="col-span-3 md:col-span-4 lg:col-span-3 xl:col-span-2">
-                    {page?.sharedText?.deliveryAndReturns && (
-                      <SanityProductShipping
-                        blocks={page?.sharedText?.deliveryAndReturns}
-                      />
-                    )}
-                  </div>
-                  <div className="col-span-3 md:col-span-4 lg:col-span-3">
-                    {page?.faqs?.groups && page?.faqs?.groups.length > 0 && (
-                      <SanityProductFaqs faqs={page.faqs} />
-                    )}
-                  </div>
-                </div>
               </div>
+              <div className="col-span-3 md:col-span-4 lg:col-span-3">
+                {page?.faqs?.groups && page?.faqs?.groups.length > 0 && (
+                  <SanityProductFaqs faqs={page.faqs} />
+                )}
+              </div>
+            </div>
+          </div> */}
+
+          {/* Workshop */}
+          <Suspense>
+            <Await
+              errorElement="There was a problem loading related products"
+              resolve={variants}
+            >
+              <section className="product-section" id="customise">
+                <p className="semi-bold-24 section-header">The workshop</p>
+                <CustomiseProduct
+                  variants={variants}
+                  title={page.title}
+                  artist={page.artist}
+                  image={page.printImage}
+                  options={product?.options}
+                />
+              </section>
             </Await>
           </Suspense>
 
-          {/* Related products */}
-          {/* <Suspense>
+          {/* Related prints */}
+          <Suspense>
             <Await
               errorElement="There was a problem loading related products"
-              resolve={recommended}
+              resolve={relatedProducts}
             >
-              <p className="semi-bold-24" id="more-prints">
-                More from this drop
-              </p>
-
-              {(products) => (
-                <RelatedProducts
-                  relatedProducts={products.productRecommendations}
+              <section className="product-section" id="more-prints">
+                <p className="semi-bold-24 section-header">
+                  More from this drop
+                </p>
+                <ProductCollection
+                  products={relatedProducts?.prints}
+                  style="row"
+                  idsToHide={[page._id]}
                 />
-              )}
+              </section>
             </Await>
-          </Suspense> */}
+          </Suspense>
         </>
       )}
     </SanityPreview>
   );
 }
 
-const SanityProductShipping = ({ blocks }: { blocks: PortableTextBlock[] }) => {
-  return (
-    <>
-      <h2
-        className={clsx(
-          "first:mt-0 last:mb-0", //
-          "mb-6 mt-16 text-xl font-bold"
-        )}
-      >
-        <Label _key="shipping.shippingReturns" />
-      </h2>
-      <PortableText blocks={blocks} />
-    </>
-  );
-};
+// const SanityProductShipping = ({ blocks }: { blocks: PortableTextBlock[] }) => {
+//   return (
+//     <>
+//       <h2
+//         className={clsx(
+//           "first:mt-0 last:mb-0", //
+//           "mb-6 mt-16 text-xl font-bold"
+//         )}
+//       >
+//         <Label _key="shipping.shippingReturns" />
+//       </h2>
+//       <PortableText blocks={blocks} />
+//     </>
+//   );
+// };
 
-const SanityProductFaqs = ({ faqs }: { faqs: SanityFaqs }) => {
-  return (
-    <>
-      <h2
-        className={clsx(
-          "first:mt-0 last:mb-0", //
-          "-mb-6 mt-16 text-xl font-bold"
-        )}
-      >
-        <Label _key="faqs.title" />
-      </h2>
-      <AccordionBlock value={faqs} />
-    </>
-  );
-};
+// const SanityProductFaqs = ({ faqs }: { faqs: SanityFaqs }) => {
+//   return (
+//     <>
+//       <h2
+//         className={clsx(
+//           "first:mt-0 last:mb-0", //
+//           "-mb-6 mt-16 text-xl font-bold"
+//         )}
+//       >
+//         <Label _key="faqs.title" />
+//       </h2>
+//       <AccordionBlock value={faqs} />
+//     </>
+//   );
+// };

@@ -13,6 +13,8 @@ type Props = {
 export default function ProductCard({ product, style }: Props) {
   const { sanityDataset, sanityProjectID } = useRootLoaderData();
 
+  console.log(product);
+
   return (
     <div
       className={clsx(
@@ -36,7 +38,7 @@ export default function ProductCard({ product, style }: Props) {
         </div>
 
         <p className="bold-24 product-title">{product.title}</p>
-        <p className="semi-bold-16 artist-title">by {product.vendor}</p>
+        <p className="semi-bold-16 artist-title">by {product.artist}</p>
       </Link>
     </div>
   );

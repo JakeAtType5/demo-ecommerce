@@ -36,16 +36,17 @@ export const PRODUCT_PAGE = groq`
 
 export const PRODUCT_PREVIEW = groq`
   _id,
+  "artist": store.vendor,
   description,
+  "gid": store.gid,
   maxUnits,
+  "priceRange": store.priceRange,
   "printImage": printImage {
     ${IMAGE}
   },
-  "gid": store.gid,
   "release_date": drop->release_date,
   "slug": store.slug.current,
   "title": store.title,
-  "vendor": store.vendor
 `;
 
 // export const PRODUCT_PAGE = groq`

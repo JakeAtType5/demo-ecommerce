@@ -341,17 +341,20 @@ export type SanityProductPage = {
 
 export type SanityProductPreview = {
   _id: string;
+  artist: string;
   description: string;
   gid: string;
   inventory: ProductInventory;
+  priceRange: {
+    maxVariantPrice: number;
+    minVariantPrice: number;
+  };
   printImage: SanityAssetImage;
   release_date?: Date;
   slug: string;
   status?: string;
   title: string;
-  vendor: string;
 };
-
 
 export type SanitySeo = {
   description?: string;

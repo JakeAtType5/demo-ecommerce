@@ -75,6 +75,13 @@ body {
   letter-spacing: -0.5px;
 }
 
+
+.semi-bold-20 {
+  font: 1.2rem "General Sans";
+  font-weight: 600;
+  letter-spacing: -0.3px;
+}
+
 .semi-bold-16 {
   font: 1rem "General Sans";
   font-weight: 600;
@@ -486,6 +493,90 @@ body {
 }
 
 
+
+/* Customisation */
+.product-customisation-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 80px;
+  margin-top: 24px;
+  align-items: center;
+}
+
+.product-customisation-container .product-imagery {
+  position: relative;
+}
+
+.product-customisation-container .blurred-print-background {
+  width: 100%;
+  filter: blur(50px);
+  z-index: -1;
+  position: absolute;
+}
+
+.product-customisation-container .customisable-frame {
+  position: absolute;
+  border: 12px solid #000;
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+  transition: 0.3s ease-in-out;
+}
+
+.product-customisation-container .customisable-mount {
+  position: absolute;
+  border: 36px solid #fff;
+  height: 100%;
+  width: 100%;
+  transition: 0.3s ease-in-out;
+}
+
+.product-customisation-container .print-container img {
+  width: 100%;
+}
+
+.customisation-input {
+  margin-bottom: 32px;
+}
+
+.customisation-input .semi-bold-20 {
+  color: #525252;  /*todo: extract*/ 
+}
+
+.radio-group {
+  display: flex;
+  gap: 12px;
+  margin-top: 6px !important;
+}
+
+.radio-group .radio-item {
+  border-radius: 8px;
+  border: 1px solid #C6C6C6;
+  padding: 8px 12px;
+}
+
+.radio-group .radio-item.--is-selected {
+  background: var(--black);
+  color: var(--white);
+}
+
+.customisation-form .product-price {
+  border-bottom: 1px solid #E3E3E3;
+  border-top: 1px solid #E3E3E3;
+  padding: 20px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin: 80px 0 20px 0;
+}
+
+.customisation-form .button--large {
+  width: 100%;
+  padding: 12px 24px;
+}
+
+
+
 /* Product collection */
 .product-collection {
   display: grid;
@@ -532,3 +623,30 @@ body {
 .products-grid .product-title {
   margin-top: 100px;
 } */
+
+.products-grid .product-collection {
+  margin-top: 40px;
+}
+
+.collection-options {
+  display: flex;
+  justify-content: space-between;
+  color: #bbbbbb;
+  margin-top: 4px;
+}
+
+.collection-filters {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+}
+
+.filter-dropdown {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.filter-dropdown svg {
+  height: 16px;
+}
