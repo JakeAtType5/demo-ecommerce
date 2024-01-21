@@ -101,13 +101,36 @@ export default defineType({
       }
     }),
 
-    // manufacture
+    // manufacturing
     defineField({
       name: 'maxUnits',
       title: 'Maximum Units',
       type: 'number',
       group: 'manufacturing',
       validation: (Rule) => Rule.positive().integer(),
+    }),
+
+    defineField({
+      name: 'bundles',
+      title: 'Bundles',
+      group: 'manufacturing',
+      type: 'array',
+      of: [
+        {
+          type: 'reference',
+          title: 'Products',
+          to: [
+            {
+              type: 'product',
+            },
+          ],
+          options: {
+            filter: "store.tags == $bundle",
+            filterParams: {bundle: 'Bundle'},
+            sortable: false,
+          }
+        },
+      ]
     }),
 
     // story
