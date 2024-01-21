@@ -322,6 +322,7 @@ export type SanityProductWithVariant = {
 
 export type SanityProductPage = {
   _id: string;
+  bundles: [];
   customProductOptions?: SanityCustomProductOption[];
   description: string;
   drop?: SanityDrop;

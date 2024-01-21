@@ -8,6 +8,7 @@ import {
   type SeoConfig,
   type SeoHandleFunction,
   ShopifyAnalyticsProduct,
+  Money,
 } from "@shopify/hydrogen";
 import type {
   MediaConnection,
@@ -134,13 +135,20 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
   // Resolve any references to products on the Storefront API
   const gids = fetchGids({ page, context });
 
-  // In order to show which variants are available in the UI, we need to query
-  // all of them. We defer this query so that it doesn't block the page.
-  const variants = context.storefront.query(VARIANTS_QUERY, {
+  // fetch bundles
+  // we use one bundles for each size option to overcome
+  // shopify option limits for our customisation builder
+  const bundles = page.bundles.map((x) => x.gid);
+
+  const conntectProductIds = [...bundles, product.id];
+
+  const variantsRequest = await context.storefront.query(VARIANTS_QUERY, {
     variables: {
-      handle,
+      ids: conntectProductIds,
     },
   });
+
+  const variants = variantsRequest.products;
 
   // Fetch related print IDs from this drop
   const relatedProducts =
@@ -155,22 +163,6 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
       : {
           products: [],
         };
-
-  // // Fetch related print IDs from this drop
-  // const shopifyRelatedProducts = await context.storefront.query(
-  //   PRODUCTS_QUERY,
-  //   {
-  //     variables: {
-  //       ids: sanityRelatedProducts?.map((product) => product.gid),
-  //     },
-  //   }
-  // );
-
-  //  // Fetch related print IDs from this drop
-  //  const shopifyRelatedProducts = await fetchGidsForProductIds({
-  //   ids: sanityRelatedProducts?.map((product) => product.gid),
-  //   context,
-  // });
 
   const firstVariant = product.variants.nodes[0];
   const selectedVariant = product.selectedVariant ?? firstVariant;
@@ -339,13 +331,7 @@ export default function ProductHandle() {
             >
               <section className="product-section" id="customise">
                 <p className="semi-bold-24 section-header">The workshop</p>
-                <CustomiseProduct
-                  variants={variants}
-                  title={page.title}
-                  artist={page.artist}
-                  image={page.printImage}
-                  options={product?.options}
-                />
+                <CustomiseProduct variants={variants} image={page.printImage} />
               </section>
             </Await>
           </Suspense>

@@ -6,13 +6,6 @@ export const PRODUCT_VARIANT_FIELDS = `
       amount
     }
     id
-    image {
-      altText
-      height
-      id
-      url
-      width
-    }
     price {
       currencyCode
       amount
@@ -29,6 +22,7 @@ export const PRODUCT_VARIANT_FIELDS = `
     }
     product {
       title
+      id
       handle
     }
   }
@@ -39,10 +33,6 @@ export const PRODUCT_FIELDS = `
     availableForSale,
     handle
     id
-    options {
-      name
-      values
-    }
     title
     vendor
   }
@@ -194,12 +184,14 @@ export const VARIANTS_QUERY = `#graphql
   query variants(
     $country: CountryCode
     $language: LanguageCode
-    $handle: String!
+    $ids: [ID!]!
   ) @inContext(country: $country, language: $language) {
-    product(handle: $handle) {
-      variants(first: 250) {
-        nodes {
-          ...ProductVariantFields
+    products: nodes(ids: $ids) {
+      ... on Product {
+        variants(first: 10) {
+          nodes {
+            ...ProductVariantFields
+          }
         }
       }
     }

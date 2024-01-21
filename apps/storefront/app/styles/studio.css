@@ -192,6 +192,7 @@ body {
 .product-hero .image-container {
   box-shadow: 0px 1px 1px 0px rgba(255, 255, 255, 0.10) inset, 0px 50px 100px -20px rgba(50, 50, 93, 0.25), 0px 30px 60px -30px rgba(0, 0, 0, 0.30);
   object-fit: fill;
+  border: 10px solid #000;
 }
 
 .product-hero .image-container img {
@@ -495,7 +496,7 @@ body {
 
 
 /* Customisation */
-.product-customisation-container {
+.product-customisation {
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-gap: 80px;
@@ -503,18 +504,11 @@ body {
   align-items: center;
 }
 
-.product-customisation-container .product-imagery {
+.product-customisation .product-imagery {
   position: relative;
 }
 
-.product-customisation-container .blurred-print-background {
-  width: 100%;
-  filter: blur(50px);
-  z-index: -1;
-  position: absolute;
-}
-
-.product-customisation-container .customisable-frame {
+.product-customisation .customisable-frame {
   position: absolute;
   border: 12px solid #000;
   height: 100%;
@@ -523,7 +517,19 @@ body {
   transition: 0.3s ease-in-out;
 }
 
-.product-customisation-container .customisable-mount {
+.customisable-frame.--is-jet-black {
+  border-color: #000 !important;
+}
+
+.customisable-frame.--is-brushed-aluminium {
+  border-color: rgb(180,180,180) !important;
+}
+
+.customisable-frame.--is-polished-oak {
+  border-color: rgb(190,160,135) !important;
+}
+
+.product-customisation .customisable-mount {
   position: absolute;
   border: 36px solid #fff;
   height: 100%;
@@ -531,7 +537,25 @@ body {
   transition: 0.3s ease-in-out;
 }
 
-.product-customisation-container .print-container img {
+.customisable-mount.--is-black {
+  border-color: #000 !important;
+}
+
+.customisable-mount.--is-white {
+  border-color: #fff !important;
+}
+
+.customisable-frame.--is-none, .customisable-mount.--is-none {
+  opacity: 0;
+}
+
+.product-customisation .print-container {
+  box-shadow: 0 1px 1px #ffffff1a inset, 0 50px 100px -20px #32325d40, 0 30px 60px -30px #0000004d;
+  object-fit: fill;
+  margin: 12px;
+}
+
+.product-customisation .print-container img {
   width: 100%;
 }
 
@@ -553,6 +577,12 @@ body {
   border-radius: 8px;
   border: 1px solid #C6C6C6;
   padding: 8px 12px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.radio-group .radio-item:hover {
+  opacity: 0.8;
 }
 
 .radio-group .radio-item.--is-selected {
@@ -573,6 +603,17 @@ body {
 .customisation-form .button--large {
   width: 100%;
   padding: 12px 24px;
+}
+
+.customisation-form .collapsible-group {
+  overflow: hidden;
+  position: relative;
+  transition: max-height 0.25s ease-in-out;
+  max-height: 0;
+}
+
+.customisation-form .collapsible-group.--is-expanded {
+  max-height: 1000px;
 }
 
 

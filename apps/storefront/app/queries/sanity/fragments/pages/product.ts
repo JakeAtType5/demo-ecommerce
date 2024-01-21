@@ -8,10 +8,28 @@ import { PRODUCT_FAQS } from "../productFaqs";
 import { SEO_SHOPIFY } from "../seoShopify";
 import { SHARED_TEXT } from "../sharedText";
 
+export const PRODUCT_PREVIEW = groq`
+  _id,
+  "artist": store.vendor,
+  description,
+  "gid": store.gid,
+  maxUnits,
+  "priceRange": store.priceRange,
+  "printImage": printImage {
+    ${IMAGE}
+  },
+  "release_date": drop->release_date,
+  "slug": store.slug.current,
+  "title": store.title,
+`;
+
 export const PRODUCT_PAGE = groq`
   _id,
   "body": coalesce(body[_key == $language][0].value, body[_key == $baseLanguage][0].value)[] {
     ${PORTABLE_TEXT}
+  },
+  bundles[]->{
+    "gid": store.gid
   },
   description,
   drop->{
@@ -34,20 +52,6 @@ export const PRODUCT_PAGE = groq`
   ${SHARED_TEXT},
 `;
 
-export const PRODUCT_PREVIEW = groq`
-  _id,
-  "artist": store.vendor,
-  description,
-  "gid": store.gid,
-  maxUnits,
-  "priceRange": store.priceRange,
-  "printImage": printImage {
-    ${IMAGE}
-  },
-  "release_date": drop->release_date,
-  "slug": store.slug.current,
-  "title": store.title,
-`;
 
 // export const PRODUCT_PAGE = groq`
 //   "body": coalesce(body[_key == $language][0].value, body[_key == $baseLanguage][0].value)[] {

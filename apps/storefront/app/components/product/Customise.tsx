@@ -1,56 +1,137 @@
-import { Image } from "@shopify/hydrogen";
+import { Image, Money } from "@shopify/hydrogen";
 import type {
   Product,
   ProductVariant,
 } from "@shopify/hydrogen/storefront-api-types";
+import clsx from "clsx";
+import { useState } from "react";
 
 import SanityImage from "~/components/media/SanityImage";
-import ProductTile from "~/components/product/Tile";
 import { useGid } from "~/lib/utils";
+import {
+  getMatchingOptionValues,
+  makeSafeClass,
+  prepareVariants,
+} from "~/lib/variants";
 import { useRootLoaderData } from "~/root";
+
+import RadioInput from "../elements/RadioInput";
+import RadioInputGroup from "../elements/RadioInputGroup";
 
 type Props = {
   image: SanityImage;
   variants: ProductVariant[];
-  title: string;
-  artist: string;
-  options: [];
 };
 
-export default function CustomiseProduct({
-  artist,
-  image,
-  title,
-  variants,
-  options,
-}: Props) {
+export default function CustomiseProduct({ image, variants }: Props) {
+  const [options, setOptions] = useState({
+    size: "A2",
+    frame: "Jet Black",
+    mount: "White",
+  });
+
   const { sanityDataset, sanityProjectID } = useRootLoaderData();
 
-  console.log(options);
+  // fill gaps in Shopify data as a result of merging bundles into a single product
+  // this lets us overcome Shopify limits on # of options
+  const processedVariants = prepareVariants(variants);
+  const allOptions = processedVariants.map((x) => x.selectedOptions).flat();
+
+  const sizes = getMatchingOptionValues(allOptions, "Size");
+  const frames = getMatchingOptionValues(allOptions, "Frame").filter(
+    (x) => x != "None"
+  );
+  const mounts = getMatchingOptionValues(allOptions, "Mount");
+
+  const setDefaultFrame = () => {
+    if (options.frame !== "None") {
+      return true;
+    }
+    setOptions({
+      frame: "Jet Black",
+      mount: "White",
+      size: options.size,
+    });
+  };
+
+  const setNoFrame = () => {
+    if (options.frame == "None") {
+      return true;
+    }
+    setOptions({
+      frame: "None",
+      mount: "None",
+      size: options.size,
+    });
+  };
+
+  const updateState = ({ optionType, value }) => {
+    if (options[optionType] == value) {
+      return true;
+    }
+
+    setOptions({
+      ...options,
+      [optionType]: value,
+    });
+  };
+
+  const activeVariant = processedVariants.find((x) => {
+    const frameMatches = x.selectedOptions.some(
+      (option) => option.name === "Frame" && option.value === options.frame
+    );
+
+    const mountMatches = x.selectedOptions.some(
+      (option) => option.name === "Mount" && option.value === options.mount
+    );
+    const sizeMatches = x.selectedOptions.some(
+      (option) => option.name === "Size" && option.value === options.size
+    );
+
+    if (frameMatches && mountMatches && sizeMatches) {
+      return true;
+    }
+  });
+
+  const ProductPrices = (selectedVariant: ProductVariant) => {
+    if (!selectedVariant) {
+      return null;
+    }
+
+    return (
+      <div className="mt-2 flex text-md font-bold">
+        {selectedVariant.compareAtPrice && (
+          <span className="mr-3 text-darkGray line-through decoration-red">
+            <Money data={selectedVariant.compareAtPrice} />
+          </span>
+        )}
+        {selectedVariant.price && <Money data={selectedVariant.price} />}
+      </div>
+    );
+  };
+
+  console.log(activeVariant);
+
   return (
-    <div className="product-customisation-container">
+    <div className="product-customisation">
       <div className="product-imagery">
-        <div className="blurred-print-background">
-          <SanityImage
-            // crop={image?.crop}
-            dataset={sanityDataset}
-            layout="responsive"
-            projectId={sanityProjectID}
-            sizes={["10vw"]}
-            src={image?.asset?._ref}
-          />
-        </div>
+        <div
+          className={clsx("customisable-mount", [
+            `--is-${makeSafeClass(options.mount)}`,
+          ])}
+        ></div>
 
-        <div className="customisable-mount"></div>
-        <div className="customisable-frame"></div>
-
+        <div
+          className={clsx("customisable-frame", [
+            `--is-${makeSafeClass(options.frame)}`,
+          ])}
+        ></div>
         <div className="print-container">
           <SanityImage
-            // crop={image?.crop}
             dataset={sanityDataset}
             layout="responsive"
             projectId={sanityProjectID}
-            sizes={["30vw, 100vw"]}
+            sizes={["60vw, 100vw"]}
             src={image?.asset?._ref}
           />
         </div>
@@ -58,63 +139,58 @@ export default function CustomiseProduct({
 
       <div className="customisation-form">
         <div className="customisation-input">
-          <p className="semi-bold-20">select a print</p>
-          <div className="radio-group">
-            <div className="radio-item semi-bold-16">
-              A1
-            </div>
-            <div className="radio-item semi-bold-16">
-              A2
-            </div>
-            <div className="radio-item semi-bold-16">
-              A3
-            </div>
-          </div>
-
+          <RadioInputGroup
+            options={sizes}
+            type="size"
+            value={options.size}
+            onClick={updateState}
+            title="select a size"
+          />
         </div>
-
 
         <div className="customisation-input">
           <p className="semi-bold-20">would you like us to frame your print</p>
           <div className="radio-group">
-            <div className="radio-item semi-bold-16">
-              Yes, please
-            </div>
-            <div className="radio-item semi-bold-16">
-              No thanks, I have my own frame
-            </div>
-          </div>
+            <RadioInput
+              value="Yes, please"
+              className={options.frame != "None" ? "--is-selected" : ""}
+              onClick={setDefaultFrame}
+            />
 
+            <RadioInput
+              value="No thanks, I have my own frame"
+              className={options.frame == "None" ? "--is-selected" : ""}
+              onClick={setNoFrame}
+            />
+          </div>
         </div>
 
-
-        <div className="customisation-input">
-          <p className="semi-bold-20">select a frame finish</p>
-          <div className="radio-group">
-            <div className="radio-item semi-bold-16">
-              Jet Black
-            </div>
-            <div className="radio-item semi-bold-16">
-              Brushed Silver
-            </div>
-            <div className="radio-item semi-bold-16">
-              Oak
-            </div>
+        <div
+          className={
+            options.frame == "None"
+              ? "collapsible-group"
+              : "collapsible-group --is-expanded"
+          }
+        >
+          <div className="customisation-input">
+            <RadioInputGroup
+              options={frames}
+              type="frame"
+              value={options.frame}
+              onClick={updateState}
+              title="select a frame finish"
+            />
           </div>
 
-        </div>
-
-        <div className="customisation-input">
-          <p className="semi-bold-20">select a mount</p>
-          <div className="radio-group">
-            <div className="radio-item semi-bold-16">
-              White
-            </div>
-            <div className="radio-item semi-bold-16">
-              Black
-            </div>
+          <div className="customisation-input">
+            <RadioInputGroup
+              options={mounts}
+              type="mount"
+              value={options.mount}
+              onClick={updateState}
+              title="select a mount"
+            />
           </div>
-
         </div>
 
         <div className="product-price">
@@ -123,11 +199,14 @@ export default function CustomiseProduct({
             <p className="semi-bold-16">includes delivery to France</p>
           </div>
 
-          <p className="money price semi-bold-20">£260.00</p>
+          <p className="money price semi-bold-20">
+            {ProductPrices(activeVariant)}
+          </p>
         </div>
 
-        <button className=" semi-bold-24 button--small button--large">Add to cart</button>
-
+        <button className=" semi-bold-24 button--small button--large">
+          Add to cart
+        </button>
       </div>
     </div>
   );
