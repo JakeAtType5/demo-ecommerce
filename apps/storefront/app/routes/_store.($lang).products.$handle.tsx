@@ -5,10 +5,10 @@ import type { ShopifyAnalyticsPayload } from "@shopify/hydrogen";
 import {
   flattenConnection,
   getSelectedProductOptions,
+  Money,
   type SeoConfig,
   type SeoHandleFunction,
   ShopifyAnalyticsProduct,
-  Money,
 } from "@shopify/hydrogen";
 import type {
   MediaConnection,
@@ -323,14 +323,16 @@ export default function ProductHandle() {
             </div>
           </div> */}
 
-          {/* Workshop */}
+          {/* Customise */}
           <Suspense>
             <Await
               errorElement="There was a problem loading related products"
               resolve={variants}
             >
               <section className="product-section" id="customise">
-                <p className="semi-bold-24 section-header">The workshop</p>
+                <p className="semi-bold-24 section-header">
+                  Customise your print
+                </p>
                 <CustomiseProduct variants={variants} image={page.printImage} />
               </section>
             </Await>

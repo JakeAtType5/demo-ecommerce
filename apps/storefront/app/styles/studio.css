@@ -559,11 +559,19 @@ body {
   width: 100%;
 }
 
-.customisation-input {
-  margin-bottom: 32px;
+.product-customisation .option-container {
+  border: 1px solid #f0f0f0;
+  padding: 26px;
+  margin-bottom: 24px;
 }
 
-.customisation-input .semi-bold-20 {
+.customisation-input {
+  margin-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 20px;
+}
+
+.customisation-input .semi-bold-16 {
   color: #525252;  /*todo: extract*/ 
 }
 
@@ -590,14 +598,11 @@ body {
   color: var(--white);
 }
 
-.customisation-form .product-price {
-  border-bottom: 1px solid #E3E3E3;
-  border-top: 1px solid #E3E3E3;
-  padding: 20px 0;
+.customisation-form .price-container {
+  padding: 20px 0 12px 0;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  margin: 80px 0 20px 0;
 }
 
 .customisation-form .button--large {

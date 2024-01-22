@@ -99,7 +99,7 @@ export default function CustomiseProduct({ image, variants }: Props) {
     }
 
     return (
-      <div className="mt-2 flex text-md font-bold">
+      <div className="product-price">
         {selectedVariant.compareAtPrice && (
           <span className="mr-3 text-darkGray line-through decoration-red">
             <Money data={selectedVariant.compareAtPrice} />
@@ -138,73 +138,77 @@ export default function CustomiseProduct({ image, variants }: Props) {
       </div>
 
       <div className="customisation-form">
-        <div className="customisation-input">
-          <RadioInputGroup
-            options={sizes}
-            type="size"
-            value={options.size}
-            onClick={updateState}
-            title="select a size"
-          />
-        </div>
-
-        <div className="customisation-input">
-          <p className="semi-bold-20">would you like us to frame your print</p>
-          <div className="radio-group">
-            <RadioInput
-              value="Yes, please"
-              className={options.frame != "None" ? "--is-selected" : ""}
-              onClick={setDefaultFrame}
-            />
-
-            <RadioInput
-              value="No thanks, I have my own frame"
-              className={options.frame == "None" ? "--is-selected" : ""}
-              onClick={setNoFrame}
-            />
-          </div>
-        </div>
-
-        <div
-          className={
-            options.frame == "None"
-              ? "collapsible-group"
-              : "collapsible-group --is-expanded"
-          }
-        >
+        <div className="option-container">
           <div className="customisation-input">
             <RadioInputGroup
-              options={frames}
-              type="frame"
-              value={options.frame}
+              options={sizes}
+              type="size"
+              value={options.size}
               onClick={updateState}
-              title="select a frame finish"
+              title="select a size"
             />
           </div>
 
           <div className="customisation-input">
-            <RadioInputGroup
-              options={mounts}
-              type="mount"
-              value={options.mount}
-              onClick={updateState}
-              title="select a mount"
-            />
+            <p className="semi-bold-20">
+              would you like us to frame your print
+            </p>
+            <div className="radio-group">
+              <RadioInput
+                value="Yes, please"
+                className={options.frame != "None" ? "--is-selected" : ""}
+                onClick={setDefaultFrame}
+              />
+
+              <RadioInput
+                value="No thanks, I have my own frame"
+                className={options.frame == "None" ? "--is-selected" : ""}
+                onClick={setNoFrame}
+              />
+            </div>
+          </div>
+
+          <div
+            className={
+              options.frame == "None"
+                ? "collapsible-group"
+                : "collapsible-group --is-expanded"
+            }
+          >
+            <div className="customisation-input">
+              <RadioInputGroup
+                options={frames}
+                type="frame"
+                value={options.frame}
+                onClick={updateState}
+                title="select a frame finish"
+              />
+            </div>
+
+            <div className="customisation-input">
+              <RadioInputGroup
+                options={mounts}
+                type="mount"
+                value={options.mount}
+                onClick={updateState}
+                title="select a mount"
+              />
+            </div>
           </div>
         </div>
 
-        <div className="product-price">
+        <div className="price-container">
           <div className="price-label">
             <p className="semi-bold-20">Total price</p>
             <p className="semi-bold-16">includes delivery to France</p>
           </div>
 
-          <p className="money price semi-bold-20">
+          <div className="money price semi-bold-20">
             {ProductPrices(activeVariant)}
-          </p>
+          </div>
         </div>
 
-        <button className=" semi-bold-24 button--small button--large">
+        <button className="semi-bold-24 button--small button--large">
           Add to cart
         </button>
       </div>
