@@ -46,10 +46,8 @@ export function Layout({ backgroundColor, children }: LayoutProps) {
     <>
       <div className="content-wrapper">
         <Header />
-        <main className="relative grow" id="mainContent" role="main">
-          <div className="mx-auto pb-overlap">{children}</div>
-        </main>
+        <main role="main">{children}</main>
       </div>
     </>
-  )
+  );
 }

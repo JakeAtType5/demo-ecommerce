@@ -13,8 +13,6 @@ type Props = {
 export default function ProductCard({ product, style }: Props) {
   const { sanityDataset, sanityProjectID } = useRootLoaderData();
 
-  console.log(product);
-
   return (
     <div
       className={clsx(

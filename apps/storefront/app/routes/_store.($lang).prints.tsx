@@ -1,3 +1,5 @@
+import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Await, useLoaderData } from "@remix-run/react";
 import { AnalyticsPageType, type SeoHandleFunction } from "@shopify/hydrogen";
 import {
@@ -79,6 +81,29 @@ export default function Index() {
   return (
     <section className="products-grid">
       <h1 className="bold-56">our prints.</h1>
+      <div className="collection-options">
+        <div className="collection-filters semi-bold-24">
+          <div className="filter-dropdown">
+            style <FontAwesomeIcon icon={faAngleDown} />
+          </div>
+          <div className="filter-dropdown">
+            colour
+            <FontAwesomeIcon icon={faAngleDown} />
+          </div>
+          <div className="filter-dropdown">
+            availability
+            <FontAwesomeIcon icon={faAngleDown} />
+          </div>
+        </div>
+
+        <div className="collection-sorting semi-bold-24">
+          <div className="filter-dropdown">
+            sort by: latest
+            <FontAwesomeIcon icon={faAngleDown} />
+          </div>
+        </div>
+      </div>
+
       <ProductCollection
         filter="upcoming available unavailable"
         products={products}

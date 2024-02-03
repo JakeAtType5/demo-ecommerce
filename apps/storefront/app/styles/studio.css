@@ -69,6 +69,12 @@ body {
   letter-spacing: -2px;
 }
 
+.semi-bold-32 {
+  font: 2rem "General Sans";
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
 .semi-bold-24 {
   font: 1.5rem "General Sans";
   font-weight: 600;
@@ -103,6 +109,35 @@ body {
   padding: 8px 24px;
   color: #fff;
   border-radius: 4px;
+}
+
+.button--large {
+  background: #000;
+  padding: 12px 24px;
+  color: #fff;
+  border-radius: 4px;
+}
+
+.button--large[disabled], .button--large[disabled] {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.button--small, .button--large {
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.button--small:hover, .button--large:hover {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+.button--secondary {
+  font-size: 1rem;
+  background: #f7f7f7;
+  border: 1px solid #f0f0f0;
+  color: #4e4e4e;
 }
 
 /* Navigation */
@@ -610,6 +645,7 @@ body {
   padding: 12px 24px;
 }
 
+
 .customisation-form .collapsible-group {
   overflow: hidden;
   position: relative;
@@ -619,6 +655,40 @@ body {
 
 .customisation-form .collapsible-group.--is-expanded {
   max-height: 1000px;
+}
+
+.customisation-form .collapsible-group .customisation-input:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+/* Cart notifications */
+.cart-notification {
+  color: #555555;
+  max-width: 350px;
+}
+
+.cart-notification p {
+  white-space: pre-line;
+}
+
+.cart-notification .back-link {
+  margin-bottom: 24px;
+}
+
+.cart-notification .semi-bold-24 {
+  margin-bottom: 24px;
+}
+
+.cart-notification .button--checkout {
+  margin-top: 24px;
+  width: 100%
+}
+
+.cart-notification .button--secondary {
+  margin: 8px auto;
+  width: 100%;
 }
 
 

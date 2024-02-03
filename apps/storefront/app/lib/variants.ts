@@ -22,16 +22,17 @@ export const getSizeFromBundleHandle = (productTitle: string) => {
 
 /**
  * Prepare a list of variants to be filtered
- * and rendered by product customisation form
+ * and rendered by the product customisation form
  */
-export const prepareVariants = (variants) => {
+export const getAllVariants = (variants) => {
   if (!variants || !variants.length) {
     return [];
   }
 
-  // we first fill in missing variant options from Shopify
-  const processedVariants = variants
-    .map((x) => x?.variants?.nodes) // unpack from Shopify api format into usable array
+  // fill in missing variant options from Shopify
+  // to overcome the limitations of native product bundles
+  const allVariants = variants
+    .map((resp) => resp?.variants?.nodes) // unpack from Shopify api format into usable array
     .flat()
     .map((x) => {
       const hasSize = x.selectedOptions.some((x) => x.name === "Size");
@@ -57,8 +58,8 @@ export const prepareVariants = (variants) => {
       return x;
     });
 
-  // all possible options
-  return processedVariants;
+  // an array of all possible options
+  return allVariants;
 };
 
 /* Get all options matching a specific type */
@@ -74,4 +75,4 @@ export const getMatchingOptionValues = (options: [], optionType: string) => {
 
 export const makeSafeClass = (value: string) => {
   return value.replace(/\s+/g, "-").toLowerCase();
-}
+};

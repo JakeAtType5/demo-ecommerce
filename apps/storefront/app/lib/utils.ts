@@ -24,7 +24,7 @@ import type {
   SanityPersonPage,
   SanityProductPage,
 } from "~/lib/sanity";
-import { PRODUCTS_AND_COLLECTIONS } from "~/queries/shopify/product";
+import { INVENTORY_BY_PRODUCT_IDS, PRODUCTS_QUERY } from "~/queries/shopify/product";
 import { useRootLoaderData } from "~/root";
 import type { I18nLocale } from "~/types/shopify";
 
@@ -196,21 +196,32 @@ export async function fetchGids({
   const productGids = extract(`..[_type == "productWithVariant"].gid`, page);
   const collectionGids = extract(`..[_type == "collection"].gid`, page);
 
-  const { productsAndCollections } =
-    await context.storefront.query<StorefrontPayload>(
-      PRODUCTS_AND_COLLECTIONS,
-      {
-        variables: {
-          ids: [...productGids, ...collectionGids],
-        },
-      }
-    );
+  const { productsAndCollections } = await fetchGidsForProductIds({
+    ids: [...productGids, ...collectionGids],
+    context,
+  });
 
-  return extract(`..[id?]`, productsAndCollections) as (
-    | Product
-    | Collection
-    | ProductVariant
-  )[];
+  return productsAndCollections;
+}
+
+/**
+ * Get data from Shopify for array of products
+ */
+export async function fetchGidsForProductIds({
+  context,
+  ids,
+}: {
+  ids: [];
+  context: AppLoadContext;
+}) {
+  const { products } = await context.storefront.query<StorefrontPayload>(
+    INVENTORY_BY_PRODUCT_IDS,
+    {
+      variables: {
+        ids,
+      },
+    });
+  return extract(`..[id?]`, products) as Product[];
 }
 
 // TODO: better typing?
@@ -355,6 +366,7 @@ export const formatDate = ({
  * i -> ii
  * s -> ss
  * o -> 1st / 2nd etc.
+ * w -> day of week
  */
 export const parseDateFormat = ({
   date,
@@ -386,11 +398,14 @@ export const parseDateFormat = ({
     case char === "y":
       return date.getFullYear();
     case char === "m": {
-      return date.toLocaleString("default", { month: "short" });
+      return date.toLocaleString("default", { month: "long" });
     }
     case char === "d": {
       const day = date.getDate();
       return day;
+    }
+    case char === "w": {
+      return date.toLocaleString("default", { weekday: "long" });
     }
     case char === "h": {
       const hours = date.getHours();

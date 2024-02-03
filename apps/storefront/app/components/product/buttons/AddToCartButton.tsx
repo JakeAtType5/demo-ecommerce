@@ -50,11 +50,7 @@ export default function AddToCartButton({
               value={JSON.stringify(analytics)}
             />
             <button
-              className={
-                mode == "default"
-                  ? twMerge(defaultButtonStyles(), buttonClassName)
-                  : buttonClassName
-              }
+              className={buttonClassName}
               {...props}
               disabled={fetcher.state !== "idle" || props.disabled}
             >
@@ -78,6 +74,7 @@ export function AddToCartLink({
   mode = "default",
   buttonClassName,
   loadingContent,
+  fetcher,
   ...props
 }: {
   children?: React.ReactNode;
@@ -86,10 +83,9 @@ export function AddToCartLink({
   mode?: FormMode;
   buttonClassName?: string;
   loadingContent?: React.ReactNode;
+  fetcher: FetcherWithComponents<any>;
   [key: string]: any;
 }) {
-  const fetcher = useFetcher();
-
   const onClick = () =>
     fetcher.submit(
       {
@@ -106,15 +102,7 @@ export function AddToCartLink({
 
   return (
     <AddToCartAnalytics fetcher={fetcher}>
-      <button
-        className={
-          mode == "default"
-            ? twMerge(defaultButtonStyles(), buttonClassName)
-            : buttonClassName
-        }
-        onClick={onClick}
-        {...props}
-      >
+      <button className={buttonClassName} onClick={onClick} {...props}>
         {fetcher.state === "submitting" && loadingContent
           ? loadingContent
           : children}
@@ -131,6 +119,7 @@ function AddToCartAnalytics({
   children: React.ReactNode;
 }): JSX.Element {
   const fetcherData = fetcher.data;
+
   const formData = fetcher.formData;
   const pageAnalytics = usePageAnalytics({ hasUserConsent: true });
 

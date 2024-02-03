@@ -115,15 +115,12 @@ function LineItem({
       </div>
 
       {/* Title */}
-      <div
-        role="cell"
-        className="flex-grow-1 mr-4 flex w-full flex-col items-start"
-      >
+      <div className="semi-bold-16">
         <Link
           to={`/products/${merchandise.product.handle}`}
           className="text-sm font-bold hover:underline"
         >
-          {merchandise.product.title}
+          {merchandise.product.title} by {merchandise.product.vendor}
         </Link>
 
         {/* Options */}

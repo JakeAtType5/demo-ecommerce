@@ -1,20 +1,28 @@
+import {
+  Await,
+  type FetcherWithComponents,
+  useFetcher,
+  useLoaderData,
+} from "@remix-run/react";
+import { useRouteError } from "@remix-run/react";
 import { Image, Money } from "@shopify/hydrogen";
 import type {
   Product,
   ProductVariant,
 } from "@shopify/hydrogen/storefront-api-types";
 import clsx from "clsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import SanityImage from "~/components/media/SanityImage";
-import { useGid } from "~/lib/utils";
+import { AddToCartLink } from "~/components/product/buttons/AddToCartButton";
 import {
+  getAllVariants,
   getMatchingOptionValues,
   makeSafeClass,
-  prepareVariants,
 } from "~/lib/variants";
 import { useRootLoaderData } from "~/root";
 
+import CartNotification from "../cart/CartNotification";
 import RadioInput from "../elements/RadioInput";
 import RadioInputGroup from "../elements/RadioInputGroup";
 
@@ -24,25 +32,34 @@ type Props = {
 };
 
 export default function CustomiseProduct({ image, variants }: Props) {
+  const { sanityDataset, sanityProjectID, cart } = useRootLoaderData();
+
+  const fetcher = useFetcher();
+
+  const [errors, setErrors] = useState([]);
+  const [isInCart, setIsInCart] = useState([]);
+
   const [options, setOptions] = useState({
     size: "A2",
     frame: "Jet Black",
     mount: "White",
   });
 
-  const { sanityDataset, sanityProjectID } = useRootLoaderData();
-
   // fill gaps in Shopify data as a result of merging bundles into a single product
   // this lets us overcome Shopify limits on # of options
-  const processedVariants = prepareVariants(variants);
-  const allOptions = processedVariants.map((x) => x.selectedOptions).flat();
+  // todo: this can be simplified from May with higher Shopify variant limits.
+  const allVariants = getAllVariants(variants);
+
+  const allOptions = allVariants.map((x) => x.selectedOptions).flat();
 
   const sizes = getMatchingOptionValues(allOptions, "Size");
   const frames = getMatchingOptionValues(allOptions, "Frame").filter(
     (x) => x != "None"
   );
+
   const mounts = getMatchingOptionValues(allOptions, "Mount");
 
+  // resets the frame options to default
   const setDefaultFrame = () => {
     if (options.frame !== "None") {
       return true;
@@ -54,6 +71,7 @@ export default function CustomiseProduct({ image, variants }: Props) {
     });
   };
 
+  // sets the frame and mount options to none
   const setNoFrame = () => {
     if (options.frame == "None") {
       return true;
@@ -65,7 +83,8 @@ export default function CustomiseProduct({ image, variants }: Props) {
     });
   };
 
-  const updateState = ({ optionType, value }) => {
+  // updates the selected options whenever a user presses an option
+  const updateSelection = ({ optionType, value }) => {
     if (options[optionType] == value) {
       return true;
     }
@@ -76,7 +95,8 @@ export default function CustomiseProduct({ image, variants }: Props) {
     });
   };
 
-  const activeVariant = processedVariants.find((x) => {
+  // takes the selected options and finds the matching Shopify variant
+  const selectedVariant = allVariants.find((x) => {
     const frameMatches = x.selectedOptions.some(
       (option) => option.name === "Frame" && option.value === options.frame
     );
@@ -93,6 +113,67 @@ export default function CustomiseProduct({ image, variants }: Props) {
     }
   });
 
+  const artworkIsInStock = allVariants.some(
+    (variant) => variant.availableForSale == true
+  );
+
+  useEffect(() => {
+    // checks if this product is already in the cart
+    cart.then((cart) => {
+      setIsInCart(isProductInCart(cart, selectedVariant?.product?.id));
+      console.log(isInCart);
+    });
+
+    if (!fetcher.data) return;
+
+    if (fetcher?.state === "loading") {
+      setErrors(fetcher?.data?.errors);
+
+      cart.then((cart) => {
+        const productIsInCart = isProductInCart(
+          cart,
+          selectedVariant?.product?.id
+        );
+
+        if (productIsInCart && !isInCart) {
+          // has just been added to cart
+          console.log("just added");
+          // we must render the added to cart ui
+        }
+
+        if (!productIsInCart && isInCart) {
+          console.log("just deleted");
+          // has just been deleted from cart
+          // we must render the removed from cart ui
+        }
+
+        setIsInCart(isProductInCart(cart, selectedVariant.product.id));
+      });
+    }
+  }, [fetcher.data, fetcher?.state]);
+
+  const isProductInCart = (cart, productId: string) => {
+    const validLineItems = cart?.lines?.edges.filter(
+      (item) => item?.node?.quantity >= 1
+    );
+
+    return validLineItems.some(
+      (item) => item.node.merchandise.product.id == productId
+    );
+  };
+
+  const configurationIsSoldOut =
+    errors &&
+    errors.some((error) => error.message.includes("already sold out"));
+
+  const cartIsOverMaxUnits =
+    errors &&
+    errors.some((error) => error.message.includes("you can only add"));
+
+  const hasErrorMessages =
+    configurationIsSoldOut || cartIsOverMaxUnits || !artworkIsInStock;
+
+  // todo: extract into own component
   const ProductPrices = (selectedVariant: ProductVariant) => {
     if (!selectedVariant) {
       return null;
@@ -109,8 +190,6 @@ export default function CustomiseProduct({ image, variants }: Props) {
       </div>
     );
   };
-
-  console.log(activeVariant);
 
   return (
     <div className="product-customisation">
@@ -137,81 +216,139 @@ export default function CustomiseProduct({ image, variants }: Props) {
         </div>
       </div>
 
-      <div className="customisation-form">
-        <div className="option-container">
-          <div className="customisation-input">
-            <RadioInputGroup
-              options={sizes}
-              type="size"
-              value={options.size}
-              onClick={updateState}
-              title="select a size"
-            />
-          </div>
+      {configurationIsSoldOut && (
+        <CartNotification
+          title="Not in stock"
+          description={
+            "Our workshop does not currently have all of the materials in stock to build this custom order. \n \n Please speak to one of our advisors, who may be able to offer further support."
+          }
+        />
+      )}
 
-          <div className="customisation-input">
-            <p className="semi-bold-20">
-              would you like us to frame your print
-            </p>
-            <div className="radio-group">
-              <RadioInput
-                value="Yes, please"
-                className={options.frame != "None" ? "--is-selected" : ""}
-                onClick={setDefaultFrame}
-              />
+      {cartIsOverMaxUnits && (
+        <CartNotification title="Todo" description={"Todo"} />
+      )}
 
-              <RadioInput
-                value="No thanks, I have my own frame"
-                className={options.frame == "None" ? "--is-selected" : ""}
-                onClick={setNoFrame}
-              />
-            </div>
-          </div>
+      {!artworkIsInStock && (
+        <CartNotification
+          title="Sold out"
+          description="This design has sold out. <br/><br/> Our workshop only creates a very limited number of each artwork, as pre-agreed with the artist."
+        />
+      )}
 
-          <div
-            className={
-              options.frame == "None"
-                ? "collapsible-group"
-                : "collapsible-group --is-expanded"
-            }
-          >
+      {isInCart && (
+        <CartNotification
+          title="Added to cart"
+          description={
+            "Order now to receive your order by Friday 17th January. \n \n Unfortunately we cannot reserve this order for you until you have checked out. "
+          }
+          ctaLabel="Checkout"
+          secondaryCtaLabel="Edit customisation"
+        />
+      )}
+
+      {!hasErrorMessages && (
+        <div className="customisation-form">
+          <div className="option-container">
             <div className="customisation-input">
               <RadioInputGroup
-                options={frames}
-                type="frame"
-                value={options.frame}
-                onClick={updateState}
-                title="select a frame finish"
+                options={sizes}
+                type="size"
+                value={options.size}
+                onClick={updateSelection}
+                title="select a size"
               />
             </div>
 
             <div className="customisation-input">
-              <RadioInputGroup
-                options={mounts}
-                type="mount"
-                value={options.mount}
-                onClick={updateState}
-                title="select a mount"
-              />
+              <p className="semi-bold-16">
+                would you like us to frame your print
+              </p>
+              <div className="radio-group">
+                <RadioInput
+                  value="Yes, please"
+                  className={options.frame != "None" ? "--is-selected" : ""}
+                  onClick={setDefaultFrame}
+                />
+
+                <RadioInput
+                  value="No thanks, I have my own frame"
+                  className={options.frame == "None" ? "--is-selected" : ""}
+                  onClick={setNoFrame}
+                />
+              </div>
+            </div>
+
+            <div
+              className={
+                options.frame == "None"
+                  ? "collapsible-group"
+                  : "collapsible-group --is-expanded"
+              }
+            >
+              <div className="customisation-input">
+                <RadioInputGroup
+                  options={frames}
+                  type="frame"
+                  value={options.frame}
+                  onClick={updateSelection}
+                  title="select a frame finish"
+                />
+              </div>
+
+              <div className="customisation-input">
+                <RadioInputGroup
+                  options={mounts}
+                  type="mount"
+                  value={options.mount}
+                  onClick={updateSelection}
+                  title="select a mount"
+                />
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="price-container">
-          <div className="price-label">
-            <p className="semi-bold-20">Total price</p>
-            <p className="semi-bold-16">includes delivery to France</p>
+          <div className="price-container">
+            {selectedVariant.availableForSale ? (
+              <>
+                <div className="price-label">
+                  <p className="semi-bold-20">Total price</p>
+                  <p className="semi-bold-16">includes delivery to France</p>
+                </div>
+                <div className="money price semi-bold-20">
+                  {ProductPrices(selectedVariant)}
+                </div>
+              </>
+            ) : (
+              <p className="semi-bold-16">
+                Due to exceptional demand, we have sold out of one of the
+                materials needed to build this order. Try a different size or
+                frame, or speak to one of our advisors to place a order.
+              </p>
+            )}
           </div>
 
-          <div className="money price semi-bold-20">
-            {ProductPrices(activeVariant)}
-          </div>
+          {selectedVariant.availableForSale && (
+            <AddToCartLink
+              fetcher={fetcher}
+              lines={[
+                {
+                  merchandiseId: selectedVariant.id,
+                  quantity: 1,
+                },
+              ]}
+              disabled={configurationIsSoldOut}
+              // // analytics={{
+              // //   products: [productAnalytics],
+              // //   totalValue: parseFloat(productAnalytics.price),
+              // // }}
+              buttonClassName="semi-bold-24 button--small button--large"
+            >
+              {isInCart ? "Update customisation" : "Add to cart"}
+            </AddToCartLink>
+          )}
         </div>
-
-        <button className="semi-bold-24 button--small button--large">
-          Add to cart
-        </button>
-      </div>
+      )}
     </div>
   );
 }

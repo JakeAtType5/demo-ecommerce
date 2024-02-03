@@ -333,7 +333,7 @@ export default function ProductHandle() {
                 <p className="semi-bold-24 section-header">
                   Customise your print
                 </p>
-                <CustomiseProduct variants={variants} image={page.printImage} />
+                <CustomiseProduct variants={variants} image={page.printImage}  />
               </section>
             </Await>
           </Suspense>

@@ -79,7 +79,7 @@ export default function ProductDetails({
 
   const estimateDelivery = async () => {
     const locationData = await getIpData();
-    const zone = getZone("FR");
+    const zone = getZone("GB");
     // extract static number to delivery helpers and config
     const daysToFulfil = 3 + zone.daysToShip;
 
@@ -136,21 +136,6 @@ export default function ProductDetails({
   useEffect(() => {
     estimateDelivery();
   }, []);
-
-  // 1. get delivery pricings from shopify
-  // 5. estimate timing
-  // -> get stock count for frames in relevant location
-  // -> time without frames
-  // // -> 2 working days to manufacture
-  // // -> 2 days for delivery in UK
-  // // -> 5 days delivery?
-
-  // 4. show non UK message?
-  // -> + 3 days to send to EU = 8 working days
-
-  // UK: 48 hr
-  // EU: 5 day, 3 day.
-  // Global: 5 day = £60?. Special consignment, sign up to register interest for coming to US
 
   const availableForSale = selectedVariant?.availableForSale;
 
