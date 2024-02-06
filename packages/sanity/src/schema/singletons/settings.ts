@@ -48,42 +48,6 @@ export default defineType({
           title: 'Links',
           type: 'array',
           of: [
-            {
-              name: 'collectionGroup',
-              title: 'Collection group',
-              type: 'object',
-              icon: PackageIcon,
-              fields: [
-                {
-                  name: 'title',
-                  title: 'Title',
-                  type: 'string',
-                  validation: (rule) => rule.required(),
-                },
-                {
-                  name: 'collectionLinks',
-                  title: 'Collection links',
-                  type: 'array',
-                  validation: (rule) => rule.unique().max(4),
-                  of: [
-                    {
-                      name: 'collection',
-                      type: 'reference',
-                      weak: true,
-                      to: [{type: 'collection'}],
-                    },
-                  ],
-                },
-                {
-                  name: 'collectionProducts',
-                  title: 'Collection products',
-                  type: 'reference',
-                  description: 'Products from this collection will be listed',
-                  weak: true,
-                  to: [{type: 'collection'}],
-                },
-              ],
-            },
             {type: 'linkInternal'},
             {type: 'linkExternal'},
           ],

@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import HeaderActions from "~/components/global/HeaderActions";
 import HeaderBackground from "~/components/global/HeaderBackground";
 import MobileNavigation from "~/components/global/MobileNavigation";
@@ -9,7 +11,7 @@ import { useRootLoaderData } from "~/root";
  */
 export default function Header() {
   const { layout } = useRootLoaderData();
-  const { menuLinks } = layout || {};
+  const { menuLinks, footer } = layout || {};
 
   // return (
   //   <header
@@ -33,10 +35,18 @@ export default function Header() {
       <p className="bold-24 rfc-logo">mono.</p>
 
       {/* <NavigationTabs /> */}
-      {menuLinks && <Navigation menuLinks={menuLinks} />}
+      {menuLinks && (
+        <Navigation
+          menuLinks={menuLinks}
+          className="desktop-only desktop-navigation"
+        />
+      )}
+      {menuLinks && (
+        <MobileNavigation menuLinks={[...menuLinks, ...footer.links]} />
+      )}
 
+      {/* Accounts, country selector + cart toggle */}
       <HeaderActions />
-
     </header>
   );
 }

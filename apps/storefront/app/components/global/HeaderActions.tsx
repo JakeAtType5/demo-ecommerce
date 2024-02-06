@@ -1,4 +1,7 @@
-import { faMagnifyingGlass, faUser } from "@fortawesome/free-solid-svg-icons";
+import {
+  faMagnifyingGlass,
+  faUser,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Await } from "@remix-run/react";
 import { CartForm } from "@shopify/hydrogen";
@@ -13,7 +16,7 @@ import { Link } from "~/components/Link";
 import { useCartFetchers } from "~/hooks/useCartFetchers";
 import { useRootLoaderData } from "~/root";
 
-export default function HeaderActions() {
+export default function HeaderActions(navIsOpen: boolean) {
   const { isOpen, openDrawer, closeDrawer } = useDrawer();
   const { cart } = useRootLoaderData();
 
@@ -28,7 +31,7 @@ export default function HeaderActions() {
       addToCartFetchers[0].state === "submitting"
     )
       return;
-    openDrawer();
+    // openDrawer();
   }, [addToCartFetchers, isOpen, openDrawer]);
 
   return (
@@ -45,7 +48,7 @@ export default function HeaderActions() {
         </div> */}
 
         {/* Search */}
-        <FontAwesomeIcon icon={faMagnifyingGlass} />
+        <FontAwesomeIcon className="desktop-only" icon={faMagnifyingGlass} />
 
         {/* Account */}
         <Link
@@ -53,6 +56,7 @@ export default function HeaderActions() {
             "hidden h-[2.4rem] items-center rounded-sm bg-darkGray bg-opacity-0 p-2",
             "lg:flex",
             "hover:bg-opacity-10",
+            "mobile-only",
           ])}
           to="/account"
         >
@@ -63,14 +67,23 @@ export default function HeaderActions() {
         <div className="ml-2 mr-4 flex h-full items-center justify-center py-4">
           <Await resolve={cart}>
             {(cart) => (
-              <CartToggle cart={cart as Cart} isOpen openDrawer={openDrawer} />
+              <CartToggle
+                cart={cart as Cart}
+                isOpen={isOpen}
+                openDrawer={openDrawer}
+              />
             )}
           </Await>
         </div>
       </div>
+
       <Await resolve={cart}>
         {(cart) => (
-          <CartDrawer cart={cart as Cart} open={isOpen} onClose={closeDrawer} />
+          <CartDrawer
+            cart={cart as Cart}
+            open={isOpen}
+            onClose={closeDrawer}
+          />
         )}
       </Await>
     </>
