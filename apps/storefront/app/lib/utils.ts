@@ -423,3 +423,17 @@ export const parseDateFormat = ({
       return char;
   }
 };
+
+/* Scrolls to a DOM element given by ID */
+export const scrollToElement = (event: Event, target: string) => {
+  event.preventDefault();
+
+  const element = document.getElementById(target);
+
+  if (element) {
+    const yOffset = -100;
+    const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
+
+    window.scrollTo({ top: y, behavior: "smooth" });
+  }
+};

@@ -3,13 +3,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { scrollToElement } from "../../lib/utils";
+
 type Props = {
   productTitle: string;
   sections?: []; // type?
 };
 
 export default function StickyProductHeader({ productTitle, sections }: Props) {
-  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [expandMobileMenu, setExpandMobileMenu] = useState(false);
 
   /* Sticks header when it is no longer in the viewport */
   const [stickHeader, setStickHeader] = useState(false);
@@ -34,26 +36,12 @@ export default function StickyProductHeader({ productTitle, sections }: Props) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [handleScroll, headerYPos]);
 
-  /* Scrolls to section */
-  const handleClickEvent = (event: Event, target: string) => {
-    event.preventDefault();
-
-    const element = document.getElementById(target);
-
-    if (element) {
-      const yOffset = stickHeader ? -120 : -60;
-      const y = element.getBoundingClientRect().top + window.scrollY + yOffset;
-
-      window.scrollTo({ top: y, behavior: "smooth" });
-    }
-  };
-
   /* Toggles mobile overflow menu */
   const toggleMobileMenu = () => {
-    if (showMobileMenu) {
-      setShowMobileMenu(false);
+    if (expandMobileMenu) {
+      setExpandMobileMenu(false);
     } else {
-      setShowMobileMenu(true);
+      setExpandMobileMenu(true);
     }
   };
 
@@ -62,7 +50,7 @@ export default function StickyProductHeader({ productTitle, sections }: Props) {
       className={clsx([
         "sticky-product-header",
         stickHeader ? "--is-stuck" : "",
-        showMobileMenu ? "--with-expanded-menu" : "",
+        expandMobileMenu ? "--with-expanded-menu" : "",
       ])}
       ref={headerElement}
     >
@@ -77,7 +65,7 @@ export default function StickyProductHeader({ productTitle, sections }: Props) {
               className="section-link semi-bold-16"
               href={`#${section.target}`}
               key={section.target}
-              onClick={(e) => handleClickEvent(e, section.target)}
+              onClick={(e) => scrollToElement(e, section.target)}
             >
               {section.label}
             </a>
@@ -86,7 +74,7 @@ export default function StickyProductHeader({ productTitle, sections }: Props) {
 
         <button
           className="section-link semi-bold-16 button--small"
-          onClick={(e) => handleClickEvent(e, "customise")}
+          onClick={(e) => scrollToElement(e, "customise")}
         >
           Customise
         </button>
