@@ -2,10 +2,11 @@ import clsx from "clsx";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 type Props = {
+  productTitle: string;
   sections?: []; // type?
 };
 
-export default function StickyProductHeader({ sections }: Props) {
+export default function StickyProductHeader({ productTitle, sections }: Props) {
   /* Sticks header when it is no longer in the viewport */
   const [stickHeader, setStickHeader] = useState(false);
   const [headerYPos, setHeaderYPos] = useState(false);
@@ -27,7 +28,7 @@ export default function StickyProductHeader({ sections }: Props) {
     window.addEventListener("scroll", handleScroll);
 
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [handleScroll]);
+  }, [handleScroll, headerYPos]);
 
   /** Scrolls to section */
   const handleClickEvent = (event: Event, target: string) => {
@@ -52,23 +53,26 @@ export default function StickyProductHeader({ sections }: Props) {
       ref={headerElement}
     >
       <div className="content-wrapper">
-        {sections.map((section) => (
-          <a
-            className="section-link semi-bold-16"
-            href={`#${section.target}`}
-            key={section.target}
-            onClick={(e) => handleClickEvent(e, section.target)}
-          >
-            {section.label}
-          </a>
-        ))}
+        <p className="product-title bold-24">{productTitle}</p>
+        <div className="sub-navigation-links">
+          {sections.map((section) => (
+            <a
+              className="section-link semi-bold-16"
+              href={`#${section.target}`}
+              key={section.target}
+              onClick={(e) => handleClickEvent(e, section.target)}
+            >
+              {section.label}
+            </a>
+          ))}
 
-        <button
-          className="section-link semi-bold-16 button--small"
-          key={"buy-button"}
-        >
-          Buy now
-        </button>
+          <button
+            className="section-link semi-bold-16 button--small"
+            key={"buy-button"}
+          >
+            Customise
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -193,22 +193,22 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
   });
 }
 
-function redirectToFirstVariant({
-  product,
-  request,
-}: {
-  product: Product;
-  request: Request;
-}) {
-  const url = new URL(request.url);
-  const searchParams = new URLSearchParams();
-  const firstVariant = product!.variants.nodes[0];
-  for (const option of firstVariant.selectedOptions) {
-    searchParams.set(option.name, option.value);
-  }
+// function redirectToFirstVariant({
+//   product,
+//   request,
+// }: {
+//   product: Product;
+//   request: Request;
+// }) {
+//   const url = new URL(request.url);
+//   const searchParams = new URLSearchParams();
+//   const firstVariant = product!.variants.nodes[0];
+//   for (const option of firstVariant.selectedOptions) {
+//     searchParams.set(option.name, option.value);
+//   }
 
-  throw redirect(`${url.pathname}?${searchParams.toString()}`, 302);
-}
+//   throw redirect(`${url.pathname}?${searchParams.toString()}`, 302);
+// }
 
 const SECTIONS = [
   {
@@ -283,7 +283,10 @@ export default function ProductHandle() {
             </Await>
           </Suspense>
 
-          <StickyProductHeader sections={SECTIONS} />
+          <StickyProductHeader
+            productTitle={product.title}
+            sections={SECTIONS}
+          />
 
           {/* Story */}
           <section className="product-section" id="the-story">
