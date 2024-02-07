@@ -1,3 +1,5 @@
+import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -7,6 +9,8 @@ type Props = {
 };
 
 export default function StickyProductHeader({ productTitle, sections }: Props) {
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+
   /* Sticks header when it is no longer in the viewport */
   const [stickHeader, setStickHeader] = useState(false);
   const [headerYPos, setHeaderYPos] = useState(false);
@@ -30,7 +34,7 @@ export default function StickyProductHeader({ productTitle, sections }: Props) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [handleScroll, headerYPos]);
 
-  /** Scrolls to section */
+  /* Scrolls to section */
   const handleClickEvent = (event: Event, target: string) => {
     event.preventDefault();
 
@@ -44,16 +48,29 @@ export default function StickyProductHeader({ productTitle, sections }: Props) {
     }
   };
 
+  /* Toggles mobile overflow menu */
+  const toggleMobileMenu = () => {
+    if (showMobileMenu) {
+      setShowMobileMenu(false);
+    } else {
+      setShowMobileMenu(true);
+    }
+  };
+
   return (
     <div
       className={clsx([
         "sticky-product-header",
         stickHeader ? "--is-stuck" : "",
+        showMobileMenu ? "--with-expanded-menu" : "",
       ])}
       ref={headerElement}
     >
       <div className="content-wrapper">
-        <p className="product-title bold-24">{productTitle}</p>
+        <p className="product-title bold-24" onClick={() => toggleMobileMenu()}>
+          {productTitle}
+          <FontAwesomeIcon icon={faAngleDown} />
+        </p>
         <div className="sub-navigation-links">
           {sections.map((section) => (
             <a
@@ -65,14 +82,14 @@ export default function StickyProductHeader({ productTitle, sections }: Props) {
               {section.label}
             </a>
           ))}
-
-          <button
-            className="section-link semi-bold-16 button--small"
-            key={"buy-button"}
-          >
-            Customise
-          </button>
         </div>
+
+        <button
+          className="section-link semi-bold-16 button--small"
+          onClick={(e) => handleClickEvent(e, "customise")}
+        >
+          Customise
+        </button>
       </div>
     </div>
   );

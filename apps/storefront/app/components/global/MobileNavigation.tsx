@@ -36,7 +36,7 @@ export default function MobileNavigation({ menuLinks }: Props) {
       <Transition show={open}>
         {/* <Dialog onClose={handleClose}> */}
         {/* Panel */}
-        <Transition.Child
+        {/* <Transition.Child
           as={Fragment}
           enter="ease-in-out duration-500"
           enterFrom="-translate-x-full"
@@ -44,7 +44,7 @@ export default function MobileNavigation({ menuLinks }: Props) {
           leave="ease-in-out duration-500"
           leaveFrom="translate-x-0"
           leaveTo="-translate-x-full"
-        >
+        > */}
           <div className="fullscreen-navigation">
             {/* Header */}
             <header className="header">
@@ -74,7 +74,7 @@ export default function MobileNavigation({ menuLinks }: Props) {
                 </div>
               </div> */}
           </div>
-        </Transition.Child>
+        {/* </Transition.Child> */}
         {/* </Dialog> */}
       </Transition>
     </>
