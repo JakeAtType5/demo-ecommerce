@@ -29,13 +29,18 @@ import { Suspense, useEffect, useState } from "react";
 import invariant from "tiny-invariant";
 
 import DropPreview from "~/components/drop/Preview";
-import AccordionBlock from "~/components/portableText/blocks/Accordion";
 import PortableText from "~/components/portableText/PortableText";
 import CustomiseProduct from "~/components/product/Customise";
 import ProductDetails from "~/components/product/Details";
 import ProductCollection from "~/components/product/ProductCollection";
 import StickyProductHeader from "~/components/product/StickyHeader";
 import { baseLanguage } from "~/data/countries";
+import {
+  addWorkingDays,
+  getIpData,
+  getZone,
+  shippingZones,
+} from "~/lib/delivery-utils";
 import type {
   SanityFaqs,
   SanityProductPage,
@@ -44,6 +49,7 @@ import type {
 import {
   fetchGids,
   fetchGidsForProductIds,
+  formatDate,
   notFound,
   useGids,
   validateLocale,
@@ -246,6 +252,38 @@ export default function ProductHandle() {
 
   const { handle } = useParams();
 
+  const [shipping, setShipping] = useState({
+    city: "",
+    date: "",
+    price: 0,
+  });
+
+  const fetchShippingData = async () => {
+    const locationData = await getIpData();
+    const zone = getZone(locationData.country);
+    // extract static number to delivery helpers and config
+    const daysToFulfil = 2 + zone.daysToShip;
+
+    const deliveryDate = addWorkingDays(daysToFulfil);
+
+    const formattedDeliveryDate = formatDate({
+      value: deliveryDate,
+      format: "w do m",
+    });
+
+    setShipping({
+      city: locationData.city,
+      date: formattedDeliveryDate,
+      price: zone.additionalFee,
+    });
+  };
+
+  useEffect(() => {
+    fetchShippingData();
+  }, []);
+
+  const [showCustomiseModal, setShowCustomiseModal] = useState(true);
+
   return (
     <SanityPreview
       data={page}
@@ -253,35 +291,20 @@ export default function ProductHandle() {
       params={{ slug: handle, language, baseLanguage }}
     >
       {(page) => (
-        <>
-          <Suspense
-            fallback={
-              <ProductDetails
-                selectedVariant={selectedVariant}
-                sanityProduct={page as SanityProductPage}
-                storefrontProduct={product}
-                storefrontVariants={[]}
-                analytics={analytics as ShopifyAnalyticsPayload}
-                anchorLinkID={"the-art"}
-              />
-            }
-          >
-            <Await
-              errorElement="There was a problem loading product variants"
-              resolve={variants}
-            >
-              {(resp) => (
-                <ProductDetails
-                  selectedVariant={selectedVariant}
-                  sanityProduct={page as SanityProductPage}
-                  storefrontProduct={product}
-                  storefrontVariants={resp.product?.variants.nodes || []}
-                  analytics={analytics as ShopifyAnalyticsPayload}
-                  anchorLinkID={"the-art"}
-                />
-              )}
-            </Await>
-          </Suspense>
+        <div
+          className="color-theme"
+          style={{
+            "--product-primary-color": `${page.printImage?.palette.vibrant.background}1c`,
+            "--product-secondary-color": `${page.printImage?.palette.vibrant.background}1f`,
+          }}
+        >
+          <ProductDetails
+            sanityProduct={page as SanityProductPage}
+            storefrontProduct={product}
+            analytics={analytics as ShopifyAnalyticsPayload}
+            anchorLinkID={"the-art"}
+            shipping={shipping}
+          />
 
           <StickyProductHeader
             productTitle={product.title}
@@ -326,20 +349,26 @@ export default function ProductHandle() {
             </div>
           </div> */}
 
-          {/* Customise */}
-          <Suspense>
-            <Await
-              errorElement="There was a problem loading related products"
-              resolve={variants}
-            >
-              <section className="product-section" id="customise">
-                <p className="semi-bold-24 section-header">
-                  Customise your print
-                </p>
-                <CustomiseProduct variants={variants} image={page.printImage}  />
-              </section>
-            </Await>
-          </Suspense>
+          {/* Customise Modal */}
+          {showCustomiseModal && (
+            <Suspense>
+              <Await
+                errorElement="There was a problem loading related products"
+                resolve={variants}
+              >
+                <section className="product-section" id="customise">
+                  <p className="semi-bold-24 section-header">
+                    Customise your print
+                  </p>
+                  <CustomiseProduct
+                    variants={variants}
+                    image={page.printImage}
+                    shipping={shipping}
+                  />
+                </section>
+              </Await>
+            </Suspense>
+          )}
 
           {/* Related prints */}
           <Suspense>
@@ -359,7 +388,7 @@ export default function ProductHandle() {
               </section>
             </Await>
           </Suspense>
-        </>
+        </div>
       )}
     </SanityPreview>
   );

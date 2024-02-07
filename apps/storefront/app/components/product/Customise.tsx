@@ -1,3 +1,4 @@
+import { DEFAULT_CURRENCY_CODE } from "@demo-ecommerce/sanity/src/constants";
 import {
   Await,
   type FetcherWithComponents,
@@ -28,10 +29,15 @@ import RadioInputGroup from "../elements/RadioInputGroup";
 
 type Props = {
   image: SanityImage;
+  shipping?: {
+    price?: number;
+    city?: string;
+    date?: string;
+  };
   variants: ProductVariant[];
 };
 
-export default function CustomiseProduct({ image, variants }: Props) {
+export default function CustomiseProduct({ image, shipping, variants }: Props) {
   const { sanityDataset, sanityProjectID, cart } = useRootLoaderData();
 
   const fetcher = useFetcher();
@@ -47,7 +53,7 @@ export default function CustomiseProduct({ image, variants }: Props) {
 
   // fill gaps in Shopify data as a result of merging bundles into a single product
   // this lets us overcome Shopify limits on # of options
-  // todo: this can be simplified from May with higher Shopify variant limits.
+  // todo: this can be simplified from May 2024 with higher Shopify variant limits.
   const allVariants = getAllVariants(variants);
 
   const allOptions = allVariants.map((x) => x.selectedOptions).flat();
@@ -152,10 +158,15 @@ export default function CustomiseProduct({ image, variants }: Props) {
     }
   }, [fetcher.data, fetcher?.state]);
 
+  // todo: extract into cart helper
   const isProductInCart = (cart, productId: string) => {
     const validLineItems = cart?.lines?.edges.filter(
       (item) => item?.node?.quantity >= 1
     );
+
+    if (!validLineItems || !validLineItems.length) {
+      return false;
+    }
 
     return validLineItems.some(
       (item) => item.node.merchandise.product.id == productId
@@ -193,18 +204,20 @@ export default function CustomiseProduct({ image, variants }: Props) {
 
   return (
     <div className="product-customisation">
+      <div className="background-effect" />
       <div className="product-imagery">
         <div
           className={clsx("customisable-mount", [
             `--is-${makeSafeClass(options.mount)}`,
           ])}
-        ></div>
+        />
 
         <div
           className={clsx("customisable-frame", [
             `--is-${makeSafeClass(options.frame)}`,
           ])}
-        ></div>
+        />
+
         <div className="print-container">
           <SanityImage
             dataset={sanityDataset}
@@ -239,9 +252,7 @@ export default function CustomiseProduct({ image, variants }: Props) {
       {isInCart && (
         <CartNotification
           title="Added to cart"
-          description={
-            "Order now to receive your order by Friday 17th January. \n \n Unfortunately we cannot reserve this order for you until you have checked out. "
-          }
+          description={`Order now to receive your order by ${shipping.date}. \n \n Unfortunately we cannot reserve this order for you until you have checked out. `}
           ctaLabel="Checkout"
           secondaryCtaLabel="Edit customisation"
         />
@@ -249,7 +260,13 @@ export default function CustomiseProduct({ image, variants }: Props) {
 
       {!hasErrorMessages && (
         <div className="customisation-form">
-          <div className="option-container">
+          <div
+            className={
+              options.frame == "None"
+                ? "option-container"
+                : "option-container --is-expanded"
+            }
+          >
             <div className="customisation-input">
               <RadioInputGroup
                 options={sizes}
@@ -279,13 +296,7 @@ export default function CustomiseProduct({ image, variants }: Props) {
               </div>
             </div>
 
-            <div
-              className={
-                options.frame == "None"
-                  ? "collapsible-group"
-                  : "collapsible-group --is-expanded"
-              }
-            >
+            <div className="collapsible-group">
               <div className="customisation-input">
                 <RadioInputGroup
                   options={frames}
@@ -312,8 +323,13 @@ export default function CustomiseProduct({ image, variants }: Props) {
             {selectedVariant.availableForSale ? (
               <>
                 <div className="price-label">
-                  <p className="semi-bold-20">Total price</p>
-                  <p className="semi-bold-16">includes delivery to France</p>
+                  <p className="semi-bold-20">Total Price</p>
+                  <p className="semi-bold-16">
+                  {shipping.price == 0
+                      ? "including delivery "
+                      : `plus £${shipping.price} delivery `}
+                    to {shipping.city}
+                  </p>
                 </div>
                 <div className="money price semi-bold-20">
                   {ProductPrices(selectedVariant)}
@@ -342,7 +358,7 @@ export default function CustomiseProduct({ image, variants }: Props) {
               // //   products: [productAnalytics],
               // //   totalValue: parseFloat(productAnalytics.price),
               // // }}
-              buttonClassName="semi-bold-24 button--small button--large"
+              buttonClassName="semi-bold-24 button--large"
             >
               {isInCart ? "Update customisation" : "Add to cart"}
             </AddToCartLink>
