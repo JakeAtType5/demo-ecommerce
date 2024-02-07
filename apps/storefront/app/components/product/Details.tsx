@@ -8,6 +8,12 @@ import type {
 import { useEffect, useState } from "react";
 
 import SanityImage from "~/components/media/SanityImage";
+import {
+  addWorkingDays,
+  getIpData,
+  getZone,
+  shippingZones,
+} from "~/lib/delivery-utils";
 import type { SanityProductPage } from "~/lib/sanity";
 import { formatDate } from "~/lib/utils";
 import { useRootLoaderData } from "~/root";
@@ -19,47 +25,6 @@ type Props = {
   selectedVariant: ProductVariant;
   analytics: ShopifyAnalyticsPayload;
   anchorLinkID: string;
-};
-
-function ProductPrices({
-  storefrontProduct,
-  selectedVariant,
-}: {
-  storefrontProduct: Product;
-  selectedVariant: ProductVariant;
-}) {
-  if (!storefrontProduct || !selectedVariant) {
-    return null;
-  }
-
-  return (
-    <div className="mt-2 flex text-md font-bold">
-      {selectedVariant.compareAtPrice && (
-        <span className="mr-3 text-darkGray line-through decoration-red">
-          <Money data={selectedVariant.compareAtPrice} />
-        </span>
-      )}
-      {selectedVariant.price && <Money data={selectedVariant.price} />}
-    </div>
-  );
-}
-
-const zones = {
-  1: {
-    additionalPrice: 0,
-    markets: ["GB"],
-    daysToShip: 2,
-  },
-  2: {
-    additionalPrice: 10,
-    markets: ["IR"],
-    daysToShip: 3,
-  },
-  3: {
-    additionalPrice: 10,
-    markets: ["FR", "DE"],
-    daysToShip: 3,
-  },
 };
 
 export default function ProductDetails({
@@ -81,55 +46,19 @@ export default function ProductDetails({
     const locationData = await getIpData();
     const zone = getZone("GB");
     // extract static number to delivery helpers and config
-    const daysToFulfil = 3 + zone.daysToShip;
+    const daysToFulfil = 2 + zone.daysToShip;
 
     const deliveryDate = addWorkingDays(daysToFulfil);
 
+    const formattedDeliveryDate = formatDate({
+      value: deliveryDate,
+      format: "w do m",
+    });
+
     setDeliveryData({
       city: locationData.city,
-      date: deliveryDate,
-      price: zone.additionalPrice,
-    });
-  };
-
-  // extract to delivery helpers
-  const getIpData = async () => {
-    const response = await fetch("https://ipapi.co/json/");
-    const data = await response.json();
-    return data;
-  };
-
-  // extract to delivery helpers
-  const getZone = (countryCode) => {
-    const activeZoneIndex = Object.keys(zones).filter((i) => {
-      return zones[i].markets.includes(countryCode);
-    });
-
-    return activeZoneIndex ? zones[activeZoneIndex] : {};
-  };
-
-  // extract to delivery helpers
-  const addWorkingDays = (daysToAdd) => {
-    const date = new Date();
-
-    for (let i = 0; i < daysToAdd; i++) {
-      date.setDate(date.getDate() + 1);
-      const dayOfWeek = date.getDay();
-
-      if (dayOfWeek == 0) {
-        // sunday, add another day to Monday
-        date.setDate(date.getDate() + 1);
-      }
-
-      if (dayOfWeek == 6) {
-        // saturday, add another two days to get to Monday
-        date.setDate(date.getDate() + 2);
-      }
-    }
-
-    return formatDate({
-      value: date,
-      format: "w d m",
+      date: formattedDeliveryDate,
+      price: zone.additionalFee,
     });
   };
 
@@ -144,24 +73,25 @@ export default function ProductDetails({
   }
 
   return (
-    <>
-      <div
-        className="background-effect"
-        style={{
-          "--product-primary-color": `${sanityProduct.printImage?.palette.vibrant.background}1f`,
-        }}
-      ></div>
-
+    <div
+      style={{
+        "--product-primary-color": `${sanityProduct.printImage?.palette.vibrant.background}1c`,
+        "--product-secondary-color": `${sanityProduct.printImage?.palette.vibrant.background}1f`,
+      }}
+    >
+      <div className="background-effect" />
       <section className="product-hero" id={anchorLinkID}>
-        <div className="image-container">
-          <SanityImage
-            // crop={image?.crop}
-            dataset={sanityDataset}
-            layout="responsive"
-            projectId={sanityProjectID}
-            sizes={["30vw, 100vw"]}
-            src={sanityProduct.printImage?.asset?._ref}
-          />
+        <div className="product-preview">
+          <div className="image-container">
+            <SanityImage
+              // crop={image?.crop}
+              dataset={sanityDataset}
+              layout="responsive"
+              projectId={sanityProjectID}
+              sizes={["30vw, 100vw"]}
+              src={sanityProduct.printImage?.asset?._ref}
+            />
+          </div>
         </div>
 
         <div className="product-details">
@@ -184,11 +114,19 @@ export default function ProductDetails({
             </p>
           )}
 
+          <button className="button--large semi-bold-16 desktop-only">
+            Customise
+          </button>
+
           {/* Messages */}
           <div className="semi-bold-16 product-messages">
             <div className="product-message">
               <FontAwesomeIcon icon={faCheck} />
-              <p>1 of just {sanityProduct.maxUnits}</p>
+              <p>Starting at just £60.00</p>
+            </div>
+            <div className="product-message">
+              <FontAwesomeIcon icon={faCheck} />
+              <p>1 of only {sanityProduct.maxUnits} editions printed</p>
             </div>
             <div className="product-message">
               {deliveryData.city ? (
@@ -197,8 +135,7 @@ export default function ProductDetails({
                   <p>
                     {deliveryData.price == 0
                       ? "Free delivery "
-                      : `£${deliveryData.price} delivery `
-                    }
+                      : `£${deliveryData.price} delivery `}
                     to {deliveryData.city} by {deliveryData.date}
                   </p>
                 </>
@@ -214,9 +151,12 @@ export default function ProductDetails({
               <p>14 days return.</p>
             </div>
           </div>
+          <button className="button--large semi-bold-16 mobile-only">
+            Customise
+          </button>
         </div>
       </section>
-    </>
+    </div>
   );
 }
 
@@ -245,28 +185,8 @@ export default function ProductDetails({
 // //         </div>
 // //       )}
 
-// //       {/* Sale */}
-// //       {availableForSale && selectedVariant?.compareAtPrice && (
-// //         <div className="mb-3 text-xs font-bold uppercase text-red">
-// //           <Label _key="product.sale" />
-// //         </div>
-// //       )}
-
 // //       {/* Prices */}
 // //       <ProductPrices
 // //         storefrontProduct={storefrontProduct}
 // //         selectedVariant={selectedVariant}
 // //       />
-
-// //       {/* Divider */}
-// //       <div className="my-4 w-full border-b border-gray" />
-
-// //       {/* Product options */}
-// //       <ProductForm
-// //         product={storefrontProduct}
-// //         variants={storefrontVariants}
-// //         selectedVariant={selectedVariant}
-// //         analytics={analytics}
-// //         customProductOptions={sanityProduct.customProductOptions}
-// //       />
-// //   );
