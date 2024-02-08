@@ -9,7 +9,7 @@ type Props = {
 export default function RadioInput({ className, onClick, value }: Props) {
   return (
     <div
-      className={clsx(["radio-item semi-bold-16", className])}
+      className={clsx(["radio-item semi-bold-14", className])}
       role="button"
       onClick={() => onClick()}
     >

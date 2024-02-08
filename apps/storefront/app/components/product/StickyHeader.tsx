@@ -6,11 +6,16 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { scrollToElement } from "../../lib/utils";
 
 type Props = {
+  onCustomiseClick: () => void;
   productTitle: string;
   sections?: []; // type?
 };
 
-export default function StickyProductHeader({ productTitle, sections }: Props) {
+export default function StickyProductHeader({
+  onCustomiseClick,
+  productTitle,
+  sections,
+}: Props) {
   const [expandMobileMenu, setExpandMobileMenu] = useState(false);
 
   /* Sticks header when it is no longer in the viewport */
@@ -74,7 +79,7 @@ export default function StickyProductHeader({ productTitle, sections }: Props) {
 
         <button
           className="section-link semi-bold-16 button--small"
-          onClick={(e) => scrollToElement(e, "customise")}
+          onClick={(e) => onCustomiseClick()}
         >
           Customise
         </button>

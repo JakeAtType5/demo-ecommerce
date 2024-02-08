@@ -1,4 +1,6 @@
 import shopify from "@demo-ecommerce/sanity/src/schema/objects/seo/shopify";
+import { faAngleLeft } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import type { PortableTextBlock } from "@portabletext/types";
 import { Await, useLoaderData, useParams } from "@remix-run/react";
 import type { ShopifyAnalyticsPayload } from "@shopify/hydrogen";
@@ -31,7 +33,7 @@ import invariant from "tiny-invariant";
 import DropPreview from "~/components/drop/Preview";
 import PortableText from "~/components/portableText/PortableText";
 import CustomiseProduct from "~/components/product/Customise";
-import ProductDetails from "~/components/product/Details";
+import ProductHero from "~/components/product/Hero";
 import ProductCollection from "~/components/product/ProductCollection";
 import StickyProductHeader from "~/components/product/StickyHeader";
 import { baseLanguage } from "~/data/countries";
@@ -134,10 +136,6 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
     throw notFound();
   }
 
-  // if (!product.selectedVariant) {
-  //   return redirectToFirstVariant({ product, request });
-  // }
-
   // Resolve any references to products on the Storefront API
   const gids = fetchGids({ page, context });
 
@@ -199,23 +197,6 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
   });
 }
 
-// function redirectToFirstVariant({
-//   product,
-//   request,
-// }: {
-//   product: Product;
-//   request: Request;
-// }) {
-//   const url = new URL(request.url);
-//   const searchParams = new URLSearchParams();
-//   const firstVariant = product!.variants.nodes[0];
-//   for (const option of firstVariant.selectedOptions) {
-//     searchParams.set(option.name, option.value);
-//   }
-
-//   throw redirect(`${url.pathname}?${searchParams.toString()}`, 302);
-// }
-
 const SECTIONS = [
   {
     label: "The Art",
@@ -252,6 +233,8 @@ export default function ProductHandle() {
 
   const { handle } = useParams();
 
+  const [showCustomiseModal, setShowCustomiseModal] = useState(false);
+
   const [shipping, setShipping] = useState({
     city: "",
     date: "",
@@ -282,8 +265,6 @@ export default function ProductHandle() {
     fetchShippingData();
   }, []);
 
-  const [showCustomiseModal, setShowCustomiseModal] = useState(true);
-
   return (
     <SanityPreview
       data={page}
@@ -292,23 +273,61 @@ export default function ProductHandle() {
     >
       {(page) => (
         <div
-          className="color-theme"
+          className={clsx(
+            showCustomiseModal && "--with-customisation-modal",
+            "color-theme"
+          )}
           style={{
             "--product-primary-color": `${page.printImage?.palette.vibrant.background}1c`,
             "--product-secondary-color": `${page.printImage?.palette.vibrant.background}1f`,
           }}
         >
-          <ProductDetails
+          {/* Customise Modal */}
+          {showCustomiseModal && (
+            <Suspense>
+              <Await
+                errorElement="There was a problem loading related products"
+                resolve={variants}
+              >
+                <section className="product-section" id="customise">
+                  <button
+                    className="semi-bold-16 back-button"
+                    onClick={() => setShowCustomiseModal(false)}
+                  >
+                    <FontAwesomeIcon icon={faAngleLeft} />
+                    back
+                  </button>
+
+                  <p className="semi-bold-24 section-header">
+                    Customise your print
+                  </p>
+
+                  <CustomiseProduct
+                    variants={variants}
+                    image={page.printImage}
+                    shipping={shipping}
+                  />
+                </section>
+              </Await>
+            </Suspense>
+          )}
+
+          <ProductHero
             sanityProduct={page as SanityProductPage}
             storefrontProduct={product}
             analytics={analytics as ShopifyAnalyticsPayload}
             anchorLinkID={"the-art"}
             shipping={shipping}
+            onCustomiseClick={() => setShowCustomiseModal(true)}
           />
 
           <StickyProductHeader
             productTitle={product.title}
             sections={SECTIONS}
+            onCustomiseClick={() => {
+              setShowCustomiseModal(true);
+              window.scrollTo(0, 0);
+            }}
           />
 
           {/* Story */}
@@ -323,52 +342,6 @@ export default function ProductHandle() {
               <DropPreview drop={page.drop} sectionTitle="Featured in" />
             )}
           </section>
-
-          {/* Shipping info and FAQs
-          <div
-            className={clsx(
-              "w-full", //
-              "lg:w-[calc(100%-315px)]",
-              "mb-10 mt-8 p-5"
-            )}
-          >
-            <div className="mb-10 grid grid-cols-3 gap-10 md:grid-cols-4 lg:grid-cols-6">
-              <div className="hidden aspect-square xl:block" />
-              <div className="col-span-3 md:col-span-4 lg:col-span-3 xl:col-span-2">
-                {page?.sharedText?.deliveryAndReturns && (
-                  <SanityProductShipping
-                    blocks={page?.sharedText?.deliveryAndReturns}
-                  />
-                )}
-              </div>
-              <div className="col-span-3 md:col-span-4 lg:col-span-3">
-                {page?.faqs?.groups && page?.faqs?.groups.length > 0 && (
-                  <SanityProductFaqs faqs={page.faqs} />
-                )}
-              </div>
-            </div>
-          </div> */}
-
-          {/* Customise Modal */}
-          {showCustomiseModal && (
-            <Suspense>
-              <Await
-                errorElement="There was a problem loading related products"
-                resolve={variants}
-              >
-                <section className="product-section" id="customise">
-                  <p className="semi-bold-24 section-header">
-                    Customise your print
-                  </p>
-                  <CustomiseProduct
-                    variants={variants}
-                    image={page.printImage}
-                    shipping={shipping}
-                  />
-                </section>
-              </Await>
-            </Suspense>
-          )}
 
           {/* Related prints */}
           <Suspense>
@@ -393,35 +366,3 @@ export default function ProductHandle() {
     </SanityPreview>
   );
 }
-
-// const SanityProductShipping = ({ blocks }: { blocks: PortableTextBlock[] }) => {
-//   return (
-//     <>
-//       <h2
-//         className={clsx(
-//           "first:mt-0 last:mb-0", //
-//           "mb-6 mt-16 text-xl font-bold"
-//         )}
-//       >
-//         <Label _key="shipping.shippingReturns" />
-//       </h2>
-//       <PortableText blocks={blocks} />
-//     </>
-//   );
-// };
-
-// const SanityProductFaqs = ({ faqs }: { faqs: SanityFaqs }) => {
-//   return (
-//     <>
-//       <h2
-//         className={clsx(
-//           "first:mt-0 last:mb-0", //
-//           "-mb-6 mt-16 text-xl font-bold"
-//         )}
-//       >
-//         <Label _key="faqs.title" />
-//       </h2>
-//       <AccordionBlock value={faqs} />
-//     </>
-//   );
-// };

@@ -43,7 +43,7 @@ export default function CustomiseProduct({ image, shipping, variants }: Props) {
   const fetcher = useFetcher();
 
   const [errors, setErrors] = useState([]);
-  const [isInCart, setIsInCart] = useState([]);
+  const [isInCart, setIsInCart] = useState(false);
 
   const [options, setOptions] = useState({
     size: "A2",
@@ -160,6 +160,10 @@ export default function CustomiseProduct({ image, shipping, variants }: Props) {
 
   // todo: extract into cart helper
   const isProductInCart = (cart, productId: string) => {
+    if (!cart) {
+      return false;
+    }
+
     const validLineItems = cart?.lines?.edges.filter(
       (item) => item?.node?.quantity >= 1
     );
@@ -204,28 +208,29 @@ export default function CustomiseProduct({ image, shipping, variants }: Props) {
 
   return (
     <div className="product-customisation">
-      <div className="background-effect" />
-      <div className="product-imagery">
-        <div
-          className={clsx("customisable-mount", [
-            `--is-${makeSafeClass(options.mount)}`,
-          ])}
-        />
-
-        <div
-          className={clsx("customisable-frame", [
-            `--is-${makeSafeClass(options.frame)}`,
-          ])}
-        />
-
-        <div className="print-container">
-          <SanityImage
-            dataset={sanityDataset}
-            layout="responsive"
-            projectId={sanityProjectID}
-            sizes={["60vw, 100vw"]}
-            src={image?.asset?._ref}
+      <div className="product-imagery-container">
+        <div className="product-imagery">
+          <div
+            className={clsx("customisable-mount", [
+              `--is-${makeSafeClass(options.mount)}`,
+            ])}
           />
+
+          <div
+            className={clsx("customisable-frame", [
+              `--is-${makeSafeClass(options.frame)}`,
+            ])}
+          />
+
+          <div className="print-container">
+            <SanityImage
+              dataset={sanityDataset}
+              layout="responsive"
+              projectId={sanityProjectID}
+              sizes={["60vw, 100vw"]}
+              src={image?.asset?._ref}
+            />
+          </div>
         </div>
       </div>
 
@@ -249,14 +254,14 @@ export default function CustomiseProduct({ image, shipping, variants }: Props) {
         />
       )}
 
-      {isInCart && (
+      {/* {isInCart && (
         <CartNotification
           title="Added to cart"
           description={`Order now to receive your order by ${shipping.date}. \n \n Unfortunately we cannot reserve this order for you until you have checked out. `}
           ctaLabel="Checkout"
           secondaryCtaLabel="Edit customisation"
         />
-      )}
+      )} */}
 
       {!hasErrorMessages && (
         <div className="customisation-form">
@@ -273,13 +278,13 @@ export default function CustomiseProduct({ image, shipping, variants }: Props) {
                 type="size"
                 value={options.size}
                 onClick={updateSelection}
-                title="select a size"
+                title="1. select a size."
               />
             </div>
 
             <div className="customisation-input">
               <p className="semi-bold-16">
-                would you like us to frame your print
+                2. would you like us to frame your print?
               </p>
               <div className="radio-group">
                 <RadioInput
@@ -303,7 +308,7 @@ export default function CustomiseProduct({ image, shipping, variants }: Props) {
                   type="frame"
                   value={options.frame}
                   onClick={updateSelection}
-                  title="select a frame finish"
+                  title="3. select a frame finish."
                 />
               </div>
 
@@ -313,7 +318,7 @@ export default function CustomiseProduct({ image, shipping, variants }: Props) {
                   type="mount"
                   value={options.mount}
                   onClick={updateSelection}
-                  title="select a mount"
+                  title="4. select a mount."
                 />
               </div>
             </div>
@@ -323,7 +328,7 @@ export default function CustomiseProduct({ image, shipping, variants }: Props) {
             {selectedVariant.availableForSale ? (
               <>
                 <div className="price-label">
-                  <p className="semi-bold-20">Total Price</p>
+                  <p className="semi-bold-20">Total price</p>
                   <p className="semi-bold-16">
                   {shipping.price == 0
                       ? "including delivery "
@@ -338,8 +343,8 @@ export default function CustomiseProduct({ image, shipping, variants }: Props) {
             ) : (
               <p className="semi-bold-16">
                 Due to exceptional demand, we have sold out of one of the
-                materials needed to build this order. Try a different size or
-                frame, or speak to one of our advisors to place a order.
+                materials needed to build this order. Try another configuration
+                or speak to one of our advisors to place a order.
               </p>
             )}
           </div>
@@ -358,9 +363,9 @@ export default function CustomiseProduct({ image, shipping, variants }: Props) {
               // //   products: [productAnalytics],
               // //   totalValue: parseFloat(productAnalytics.price),
               // // }}
-              buttonClassName="semi-bold-24 button--large"
+              buttonClassName="semi-bold-20 button--large"
             >
-              {isInCart ? "Update customisation" : "Add to cart"}
+              Add to cart
             </AddToCartLink>
           )}
         </div>

@@ -1,5 +1,7 @@
-import { faCheck, faCircle } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faCircle, faAngleRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+
 import { Money, ShopifyAnalyticsPayload } from "@shopify/hydrogen";
 import type {
   Product,
@@ -17,6 +19,7 @@ type Props = {
   analytics: ShopifyAnalyticsPayload;
   anchorLinkID: string;
   isSoldOut?: boolean;
+  onCustomiseClick?: () => void;
   shipping?: {
     price?: number;
     city?: string;
@@ -25,7 +28,7 @@ type Props = {
   };
 };
 
-export default function ProductDetails({
+export default function ProductHero({
   sanityProduct,
   storefrontProduct,
   // storefrontVariants,
@@ -34,6 +37,7 @@ export default function ProductDetails({
   anchorLinkID,
   shipping,
   isSoldOut,
+  onCustomiseClick,
 }: Props) {
   const { sanityDataset, sanityProjectID } = useRootLoaderData();
 
@@ -74,17 +78,18 @@ export default function ProductDetails({
         )}
 
         <button
-          className="button--large semi-bold-16 desktop-only"
-          onClick={(e) => scrollToElement(e, "customise")}
+          className="button--large semi-bold-16"
+          onClick={(e) => onCustomiseClick()}
         >
           Customise
+          <FontAwesomeIcon icon={faAngleRight} />
         </button>
 
         {/* Messages */}
         <div className="semi-bold-16 product-messages">
           <div className="product-message">
             <FontAwesomeIcon icon={faCheck} />
-            <p>Starting at just £60.00</p>
+            <p>Starts from £60.00</p>
           </div>
           <div className="product-message">
             <FontAwesomeIcon icon={faCheck} />
@@ -113,9 +118,6 @@ export default function ProductDetails({
             <p>14 days free return</p>
           </div>
         </div>
-        <button className="button--large semi-bold-16 mobile-only">
-          Customise
-        </button>
       </div>
     </section>
   );

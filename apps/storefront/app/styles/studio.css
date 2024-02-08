@@ -34,6 +34,8 @@ a {
 button {
   appearance: none;
   border: 0;
+  padding: 0;
+  background: none;
 }
 
 
@@ -92,6 +94,13 @@ body {
   font-weight: 600;
   letter-spacing: -0.4px;
   line-height: 140%;
+}
+
+.semi-bold-14 {
+  font: 0.9rem "General Sans";
+  font-weight: 600;
+  letter-spacing: -0.4px;
+  line-height: 120%;
 }
 
 
@@ -155,6 +164,30 @@ body {
   border: 1px solid #f0f0f0;
   color: #4e4e4e;
 }
+
+.back-button {
+  display: flex;
+  margin-bottom: 4px;
+  align-items: center;
+  padding: 0;
+  cursor: pointer;
+}
+
+.back-button:hover {
+  opacity: 0.9;
+  text-decoration: underline;
+}
+
+.back-button:hover svg {
+  transform: translateX(-4px);
+}
+
+.back-button svg {
+  height: 20px;
+  margin-right: 8px;
+  transition: 0.3s;
+}
+
 
 /* Responsive */
 @media screen and (max-width: 600px) {
@@ -221,7 +254,7 @@ body.--prevent-scrolling {
   display: flex;
   gap: 32px;
   color: #fff;
-  font: 0.8rem 'General Sans';
+  font: 0.9rem 'General Sans';
   font-weight: 600 !important;
   color: #fff !important;
   padding: 16px 48px;
@@ -229,7 +262,7 @@ body.--prevent-scrolling {
   border-radius: 30px;
   box-shadow: 0px -0.5px 0px 0px rgba(0, 0, 0, 0.30);
   backdrop-filter: blur(10px);
-  height: 50px;
+  height: 52px;
   box-sizing: border-box;
 }
 
@@ -402,8 +435,17 @@ body.--prevent-scrolling {
 }
 
 .product-hero .button--large {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
   width: 450px;
   margin-top: 16px;
+}
+
+.product-hero .button--large svg {
+  height: 14px;
+  margin-top: 2px;
 }
 
 .product-hero .product-artist {
@@ -509,7 +551,7 @@ body.--prevent-scrolling {
 
 .sticky-product-header .sub-navigation-links {
   display: flex;
-  gap: 52px;
+  gap: 56px;
   align-items: center;
   justify-content: space-between;
   width: 800px;
@@ -524,7 +566,7 @@ body.--prevent-scrolling {
 /* Sticky product header --> Stuck */
 .sticky-product-header.--is-stuck {
   position: fixed;
-  border-top: none;
+  border: none;
   background: #f4f4f4bd;
   top: 0;
   left: 0;
@@ -812,8 +854,6 @@ body.--prevent-scrolling {
   height: 600px;
 }
 
-
-
 @media screen and (min-width: 768px) and (max-width: 1200px) {
   .drop-preview {
     grid-template-columns: 1fr 1fr;
@@ -838,10 +878,14 @@ body.--prevent-scrolling {
 
 
 /* Customisation */
+section#customise {
+  margin-top: 40px;
+}
+
 .product-customisation {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: 80px;
+  grid-template-columns: 1fr 1.2fr 0.1fr;
+  grid-gap: 60px;
   margin-top: 24px;
   align-items: center;
 }
@@ -902,15 +946,12 @@ body.--prevent-scrolling {
 }
 
 .product-customisation .option-container {
-  border: 1px solid #f0f0f0;
-  padding: 26px;
   margin-bottom: 24px;
 }
 
 .customisation-input {
-  margin-bottom: 16px;
-  border-bottom: 1px solid #f0f0f0;
-  padding-bottom: 20px;
+  margin-bottom: 12px;
+  padding-bottom: 16px;
 }
 
 .customisation-input .semi-bold-16 {
@@ -919,7 +960,7 @@ body.--prevent-scrolling {
 
 .radio-group {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   margin-top: 6px !important;
 }
 
@@ -952,7 +993,6 @@ body.--prevent-scrolling {
   padding: 12px 24px;
 }
 
-
 .option-container .collapsible-group {
   overflow: hidden;
   position: relative;
@@ -970,12 +1010,59 @@ body.--prevent-scrolling {
   margin-bottom: 0;
 }
 
-
-.option-container:not(.--is-expanded) > .customisation-input:last-of-type {
+.option-container:not(.--is-expanded) .customisation-input:nth-child(2) {
   border-bottom: none;
   padding-bottom: 0;
   margin-bottom: 0;
 }
+
+.--with-customisation-modal {
+  overflow: hidden;
+  height: 100vH;
+}
+
+.--with-customisation-modal .sticky-product-header {
+  display: none;
+}
+
+.--with-customisation-modal section#customise {
+  animation: animateCustomisationEntry 0.4s forwards;
+}
+
+
+@keyframes animateCustomisationEntry {
+  from {transform: translateX(80px); opacity: 0;}
+  to {transform: translateY(0px); opacity: 1;}
+}
+
+
+@media all and (max-width: 460px) {
+  section#customise {
+    margin-top: 30px;
+  }
+  
+  .product-customisation {
+    grid-template-columns: 1fr;
+    grid-gap: 30px;
+    margin-top: 16px;
+  }
+
+  .product-customisation .product-imagery-container {
+    background: var(--product-secondary-color);
+    padding: 20px 0;
+  }
+
+  .product-customisation .product-imagery {
+    margin: 0 50px;
+  }
+
+  .back-button svg {
+    height: 16px;
+    margin-right: 6px;
+  }
+}
+
+
 
 /* Cart notifications */
 .cart-notification {
