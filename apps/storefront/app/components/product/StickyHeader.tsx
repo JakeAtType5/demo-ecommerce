@@ -54,12 +54,18 @@ export default function StickyProductHeader({
     }
   };
 
+  const sectionsToRender = sections?.filter(
+    (section) =>
+      typeof section.condition == "undefined" || section.condition == true
+  );
+
   return (
     <div
       className={clsx([
         "sticky-product-header",
         stickHeader ? "--is-stuck" : "",
         expandMobileMenu ? "--with-expanded-menu" : "",
+        sectionsToRender.length <= 3 ? "--with-tighter-spacing" : "",
       ])}
       ref={headerElement}
     >
@@ -69,7 +75,7 @@ export default function StickyProductHeader({
           <FontAwesomeIcon icon={faAngleDown} />
         </p>
         <div className="sub-navigation-links">
-          {sections.map((section) => (
+          {sectionsToRender.map((section) => (
             <a
               className="section-link semi-bold-16"
               href={`#${section.target}`}

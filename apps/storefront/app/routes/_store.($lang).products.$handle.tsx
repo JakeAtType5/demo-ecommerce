@@ -197,29 +197,6 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
   });
 }
 
-const SECTIONS = [
-  {
-    label: "The Art",
-    target: "the-art",
-  },
-  {
-    label: "The Story",
-    target: "the-story",
-  },
-  {
-    label: "Materials",
-    target: "materials",
-  },
-  {
-    label: "The Drop",
-    target: "the-drop",
-  },
-  {
-    label: "More from this drop",
-    target: "more-prints",
-  },
-];
-
 export default function ProductHandle() {
   const {
     language,
@@ -232,6 +209,13 @@ export default function ProductHandle() {
   } = useLoaderData<typeof loader>();
 
   const { handle } = useParams();
+
+  const isInStock = variants.some(
+    (variant) => variant.availableForSale == true
+  );
+
+  const releaseDate = new Date(page?.drop.release_date);
+  const isFutureRelease = releaseDate > new Date();
 
   const [showCustomiseModal, setShowCustomiseModal] = useState(false);
 
@@ -265,12 +249,31 @@ export default function ProductHandle() {
     fetchShippingData();
   }, []);
 
-  const isInStock = variants.some(
-    (variant) => variant.availableForSale == true
-  );
-
-  const releaseDate = new Date(page?.drop.release_date);
-  const isFutureRelease = releaseDate < new Date();
+  const SECTIONS = [
+    {
+      label: "The Art",
+      target: "the-art",
+    },
+    {
+      label: "The Story",
+      target: "the-story",
+      condition: !!page?.story,
+    },
+    {
+      label: "Materials",
+      target: "materials",
+    },
+    {
+      label: "The Drop",
+      target: "the-drop",
+      condition: !!page?.drop,
+    },
+    {
+      label: "More from this drop",
+      target: "more-prints",
+      condition: !!relatedProducts?.length,
+    },
+  ];
 
   return (
     <SanityPreview
@@ -342,12 +345,14 @@ export default function ProductHandle() {
           />
 
           {/* Story */}
-          <section className="product-section" id="the-story">
-            <p className="semi-bold-24 section-header">
-              The story behind the art
-            </p>
-            {page?.story && <PortableText blocks={page.story} />}
-          </section>
+          {page?.story && (
+            <section className="product-section" id="the-story">
+              <p className="semi-bold-24 section-header">
+                The story behind the art
+              </p>
+              <PortableText blocks={page.story} />
+            </section>
+          )}
 
           {/* The Drop */}
           <section className="product-section" id="the-drop">

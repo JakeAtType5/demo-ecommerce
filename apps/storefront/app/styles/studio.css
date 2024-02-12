@@ -393,6 +393,9 @@ body.--prevent-scrolling {
   display: inline-block;
   border-radius: 4px;
   margin: 12px 8px 0 0;
+  cursor: default;
+  pointer-events: none;
+  height: 40px;
 }
 
 .badge--is-sold-out {
@@ -577,6 +580,10 @@ body.--prevent-scrolling {
   justify-content: space-between;
   width: 800px;
   user-select: none;
+}
+
+.sticky-product-header.--with-tighter-spacing .sub-navigation-links {
+  justify-content: space-around;
 }
 
 .sticky-product-header .sub-navigation-links a:hover {
