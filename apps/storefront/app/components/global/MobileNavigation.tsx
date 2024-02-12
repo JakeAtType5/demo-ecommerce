@@ -45,17 +45,17 @@ export default function MobileNavigation({ menuLinks }: Props) {
           leaveFrom="translate-x-0"
           leaveTo="-translate-x-full"
         > */}
-          <div className="fullscreen-navigation">
-            {/* Header */}
-            <header className="header">
-              <button type="button" onClick={handleClose}>
-                <FontAwesomeIcon icon={faTimes} />
-              </button>
-            </header>
+        <div className="fullscreen-navigation">
+          {/* Header */}
+          <header className="header">
+            <button type="button" onClick={handleClose}>
+              <FontAwesomeIcon icon={faTimes} />
+            </button>
+          </header>
 
-            {/* Links */}
-            <Navigation menuLinks={menuLinks} />
-            {/* 
+          {/* Links */}
+          <Navigation menuLinks={menuLinks} />
+          {/* 
               <div className="space-y-1">
                 <Link
                   className={clsx(
@@ -73,7 +73,7 @@ export default function MobileNavigation({ menuLinks }: Props) {
                   <CountrySelector align="left" />
                 </div>
               </div> */}
-          </div>
+        </div>
         {/* </Transition.Child> */}
         {/* </Dialog> */}
       </Transition>

@@ -60,11 +60,7 @@ import {
   PRODUCT_PAGE_QUERY,
   PRODUCTS_IN_DROP_QUERY,
 } from "~/queries/sanity/product";
-import {
-  PRODUCT_QUERY,
-  PRODUCTS_QUERY,
-  VARIANTS_QUERY,
-} from "~/queries/shopify/product";
+import { PRODUCT_QUERY, VARIANTS_QUERY } from "~/queries/shopify/product";
 
 const seo: SeoHandleFunction<typeof loader> = ({ data }) => {
   const media = flattenConnection<MediaConnection>(data.product?.media).find(
@@ -332,15 +328,14 @@ export default function ProductHandle() {
 
           {/* Story */}
           <section className="product-section" id="the-story">
-            <p className="semi-bold-24 section-header">The story</p>
+            <p className="semi-bold-24 section-header">The story behind the art</p>
             {page?.story && <PortableText blocks={page.story} />}
           </section>
 
           {/* The Drop */}
           <section className="product-section" id="the-drop">
-            {page?.drop && (
-              <DropPreview drop={page.drop} sectionTitle="Featured in" />
-            )}
+          <p className="semi-bold-24 section-header">Featured in</p>
+            {page?.drop && <DropPreview drop={page.drop} />}
           </section>
 
           {/* Related prints */}

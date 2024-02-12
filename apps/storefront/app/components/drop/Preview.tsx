@@ -11,11 +11,9 @@ import VideoPlayerPreview from "../video/PreviewPlayer";
 
 type Props = {
   drop: SanityDrop;
-  sectionTitle?: string;
 };
 
-export default function DropPreview({ drop, sectionTitle }: Props) {
-
+export default function DropPreview({ drop }: Props) {
   const formattedDate = formatDate({
     value: drop.release_date,
     format: "do m y",
@@ -24,10 +22,6 @@ export default function DropPreview({ drop, sectionTitle }: Props) {
   return (
     <div className="drop-preview">
       <div className="drop-content">
-        {sectionTitle && (
-          <p className="semi-bold-24 section-header">{sectionTitle}</p>
-        )}
-
         <p className="drop-title bold-56">{drop.title}</p>
 
         <div className="drop-metadata semi-bold-16">
@@ -52,7 +46,9 @@ export default function DropPreview({ drop, sectionTitle }: Props) {
           <p className="semi-bold-16 drop-description">{drop.description}</p>
         )}
 
-        <button className="button--small semi-bold-16">watch the episode</button>
+        <button className="button--small semi-bold-16">
+          watch the full drop
+        </button>
       </div>
 
       <VideoPlayerPreview
