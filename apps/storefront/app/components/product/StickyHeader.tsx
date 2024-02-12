@@ -80,7 +80,10 @@ export default function StickyProductHeader({
               className="section-link semi-bold-16"
               href={`#${section.target}`}
               key={section.target}
-              onClick={(e) => scrollToElement(e, section.target)}
+              onClick={(e) => {
+                scrollToElement(e, section.target);
+                setExpandMobileMenu(false);
+              }}
             >
               {section.label}
             </a>

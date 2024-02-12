@@ -34,6 +34,7 @@ import DropPreview from "~/components/drop/Preview";
 import PortableText from "~/components/portableText/PortableText";
 import CustomiseProduct from "~/components/product/Customise";
 import ProductHero from "~/components/product/Hero";
+import Materials from "~/components/product/Materials";
 import ProductCollection from "~/components/product/ProductCollection";
 import StickyProductHeader from "~/components/product/StickyHeader";
 import { baseLanguage } from "~/data/countries";
@@ -155,7 +156,7 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
   const variants = getAllVariants(variantsRequest.products);
 
   // Fetch related print IDs from this drop
-  const relatedProducts =
+  const productsInDrop =
     page && page.drop && page.drop._id
       ? await context.sanity.query<SanityProductPreview>({
           query: PRODUCTS_IN_DROP_QUERY,
@@ -164,9 +165,9 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
             slug: page.slug,
           },
         })
-      : {
-          products: [],
-        };
+      : {};
+
+  const relatedProducts = productsInDrop?.prints ? productsInDrop.prints : [];
 
   const firstVariant = variants[0];
   const selectedVariant = product.selectedVariant ?? firstVariant;
@@ -271,7 +272,7 @@ export default function ProductHandle() {
     {
       label: "More from this drop",
       target: "more-prints",
-      condition: !!relatedProducts?.length,
+      condition: relatedProducts.length > 0,
     },
   ];
 
@@ -354,6 +355,12 @@ export default function ProductHandle() {
             </section>
           )}
 
+          {/* Materials */}
+          <section className="product-section" id="materials">
+            <p className="semi-bold-24 section-header">Materials</p>
+            <Materials/>
+          </section>
+
           {/* The Drop */}
           <section className="product-section" id="the-drop">
             <p className="semi-bold-24 section-header">Featured in</p>
@@ -364,14 +371,14 @@ export default function ProductHandle() {
           <Suspense>
             <Await
               errorElement="There was a problem loading related products"
-              resolve={relatedProducts.prints}
+              resolve={relatedProducts}
             >
               <section className="product-section" id="more-prints">
                 <p className="semi-bold-24 section-header">
                   More from this drop
                 </p>
                 <ProductCollection
-                  products={relatedProducts?.prints}
+                  products={relatedProducts}
                   style="row"
                   idsToHide={[page._id]}
                 />
