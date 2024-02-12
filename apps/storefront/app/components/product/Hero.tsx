@@ -76,23 +76,23 @@ export default function ProductHero({
           </p>
         )}
 
-        {/* Badges */}
-        {!isInStock && !isFutureRelease && (
-          <span className="semi-bold-16 badge badge--is-sold-out">
-            Sold out
-          </span>
-        )}
-        {isFutureRelease && (
-          <span className="semi-bold-16 badge badge--is-coming-soon">
-            Dropping on {formattedReleaseDate}
-          </span>
-        )}
-
         {/* Description */}
         {sanityProduct?.description && (
           <p className="semi-bold-16 product-description">
             {sanityProduct.description}
           </p>
+        )}
+
+        {/* Badges & buttons */}
+        {!isInStock && !isFutureRelease && (
+          <span className="semi-bold-16 badge button--large badge--is-sold-out">
+            Sold out
+          </span>
+        )}
+        {isFutureRelease && (
+          <span className="semi-bold-16 badge button--large badge--is-coming-soon">
+            Dropping on {formattedReleaseDate}
+          </span>
         )}
 
         {isInStock && !isFutureRelease && (
