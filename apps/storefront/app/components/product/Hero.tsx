@@ -1,16 +1,15 @@
-import { faCheck, faCircle, faAngleRight } from "@fortawesome/free-solid-svg-icons";
+import {
+  faAngleRight,
+  faCheck,
+  faCircle,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-
 import { Money, ShopifyAnalyticsPayload } from "@shopify/hydrogen";
-import type {
-  Product,
-  ProductVariant,
-} from "@shopify/hydrogen/storefront-api-types";
+import type { Product } from "@shopify/hydrogen/storefront-api-types";
 
 import SanityImage from "~/components/media/SanityImage";
 import type { SanityProductPage } from "~/lib/sanity";
-import { scrollToElement } from "~/lib/utils";
+import { formatDate, scrollToElement } from "~/lib/utils";
 import { useRootLoaderData } from "~/root";
 
 type Props = {
@@ -18,7 +17,8 @@ type Props = {
   storefrontProduct: Product;
   analytics: ShopifyAnalyticsPayload;
   anchorLinkID: string;
-  isSoldOut?: boolean;
+  isInStock: boolean;
+  isFutureRelease: boolean;
   onCustomiseClick?: () => void;
   shipping?: {
     price?: number;
@@ -35,11 +35,17 @@ export default function ProductHero({
   // selectedVariant,
   analytics,
   anchorLinkID,
+  isFutureRelease,
+  isInStock,
   shipping,
-  isSoldOut,
   onCustomiseClick,
 }: Props) {
   const { sanityDataset, sanityProjectID } = useRootLoaderData();
+
+  const formattedReleaseDate = formatDate({
+    value: sanityProduct?.drop.release_date,
+    format: "w do m @ h:00",
+  });
 
   return (
     <section className="product-hero" id={anchorLinkID}>
@@ -70,6 +76,18 @@ export default function ProductHero({
           </p>
         )}
 
+        {/* Badges */}
+        {!isInStock && !isFutureRelease && (
+          <span className="semi-bold-16 badge badge--is-sold-out">
+            Sold out
+          </span>
+        )}
+        {isFutureRelease && (
+          <span className="semi-bold-16 badge badge--is-coming-soon">
+            Dropping on {formattedReleaseDate}
+          </span>
+        )}
+
         {/* Description */}
         {sanityProduct?.description && (
           <p className="semi-bold-16 product-description">
@@ -77,47 +95,51 @@ export default function ProductHero({
           </p>
         )}
 
-        <button
-          className="button--large semi-bold-16"
-          onClick={(e) => onCustomiseClick()}
-        >
-          Customise
-          <FontAwesomeIcon icon={faAngleRight} />
-        </button>
+        {isInStock && !isFutureRelease && (
+          <button
+            className="button--large semi-bold-16"
+            onClick={(e) => onCustomiseClick()}
+          >
+            Customise
+            <FontAwesomeIcon icon={faAngleRight} />
+          </button>
+        )}
 
         {/* Messages */}
-        <div className="semi-bold-16 product-messages">
-          <div className="product-message">
-            <FontAwesomeIcon icon={faCheck} />
-            <p>Starts from £60.00</p>
+        {isInStock && (
+          <div className="semi-bold-16 product-messages">
+            <div className="product-message">
+              <FontAwesomeIcon icon={faCheck} />
+              <p>Starts from £60.00</p>
+            </div>
+            <div className="product-message">
+              <FontAwesomeIcon icon={faCheck} />
+              <p>1 of only {sanityProduct.maxUnits} editions printed</p>
+            </div>
+            <div className="product-message">
+              {shipping?.city ? (
+                <>
+                  <FontAwesomeIcon icon={faCheck} />
+                  <p>
+                    {shipping.price == 0
+                      ? "Free delivery "
+                      : `£${shipping.price} delivery `}
+                    to {shipping.city} by {shipping.date}
+                  </p>
+                </>
+              ) : (
+                <>
+                  <FontAwesomeIcon icon={faCircle} beat />
+                  <p>Calculating delivery time...</p>
+                </>
+              )}
+            </div>
+            <div className="product-message">
+              <FontAwesomeIcon icon={faCheck} />
+              <p>14 days free return</p>
+            </div>
           </div>
-          <div className="product-message">
-            <FontAwesomeIcon icon={faCheck} />
-            <p>1 of only {sanityProduct.maxUnits} editions printed</p>
-          </div>
-          <div className="product-message">
-            {shipping?.city ? (
-              <>
-                <FontAwesomeIcon icon={faCheck} />
-                <p>
-                  {shipping.price == 0
-                    ? "Free delivery "
-                    : `£${shipping.price} delivery `}
-                  to {shipping.city} by {shipping.date}
-                </p>
-              </>
-            ) : (
-              <>
-                <FontAwesomeIcon icon={faCircle} beat />
-                <p>Calculating delivery time...</p>
-              </>
-            )}
-          </div>
-          <div className="product-message">
-            <FontAwesomeIcon icon={faCheck} />
-            <p>14 days free return</p>
-          </div>
-        </div>
+        )}
       </div>
     </section>
   );

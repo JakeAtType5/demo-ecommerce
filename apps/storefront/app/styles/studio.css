@@ -386,6 +386,23 @@ body.--prevent-scrolling {
   }
 }
 
+/* Badges */
+.badge {
+  padding: 10px;
+  color: #fff;
+  display: inline-block;
+  border-radius: 4px;
+  margin: 12px 8px 0 0;
+}
+
+.badge--is-sold-out {
+  background: red;
+}
+
+.badge--is-coming-soon {
+  background: #00000038;
+}
+
 
 /* Product */
 .background-effect {
@@ -446,6 +463,10 @@ body.--prevent-scrolling {
 .product-hero .button--large svg {
   height: 14px;
   margin-top: 2px;
+}
+
+.product-hero .badge--is-sold-out {
+  width: 150px;
 }
 
 .product-hero .product-artist {

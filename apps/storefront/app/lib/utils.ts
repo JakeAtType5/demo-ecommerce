@@ -359,14 +359,14 @@ export const formatDate = ({
 /**
  * Parse and return requested date format
  *
- * y -> yyyy
- * m -> mm
- * d -> dd
- * h -> hh
- * i -> ii
- * s -> ss
+ * y -> yyyy (year)
+ * m -> mm (month)
+ * d -> dd (day)
+ * h -> hh (hour)
+ * i -> ii (minute)
+ * s -> ss (second)
  * o -> 1st / 2nd etc.
- * w -> day of week
+ * w -> day of week (day)
  */
 export const parseDateFormat = ({
   date,

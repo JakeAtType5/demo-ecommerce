@@ -6,12 +6,16 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { scrollToElement } from "../../lib/utils";
 
 type Props = {
+  isInStock: boolean;
+  isFutureRelease?: boolean;
   onCustomiseClick: () => void;
   productTitle: string;
   sections?: []; // type?
 };
 
 export default function StickyProductHeader({
+  isInStock,
+  isFutureRelease,
   onCustomiseClick,
   productTitle,
   sections,
@@ -77,12 +81,14 @@ export default function StickyProductHeader({
           ))}
         </div>
 
-        <button
-          className="section-link semi-bold-16 button--small"
-          onClick={(e) => onCustomiseClick()}
-        >
-          Customise
-        </button>
+        {isInStock && !isFutureRelease && (
+          <button
+            className="section-link semi-bold-16 button--small"
+            onClick={(e) => onCustomiseClick()}
+          >
+            Customise
+          </button>
+        )}
       </div>
     </div>
   );

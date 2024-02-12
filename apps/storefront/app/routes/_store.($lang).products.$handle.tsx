@@ -56,6 +56,7 @@ import {
   useGids,
   validateLocale,
 } from "~/lib/utils";
+import { getAllVariants } from "~/lib/variants";
 import {
   PRODUCT_PAGE_QUERY,
   PRODUCTS_IN_DROP_QUERY,
@@ -138,7 +139,7 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
   // fetch bundles
   // we use one bundles for each size option to overcome
   // shopify option limits for our customisation builder
-  const bundles = page.bundles.map((x) => x.gid);
+  const bundles = page.bundles ? page.bundles.map((x) => x.gid) : [];
 
   const conntectProductIds = [...bundles, product.id];
 
@@ -148,7 +149,10 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
     },
   });
 
-  const variants = variantsRequest.products;
+  // fill gaps in Shopify data as a result of merging bundles into a single product
+  // this lets us overcome Shopify limits on # of options
+  // todo: this can be simplified from May 2024 with higher Shopify variant limits.
+  const variants = getAllVariants(variantsRequest.products);
 
   // Fetch related print IDs from this drop
   const relatedProducts =
@@ -164,7 +168,7 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
           products: [],
         };
 
-  const firstVariant = product.variants.nodes[0];
+  const firstVariant = variants[0];
   const selectedVariant = product.selectedVariant ?? firstVariant;
 
   const productAnalytics: ShopifyAnalyticsProduct = {
@@ -261,6 +265,13 @@ export default function ProductHandle() {
     fetchShippingData();
   }, []);
 
+  const isInStock = variants.some(
+    (variant) => variant.availableForSale == true
+  );
+
+  const releaseDate = new Date(page?.drop.release_date);
+  const isFutureRelease = releaseDate < new Date();
+
   return (
     <SanityPreview
       data={page}
@@ -279,7 +290,7 @@ export default function ProductHandle() {
           }}
         >
           {/* Customise Modal */}
-          {showCustomiseModal && (
+          {showCustomiseModal && isInStock && !isFutureRelease && (
             <Suspense>
               <Await
                 errorElement="There was a problem loading related products"
@@ -314,12 +325,16 @@ export default function ProductHandle() {
             analytics={analytics as ShopifyAnalyticsPayload}
             anchorLinkID={"the-art"}
             shipping={shipping}
+            isInStock={isInStock}
+            isFutureRelease={isFutureRelease}
             onCustomiseClick={() => setShowCustomiseModal(true)}
           />
 
           <StickyProductHeader
             productTitle={product.title}
             sections={SECTIONS}
+            isInStock={isInStock}
+            isFutureRelease={isFutureRelease}
             onCustomiseClick={() => {
               setShowCustomiseModal(true);
               window.scrollTo(0, 0);
@@ -328,13 +343,15 @@ export default function ProductHandle() {
 
           {/* Story */}
           <section className="product-section" id="the-story">
-            <p className="semi-bold-24 section-header">The story behind the art</p>
+            <p className="semi-bold-24 section-header">
+              The story behind the art
+            </p>
             {page?.story && <PortableText blocks={page.story} />}
           </section>
 
           {/* The Drop */}
           <section className="product-section" id="the-drop">
-          <p className="semi-bold-24 section-header">Featured in</p>
+            <p className="semi-bold-24 section-header">Featured in</p>
             {page?.drop && <DropPreview drop={page.drop} />}
           </section>
 
@@ -342,7 +359,7 @@ export default function ProductHandle() {
           <Suspense>
             <Await
               errorElement="There was a problem loading related products"
-              resolve={relatedProducts}
+              resolve={relatedProducts.prints}
             >
               <section className="product-section" id="more-prints">
                 <p className="semi-bold-24 section-header">
