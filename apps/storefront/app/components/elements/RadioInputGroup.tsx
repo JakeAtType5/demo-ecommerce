@@ -5,6 +5,7 @@ import RadioInput from "./RadioInput";
 type Props = {
   onClick: () => void;
   options: [];
+  stage: number;
   type: string;
   title: string;
   value: string;
@@ -13,6 +14,7 @@ type Props = {
 export default function RadioInputGroup({
   onClick,
   options,
+  stage,
   type,
   title,
   value,
@@ -31,6 +33,7 @@ export default function RadioInputGroup({
                 onClick({
                   optionType: type,
                   value: option,
+                  selectedStage: stage 
                 })
               }
             />

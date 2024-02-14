@@ -734,7 +734,7 @@ body.--prevent-scrolling {
 .story, .story-image {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-  gap: 120px 60px;
+  gap: 80px 60px;
 }
 
 .story p:empty {
@@ -744,6 +744,11 @@ body.--prevent-scrolling {
 .story-image {
   grid-column: 1 / 13;
   gap: 20px 30px;
+}
+
+.story-image .image-container {
+  border-radius: 4px;
+  overflow: hidden;
 }
 
 .story-image .quote {
@@ -1062,7 +1067,6 @@ section#customise {
   display: grid;
   grid-template-columns: 1fr 1.2fr 0.1fr;
   grid-gap: 60px;
-  margin-top: 24px;
   align-items: center;
 }
 
@@ -1121,23 +1125,48 @@ section#customise {
   width: 100%;
 }
 
+.customisation-form {
+  height: 480px;
+}
+
 .product-customisation .option-container {
   margin-bottom: 24px;
 }
 
 .customisation-input {
   margin-bottom: 12px;
-  padding-bottom: 16px;
+  max-height: 0;
+  opacity: 0;
+  transition: opacity 0.35s ease-in-out;
+  overflow: hidden;
+  background: #fff;
+  height: 100%;
+  display: flex;
+  border-radius: 4px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.customisation-input.--is-expanded {
+  max-height: unset;
+  opacity: 1;
+  padding: 16px;
+  box-shadow: 0 1px 1px #ffffff1a inset, 0 50px 100px -20px #32325d40, 0 30px 60px -30px #0000004d;
+}
+
+.customisation-input--is-frame-options {
+  flex-direction: column;
+  align-items: unset;
+  gap: 8px;
 }
 
 .customisation-input .semi-bold-16 {
-  color: #525252;  /*todo: extract*/ 
+  color: var(--dark-grey);
 }
 
 .radio-group {
   display: flex;
-  gap: 8px;
-  margin-top: 6px !important;
+  gap: 12px;
 }
 
 .radio-group .radio-item {
@@ -1149,7 +1178,7 @@ section#customise {
 }
 
 .radio-group .radio-item:hover {
-  opacity: 0.8;
+  background: var(--light-grey);
 }
 
 .radio-group .radio-item.--is-selected {
@@ -1169,28 +1198,6 @@ section#customise {
   padding: 12px 24px;
 }
 
-.option-container .collapsible-group {
-  overflow: hidden;
-  position: relative;
-  transition: max-height 0.25s ease-in-out;
-  max-height: 0;
-}
-
-.option-container.--is-expanded .collapsible-group{
-  max-height: 1000px;
-}
-
-.option-container .collapsible-group .customisation-input:last-of-type {
-  border-bottom: none;
-  padding-bottom: 0;
-  margin-bottom: 0;
-}
-
-.option-container:not(.--is-expanded) .customisation-input:nth-child(2) {
-  border-bottom: none;
-  padding-bottom: 0;
-  margin-bottom: 0;
-}
 
 .--with-customisation-modal {
   overflow: hidden;

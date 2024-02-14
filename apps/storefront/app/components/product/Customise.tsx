@@ -15,11 +15,7 @@ import { useEffect, useState } from "react";
 
 import SanityImage from "~/components/media/SanityImage";
 import { AddToCartLink } from "~/components/product/buttons/AddToCartButton";
-import {
-  getAllVariants,
-  getMatchingOptionValues,
-  makeSafeClass,
-} from "~/lib/variants";
+import { getMatchingOptionValues, makeSafeClass } from "~/lib/variants";
 import { useRootLoaderData } from "~/root";
 
 import CartNotification from "../cart/CartNotification";
@@ -42,12 +38,14 @@ export default function CustomiseProduct({ image, shipping, variants }: Props) {
   const fetcher = useFetcher();
 
   const [errors, setErrors] = useState([]);
+  const [stage, setStage] = useState(1);
+
   const [isInCart, setIsInCart] = useState(false);
 
   const [options, setOptions] = useState({
-    size: "A2",
-    frame: "Jet Black",
-    mount: "White",
+    size: null,
+    frame: null,
+    mount: null,
   });
 
   // fill gaps in Shopify data as a result of merging bundles into a single product
@@ -64,30 +62,34 @@ export default function CustomiseProduct({ image, shipping, variants }: Props) {
 
   // resets the frame options to default
   const setDefaultFrame = () => {
-    if (options.frame !== "None") {
-      return true;
+    if (options.frame == "None" || options.frame == null) {
+      setOptions({
+        frame: "selected",
+        mount: null,
+        size: options.size,
+      });
     }
-    setOptions({
-      frame: "Jet Black",
-      mount: "White",
-      size: options.size,
-    });
+
+    if (stage == 2) {
+      setStage(stage + 1);
+    }
   };
 
   // sets the frame and mount options to none
   const setNoFrame = () => {
-    if (options.frame == "None") {
-      return true;
-    }
     setOptions({
       frame: "None",
       mount: "None",
       size: options.size,
     });
+
+    if (stage == 2) {
+      setStage(stage + 1);
+    }
   };
 
   // updates the selected options whenever a user presses an option
-  const updateSelection = ({ optionType, value }) => {
+  const updateSelection = ({ optionType, selectedStage, value }) => {
     if (options[optionType] == value) {
       return true;
     }
@@ -96,6 +98,10 @@ export default function CustomiseProduct({ image, shipping, variants }: Props) {
       ...options,
       [optionType]: value,
     });
+
+    if (selectedStage == stage) {
+      setStage(stage + 1);
+    }
   };
 
   // takes the selected options and finds the matching Shopify variant
@@ -118,10 +124,12 @@ export default function CustomiseProduct({ image, shipping, variants }: Props) {
 
   useEffect(() => {
     // checks if this product is already in the cart
-    cart.then((cart) => {
-      setIsInCart(isProductInCart(cart, selectedVariant?.product?.id));
-      console.log(isInCart);
-    });
+    if (selectedVariant) {
+      cart.then((cart) => {
+        setIsInCart(isProductInCart(cart, selectedVariant?.product?.id));
+        console.log(isInCart);
+      });
+    }
 
     if (!fetcher.data) return;
 
@@ -203,15 +211,17 @@ export default function CustomiseProduct({ image, shipping, variants }: Props) {
       <div className="product-imagery-container">
         <div className="product-imagery">
           <div
-            className={clsx("customisable-mount", [
-              `--is-${makeSafeClass(options.mount)}`,
-            ])}
+            className={clsx(
+              options.mount != null && `--is-${makeSafeClass(options.mount)}`,
+              "customisable-mount"
+            )}
           />
 
           <div
-            className={clsx("customisable-frame", [
-              `--is-${makeSafeClass(options.frame)}`,
-            ])}
+            className={clsx(
+              options.frame != null && `--is-${makeSafeClass(options.frame)}`,
+              "customisable-frame"
+            )}
           />
 
           <div className="print-container">
@@ -250,91 +260,118 @@ export default function CustomiseProduct({ image, shipping, variants }: Props) {
 
       {!hasErrorMessages && (
         <div className="customisation-form">
-          <div
-            className={
-              options.frame == "None"
-                ? "option-container"
-                : "option-container --is-expanded"
-            }
-          >
-            <div className="customisation-input">
+          <div className="option-container">
+            <div
+              className={clsx(
+                stage >= 1 ? "--is-expanded" : "",
+                "customisation-input"
+              )}
+            >
               <RadioInputGroup
+                onClick={updateSelection}
                 options={sizes}
+                stage={1}
+                title="1. select a size."
                 type="size"
                 value={options.size}
-                onClick={updateSelection}
-                title="1. select a size."
               />
             </div>
 
-            <div className="customisation-input">
+            <div
+              className={clsx(
+                stage >= 2 ? "--is-expanded" : "",
+                "customisation-input"
+              )}
+            >
               <p className="semi-bold-16">
                 2. would you like us to frame your print?
               </p>
               <div className="radio-group">
                 <RadioInput
-                  value="Yes, please"
-                  className={options.frame != "None" ? "--is-selected" : ""}
+                  value="Yes"
+                  className={
+                    options.frame && options.frame != "None"
+                      ? "--is-selected"
+                      : ""
+                  }
                   onClick={setDefaultFrame}
                 />
 
                 <RadioInput
-                  value="No thanks, I have my own frame"
-                  className={options.frame == "None" ? "--is-selected" : ""}
+                  value="No"
+                  className={
+                    options.frame && options.frame == "None"
+                      ? "--is-selected"
+                      : ""
+                  }
                   onClick={setNoFrame}
                 />
               </div>
             </div>
 
-            <div className="collapsible-group">
-              <div className="customisation-input">
-                <RadioInputGroup
-                  options={frames}
-                  type="frame"
-                  value={options.frame}
-                  onClick={updateSelection}
-                  title="3. select a frame finish."
-                />
-              </div>
+            <div
+              className={clsx(
+                stage >= 3 && options.frame !== "None" ? "--is-expanded" : "",
+                "customisation-input",
+                "customisation-input--is-frame-options"
+              )}
+            >
+              <RadioInputGroup
+                onClick={updateSelection}
+                options={frames}
+                stage={3}
+                title="3. select a frame finish."
+                value={options.frame}
+                type="frame"
+              />
+            </div>
 
-              <div className="customisation-input">
-                <RadioInputGroup
-                  options={mounts}
-                  type="mount"
-                  value={options.mount}
-                  onClick={updateSelection}
-                  title="4. select a mount."
-                />
-              </div>
+            <div
+              className={clsx(
+                stage >= 4 && options.frame !== "None" ? "--is-expanded" : "",
+                "customisation-input"
+              )}
+            >
+              <RadioInputGroup
+                onClick={updateSelection}
+                options={mounts}
+                stage={4}
+                title="4. select a mount."
+                type="mount"
+                value={options.mount}
+              />
             </div>
           </div>
 
-          <div className="price-container">
-            {selectedVariant.availableForSale ? (
-              <>
-                <div className="price-label">
-                  <p className="semi-bold-20">Total price</p>
-                  <p className="semi-bold-16">
-                    {shipping.price == 0
-                      ? "including delivery "
-                      : `plus £${shipping.price} delivery `}
-                    to {shipping.city}
-                  </p>
-                </div>
-                <div className="money price semi-bold-20">
-                  {ProductPrices(selectedVariant)}
-                </div>
-              </>
-            ) : (
-              <p className="semi-bold-16">
-                Due to exceptional demand, we have sold out of one of the
-                materials needed to build this order. Try another configuration
-                or speak to one of our advisors to place a order.
-              </p>
-            )}
-          </div>
+          {selectedVariant && (
+            <div className="price-container">
+              {selectedVariant.availableForSale ? (
+                <>
+                  <div className="price-label">
+                    <p className="semi-bold-20">Total price</p>
+                    <p className="semi-bold-16">
+                      {shipping.price == 0
+                        ? "including delivery "
+                        : `plus £${shipping.price} delivery `}
+                      to {shipping.city}
+                    </p>
+                  </div>
+                  <div className="money price semi-bold-20">
+                    {ProductPrices(selectedVariant)}
+                  </div>
+                </>
+              ) : (
+                <p className="semi-bold-16">
+                  Due to exceptional demand, we have sold out of one of the
+                  materials needed to build this order. Try another
+                  configuration or speak to one of our advisors to place a
+                  order.
+                </p>
+              )}
+            </div>
+          )}
 
-          {selectedVariant.availableForSale && (
+          {selectedVariant && selectedVariant.availableForSale && (
             <AddToCartLink
               fetcher={fetcher}
               lines={[
@@ -352,8 +389,7 @@ export default function CustomiseProduct({ image, shipping, variants }: Props) {
             >
               {fetcher?.state === "submitting"
                 ? "Adding to cart..."
-                : "Add to cart"
-              }
+                : "Add to cart"}
             </AddToCartLink>
           )}
         </div>

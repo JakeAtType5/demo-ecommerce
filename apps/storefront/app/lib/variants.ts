@@ -34,28 +34,32 @@ export const getAllVariants = (variants) => {
   const allVariants = variants
     .map((resp) => resp?.variants?.nodes) // unpack from Shopify api format into usable array
     .flat()
-    .map((x) => {
-      const hasSize = x.selectedOptions.some((x) => x.name === "Size");
-      const hasFrame = x.selectedOptions.some((x) => x.name === "Frame");
+    .map((variant) => {
+      const hasSize = variant.selectedOptions.some(
+        (option) => option.name === "Size"
+      );
+      const hasFrame = variant.selectedOptions.some(
+        (option) => option.name === "Frame"
+      );
 
       if (!hasFrame) {
-        x.selectedOptions.push({
+        variant.selectedOptions.push({
           name: "Frame",
           value: "None",
         });
-        x.selectedOptions.push({
+        variant.selectedOptions.push({
           name: "Mount",
           value: "None",
         });
       }
 
       if (hasSize == false) {
-        x.selectedOptions.push({
+        variant.selectedOptions.push({
           name: "Size",
-          value: getSizeFromBundleHandle(x.product.title),
+          value: getSizeFromBundleHandle(variant.product.title),
         });
       }
-      return x;
+      return variant;
     });
 
   // an array of all possible options
