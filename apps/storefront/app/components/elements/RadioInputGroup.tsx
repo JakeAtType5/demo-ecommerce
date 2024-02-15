@@ -21,7 +21,7 @@ export default function RadioInputGroup({
 }: Props) {
   return (
     <>
-      <p className="semi-bold-16">{title}</p>
+      <p className="semi-bold-14">{title}</p>
       <div className="radio-group">
         {options.map((option: string) => {
           return (

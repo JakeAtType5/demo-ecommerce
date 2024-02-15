@@ -260,7 +260,7 @@ export default function CustomiseProduct({ image, shipping, variants }: Props) {
 
       {!hasErrorMessages && (
         <div className="customisation-form">
-          <div className="option-container">
+          <div className="customisation-inputs">
             <div
               className={clsx(
                 stage >= 1 ? "--is-expanded" : "",
@@ -283,7 +283,7 @@ export default function CustomiseProduct({ image, shipping, variants }: Props) {
                 "customisation-input"
               )}
             >
-              <p className="semi-bold-16">
+              <p className="semi-bold-14">
                 2. would you like us to frame your print?
               </p>
               <div className="radio-group">
@@ -347,21 +347,51 @@ export default function CustomiseProduct({ image, shipping, variants }: Props) {
             <div className="price-container">
               {selectedVariant.availableForSale ? (
                 <>
-                  <div className="price-label">
-                    <p className="semi-bold-20">Total price</p>
-                    <p className="semi-bold-16">
-                      {shipping.price == 0
-                        ? "including delivery "
-                        : `plus £${shipping.price} delivery `}
-                      to {shipping.city}
-                    </p>
+                  {/* <div className="price-item">
+                    <p className="semi-bold-14">Subtotal</p>
+                    <div className="money price semi-bold-14">
+                      {ProductPrices(selectedVariant)}
+                    </div>
+                  </div> */}
+
+                  {/* <div className="price-item">
+                    <p className="semi-bold-14">Shipping to {shipping.city} </p>
+                    <div className="money price semi-bold-14">
+                      {shipping.price}
+                    </div>
+                  </div> */}
+
+                  <div className="price-item">
+                    <p className="semi-bold-14">Total</p>
+                    <div className="money price semi-bold-14">
+                      {ProductPrices(selectedVariant)}
+                    </div>
                   </div>
-                  <div className="money price semi-bold-20">
-                    {ProductPrices(selectedVariant)}
-                  </div>
+
+                  {selectedVariant.availableForSale && (
+                    <AddToCartLink
+                      fetcher={fetcher}
+                      lines={[
+                        {
+                          merchandiseId: selectedVariant.id,
+                          quantity: 1,
+                        },
+                      ]}
+                      disabled={configurationIsSoldOut}
+                      // // analytics={{
+                      // //   products: [productAnalytics],
+                      // //   totalValue: parseFloat(productAnalytics.price),
+                      // // }}
+                      buttonClassName="semi-bold-20 button--large"
+                    >
+                      {fetcher?.state === "submitting"
+                        ? "Adding to cart..."
+                        : "Add to cart"}
+                    </AddToCartLink>
+                  )}
                 </>
               ) : (
-                <p className="semi-bold-16">
+                <p className="semi-bold-14">
                   Due to exceptional demand, we have sold out of one of the
                   materials needed to build this order. Try another
                   configuration or speak to one of our advisors to place a
@@ -369,28 +399,6 @@ export default function CustomiseProduct({ image, shipping, variants }: Props) {
                 </p>
               )}
             </div>
-          )}
-
-          {selectedVariant && selectedVariant.availableForSale && (
-            <AddToCartLink
-              fetcher={fetcher}
-              lines={[
-                {
-                  merchandiseId: selectedVariant.id,
-                  quantity: 1,
-                },
-              ]}
-              disabled={configurationIsSoldOut}
-              // // analytics={{
-              // //   products: [productAnalytics],
-              // //   totalValue: parseFloat(productAnalytics.price),
-              // // }}
-              buttonClassName="semi-bold-20 button--large"
-            >
-              {fetcher?.state === "submitting"
-                ? "Adding to cart..."
-                : "Add to cart"}
-            </AddToCartLink>
           )}
         </div>
       )}
