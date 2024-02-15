@@ -363,7 +363,7 @@ export default function ProductHandle() {
           {/* Materials */}
           <section className="product-section" id="materials">
             <p className="semi-bold-24 section-header">Materials</p>
-            <Materials/>
+            <Materials />
           </section>
 
           {/* Related prints */}
@@ -372,16 +372,18 @@ export default function ProductHandle() {
               errorElement="There was a problem loading related products"
               resolve={relatedProducts}
             >
-              <section className="product-section" id="more-prints">
-                <p className="semi-bold-24 section-header">
-                  More from this drop
-                </p>
-                <ProductCollection
-                  products={relatedProducts}
-                  style="row"
-                  idsToHide={[page._id]}
-                />
-              </section>
+              {relatedProducts?.length >= 1 && (
+                <section className="product-section" id="more-prints">
+                  <p className="semi-bold-24 section-header">
+                    More from this drop
+                  </p>
+                  <ProductCollection
+                    products={relatedProducts}
+                    style="row"
+                    idsToHide={[page._id]}
+                  />
+                </section>
+              )}
             </Await>
           </Suspense>
         </div>
