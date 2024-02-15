@@ -19,6 +19,7 @@ export default function Materials() {
           <li>12 colour giclée prints for unrivalled quality.</li>
           <li>Wide colour gamut makes colours pop.</li>
           <li>Made by hand in our workshop.</li>
+          <li>Each edition is numbered by hand.</li>
         </div>
 
         <div className="semi-bold-16">
@@ -26,7 +27,7 @@ export default function Materials() {
           <p className="semi-bold-32">The frame.</p>
           <li>Beautifully crafted from aluminium.</li>
           <li>Optical interference glass reduces glare.</li>
-          <li>Available in Jet black, Brushed Silver or Oak. </li>
+          <li>Available in Jet black, Brushed Aluminium or Oak. </li>
         </div>
       </div>
     </div>

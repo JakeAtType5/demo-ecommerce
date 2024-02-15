@@ -142,11 +142,11 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
   // shopify option limits for our customisation builder
   const bundles = page.bundles ? page.bundles.map((x) => x.gid) : [];
 
-  const conntectProductIds = [...bundles, product.id];
+  const conntectedProductIds = [...bundles, product.id];
 
   const variantsRequest = await context.storefront.query(VARIANTS_QUERY, {
     variables: {
-      ids: conntectProductIds,
+      ids: conntectedProductIds,
     },
   });
 
@@ -162,12 +162,11 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
           query: PRODUCTS_IN_DROP_QUERY,
           params: {
             dropId: page?.drop?._id,
-            slug: page.slug,
           },
         })
       : {};
 
-  const relatedProducts = productsInDrop?.prints ? productsInDrop.prints : [];
+  const relatedProducts = productsInDrop?.prints || [];
 
   const firstVariant = variants[0];
   const selectedVariant = product.selectedVariant ?? firstVariant;
@@ -261,13 +260,13 @@ export default function ProductHandle() {
       condition: !!page?.story,
     },
     {
-      label: "Materials",
-      target: "materials",
-    },
-    {
       label: "The Drop",
       target: "the-drop",
       condition: !!page?.drop,
+    },
+    {
+      label: "Materials",
+      target: "materials",
     },
     {
       label: "More from this drop",
@@ -355,16 +354,16 @@ export default function ProductHandle() {
             </section>
           )}
 
-          {/* Materials */}
-          <section className="product-section" id="materials">
-            <p className="semi-bold-24 section-header">Materials</p>
-            <Materials/>
-          </section>
-
           {/* The Drop */}
           <section className="product-section" id="the-drop">
             <p className="semi-bold-24 section-header">Featured in</p>
             {page?.drop && <DropPreview drop={page.drop} />}
+          </section>
+
+          {/* Materials */}
+          <section className="product-section" id="materials">
+            <p className="semi-bold-24 section-header">Materials</p>
+            <Materials/>
           </section>
 
           {/* Related prints */}
