@@ -82,7 +82,7 @@ export default function Index() {
     <section className="products-grid">
       <h1 className="bold-56">our prints.</h1>
       <div className="collection-options">
-        <div className="collection-filters semi-bold-24">
+        <div className="collection-filters semi-bold-20">
           <div className="filter-dropdown">
             style <FontAwesomeIcon icon={faAngleDown} />
           </div>
@@ -96,7 +96,7 @@ export default function Index() {
           </div>
         </div>
 
-        <div className="collection-sorting semi-bold-24">
+        <div className="collection-sorting semi-bold-20">
           <div className="filter-dropdown">
             sort by: latest
             <FontAwesomeIcon icon={faAngleDown} />
