@@ -94,12 +94,18 @@ export default function ProductHandle() {
         <>
           <section className="drop-hero">
             <div className="page-background" />
-            <VideoPlayerPreview
-              playbackId={page.episode.playbackId}
-              assetId={page.episode.assetId}
-              duration={page.episode.duration}
-              // startTime
-            />
+            {page?.episode?.playBackId ? (
+              <VideoPlayerPreview
+                playbackId={page.episode.playbackId}
+                assetId={page.episode.assetId}
+                duration={page.episode.duration}
+                // startTime
+              />
+            ) : (
+              <div className="video-empty-state">
+                <p className="semi-bold-32">Video not found</p>
+              </div>
+            )}
 
             <div className="drop-content">
               <p className="drop-title bold-56">{page.title}</p>
