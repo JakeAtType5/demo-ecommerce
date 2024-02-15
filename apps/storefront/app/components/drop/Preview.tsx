@@ -1,3 +1,4 @@
+import { Link } from "~/components/Link";
 import type { SanityDrop } from "~/lib/sanity";
 
 import VideoPlayerPreview from "../video/PreviewPlayer";
@@ -23,9 +24,11 @@ export default function DropPreview({ drop }: Props) {
           <p className="semi-bold-16 drop-description">{drop.description}</p>
         )}
 
-        <button className="button--small semi-bold-16">
-          watch the full drop
-        </button>
+        <Link to={drop.slug}>
+          <button className="button--small semi-bold-16">
+            watch the full drop
+          </button>
+        </Link>
       </div>
 
       {drop?.episode?.playbackId ? (
