@@ -1,46 +1,23 @@
-import {
-  faCalendarDays,
-  faLocationDot,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
 import type { SanityDrop } from "~/lib/sanity";
 
-import { formatDate } from "../../lib/utils";
 import VideoPlayerPreview from "../video/PreviewPlayer";
+import DropMetadata from "./Metadata";
 
 type Props = {
   drop: SanityDrop;
 };
 
 export default function DropPreview({ drop }: Props) {
-  const formattedDate = formatDate({
-    value: drop.release_date,
-    format: "do m y",
-  });
-
   return (
     <div className="drop-preview">
       <div className="drop-content">
         <p className="drop-title bold-56">{drop.title}</p>
 
-        <div className="drop-metadata semi-bold-16">
-          {drop.number && <p>Drop #{drop.number}</p>}
-
-          {drop.location && (
-            <div className="metadata-with-icon">
-              <FontAwesomeIcon icon={faLocationDot} />
-              <p>{drop.location}</p>
-            </div>
-          )}
-
-          {drop.release_date && (
-            <div className="metadata-with-icon">
-              <FontAwesomeIcon icon={faCalendarDays} />
-              <p>{formattedDate}</p>
-            </div>
-          )}
-        </div>
+        <DropMetadata
+          location={drop.location}
+          number={drop.number}
+          releaseDate={drop.release_date}
+        />
 
         {drop.description && (
           <p className="semi-bold-16 drop-description">{drop.description}</p>
@@ -51,12 +28,18 @@ export default function DropPreview({ drop }: Props) {
         </button>
       </div>
 
-      <VideoPlayerPreview
-        playbackId={drop.episode.playbackId}
-        assetId={drop.episode.assetId}
-        duration={drop.episode.duration}
-        // startTime
-      />
+      {drop?.episode?.playbackId ? (
+        <VideoPlayerPreview
+          playbackId={drop.episode.playbackId}
+          assetId={drop.episode.assetId}
+          duration={drop.episode.duration}
+          // startTime
+        />
+      ) : (
+        <div className="video-empty-state">
+          <p className="semi-bold-32">Coming soon</p>
+        </div>
+      )}
     </div>
   );
 }
