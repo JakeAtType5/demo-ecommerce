@@ -6,7 +6,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import Navigation from "~/components/global/Navigation";
-import { useRootLoaderDwata } from "~/root";
+import { useRootLoaderData } from "~/root";
 
 /**
  * A server component that specifies the content of the footer
