@@ -32,7 +32,7 @@ export default function Header() {
 
   return (
     <header className="navigation-bar" role="banner">
-      <p className="bold-24 rfc-logo">mono.</p>
+      <p className="bold-24 rfc-logo">Rfc.</p>
 
       {/* <NavigationTabs /> */}
       {menuLinks && (

@@ -1,10 +1,11 @@
+
 import { usePreviewContext } from "hydrogen-sanity";
 
 import Footer from "~/components/global/Footer";
 import Header from "~/components/global/Header";
 import { PreviewBanner } from "~/components/preview/PreviewBanner";
 
-import { Label } from "./Label";
+
 
 type LayoutProps = {
   backgroundColor?: string;
@@ -48,6 +49,8 @@ export function Layout({ backgroundColor, children }: LayoutProps) {
         <Header />
         <main role="main">{children}</main>
       </div>
+
+      <Footer />
     </>
   );
 }

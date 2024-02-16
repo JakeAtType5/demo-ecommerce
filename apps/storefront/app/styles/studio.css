@@ -1443,3 +1443,31 @@ footer .footer-bar .social-links {
 .social-links svg {
   height: 16px;
 }
+
+@media all and (max-width: 465px) {
+  footer .content-wrapper {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px 0;
+    margin-top: 32px;
+  }
+
+  footer .footer-logo {
+    grid-column: 1 /3;
+  }
+
+  footer .footer-logo p {
+    max-width: 70%;
+  }
+
+  footer .footer-menu {
+    grid-row: 2;
+  }
+
+  footer .footer-bar {
+    margin-top: 0;
+    border-top: 0;
+    padding-top: 0;
+    flex-direction: column-reverse;
+    gap: 32px;
+  }
+}

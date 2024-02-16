@@ -1,91 +1,62 @@
-import clsx from "clsx";
+import {
+  faInstagram,
+  faTiktok,
+  faYoutube,
+} from "@fortawesome/free-brands-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import SanityFooter from "~/components/global/SanityFooter";
-import LogoIcon from "~/components/icons/Logo";
-import { Link } from "~/components/Link";
-import PortableText from "~/components/portableText/PortableText";
-import type { SanityLink } from "~/lib/sanity";
-import { useRootLoaderData } from "~/root";
+import Navigation from "~/components/global/Navigation";
+import { useRootLoaderDwata } from "~/root";
 
 /**
- * A component that specifies the content of the footer on the website
+ * A server component that specifies the content of the footer
  */
 export default function Footer() {
   const { layout } = useRootLoaderData();
   const { footer } = layout || {};
 
-  const renderLinks = footer?.links?.map((link: SanityLink) => {
-    if (link._type === "linkExternal") {
-      return (
-        <div className="mb-6" key={link._key}>
-          <a
-            className="linkTextNavigation"
-            href={link.url}
-            rel="noreferrer"
-            target={link.newWindow ? "_blank" : "_self"}
-          >
-            {link.title}
-          </a>
-        </div>
-      );
-    }
-    if (link._type === "linkInternal") {
-      if (!link.slug) {
-        return null;
-      }
-
-      return (
-        <div className="mb-6" key={link._key}>
-          <Link className="linkTextNavigation" to={link.slug}>
-            {link.title}
-          </Link>
-        </div>
-      );
-    }
-    return null;
-  });
-
   return (
-    <footer className="-mt-overlap" role="contentinfo">
-      {/* AVKA Footer */}
-      <div
-        className={clsx(
-          "align-start relative overflow-hidden rounded-xl bg-peach px-4 py-8", //
-          "md:px-8 md:py-10"
-        )}
-      >
-        <div
-          className={clsx(
-            "flex flex-col justify-between", //
-            "md:flex-row"
-          )}
-        >
-          <div className="pb-4">
-            <LogoIcon />
-          </div>
+    <footer>
+      <div className="content-wrapper">
+        <div className="footer-logo">
+          <p className="bold-24">RFC</p>
+          <p className="semi-bold-16">
+            Paragraph about what we do. Paragraph about what we do.
+          </p>
+        </div>
+        <div className="footer-menu semi-bold-14">
+          <p>Company</p>
+          <a>Our story</a>
+          <a>Careers</a>
+          <a>Blog</a>
+          <a>Contact</a>
+        </div>
+        <div className="footer-menu semi-bold-14">
+          <p>Support</p>
+          <a>Help with an order</a>
+          <a>Shipping</a>
+          <a>Returns</a>
+          <a>Terms & Conditions</a>
+        </div>
 
-          <div
-            className={clsx(
-              "my-16 w-full max-w-[22rem] columns-2 gap-x-8 self-start text-md font-bold",
-              "md:my-0 md:max-w-[27rem]"
-            )}
-          >
-            {renderLinks}
+        <div className="footer-bar">
+          <p className="semi-bold-14">
+            Copyright 2024 Ready For Collection. All rights reserved.
+          </p>
+          <div className="social-links">
+            <FontAwesomeIcon icon={faInstagram} />
+            <FontAwesomeIcon icon={faTiktok} />
+            <FontAwesomeIcon icon={faYoutube} />
           </div>
         </div>
-        {footer?.text && (
-          <PortableText
-            blocks={footer.text}
-            className={clsx(
-              "text-xs", //
-              "text-sm text-darkGray"
-            )}
-          />
-        )}
       </div>
-
-      {/* Sanity Footer */}
-      <SanityFooter />
     </footer>
   );
 }
+
+/* {menuLinks && (
+        <Navigation
+          menuLinks={menuLinks}
+          className="footer-menu"
+        />
+      )} */
