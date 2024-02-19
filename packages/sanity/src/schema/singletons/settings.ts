@@ -67,8 +67,14 @@ export default defineType({
       fields: [
         // Links
         defineField({
-          name: 'links',
-          title: 'Links',
+          name: 'company_links',
+          title: 'Company Links',
+          type: 'array',
+          of: [{type: 'linkInternal'}, {type: 'linkExternal'}],
+        }),
+        defineField({
+          name: 'support_links',
+          title: 'Support Links',
           type: 'array',
           of: [{type: 'linkInternal'}, {type: 'linkExternal'}],
         }),

@@ -22,8 +22,9 @@ export type SanityLabel = {
 export type SanityLayout = {
   seo: SanitySeo;
   menuLinks?: SanityMenuLink[];
+  companyLinks?: SanityMenuLink[];
+  supportLinks?: SanityMenuLink[];
   footer?: {
-    links?: SanityLink[];
     text?: PortableTextBlock[];
   };
   notFoundPage?: SanityNotFoundPage;

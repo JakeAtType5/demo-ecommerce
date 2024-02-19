@@ -13,7 +13,7 @@ import { useRootLoaderData } from "~/root";
  */
 export default function Footer() {
   const { layout } = useRootLoaderData();
-  const { footer } = layout || {};
+  const { companyLinks, supportLinks } = layout || {};
 
   return (
     <footer>
@@ -24,20 +24,24 @@ export default function Footer() {
             Paragraph about what we do. Paragraph about what we do.
           </p>
         </div>
-        <div className="footer-menu semi-bold-14">
-          <p>Company</p>
-          <a>Our story</a>
-          <a>Careers</a>
-          <a>Blog</a>
-          <a>Contact</a>
-        </div>
-        <div className="footer-menu semi-bold-14">
-          <p>Support</p>
-          <a>Help with an order</a>
-          <a>Shipping</a>
-          <a>Returns</a>
-          <a>Terms & Conditions</a>
-        </div>
+
+
+        {companyLinks && (
+          <Navigation
+            menuLinks={companyLinks}
+            className="footer-menu semi-bold-14"
+            title="Company"
+          />
+        )}
+
+        {supportLinks && (
+          <Navigation
+            menuLinks={supportLinks}
+            className="footer-menu semi-bold-14"
+            title="Support"
+
+          />
+        )}
 
         <div className="footer-bar">
           <p className="semi-bold-14">
@@ -53,10 +57,3 @@ export default function Footer() {
     </footer>
   );
 }
-
-/* {menuLinks && (
-        <Navigation
-          menuLinks={menuLinks}
-          className="footer-menu"
-        />
-      )} */

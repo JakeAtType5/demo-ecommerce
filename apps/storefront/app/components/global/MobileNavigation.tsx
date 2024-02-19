@@ -54,7 +54,7 @@ export default function MobileNavigation({ menuLinks }: Props) {
           </header>
 
           {/* Links */}
-          <Navigation menuLinks={menuLinks} />
+          <Navigation menuLinks={menuLinks} className="navigation-links" />
           {/* 
               <div className="space-y-1">
                 <Link

@@ -10,10 +10,13 @@ export const LAYOUT_QUERY = groq`
     "menuLinks": menu.links[] {
       ${LINKS}
     },
+    "companyLinks": footer.company_links[] {
+      ${LINKS}
+    },
+    "supportLinks": footer.support_links[] {
+      ${LINKS}
+    },
     footer {
-      links[] {
-        ${LINKS}
-      },
       text[]{
         ${PORTABLE_TEXT}
       },

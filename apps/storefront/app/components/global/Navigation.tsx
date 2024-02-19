@@ -12,9 +12,10 @@ import type { SanityMenuLink } from "~/lib/sanity";
 type Props = {
   className?: string;
   menuLinks: SanityMenuLink[];
+  title?: string;
 };
 
-export default function Navigation({ className, menuLinks }: Props) {
+export default function Navigation({ className, menuLinks, title }: Props) {
   const renderLinks = useCallback(() => {
     return menuLinks?.map((link) => {
       if (link._type === "collectionGroup") {
@@ -52,6 +53,9 @@ export default function Navigation({ className, menuLinks }: Props) {
   }, [menuLinks]);
 
   return (
-    <nav className={clsx(className, "navigation-links")}>{renderLinks()}</nav>
+    <nav className={className}>
+      {title && <p>{title}</p>}
+      {renderLinks()}
+    </nav>
   );
 }

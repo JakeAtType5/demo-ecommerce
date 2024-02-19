@@ -11,24 +11,7 @@ import { useRootLoaderData } from "~/root";
  */
 export default function Header() {
   const { layout } = useRootLoaderData();
-  const { menuLinks, footer } = layout || {};
-
-  // return (
-  //   <header
-  //     className={clsx(
-  //       "align-center fixed top-0 z-40 flex h-header-sm w-full px-4",
-  //       "md:px-8",
-  //       "lg:h-header-lg"
-  //     )}
-  //     role="banner"
-  //   >
-  //     <HeaderBackground />
-  //     {menuLinks && <MobileNavigation menuLinks={menuLinks} />}
-  //     {menuLinks && <Navigation menuLinks={menuLinks} />}
-  //     {/* Accounts, country selector + cart toggle */}
-  //     <HeaderActions />
-  //   </header>
-  // );
+  const { menuLinks } = layout || {};
 
   return (
     <header className="navigation-bar" role="banner">
@@ -38,12 +21,10 @@ export default function Header() {
       {menuLinks && (
         <Navigation
           menuLinks={menuLinks}
-          className="desktop-only desktop-navigation"
+          className="desktop-only desktop-navigation navigation-links"
         />
       )}
-      {menuLinks && (
-        <MobileNavigation menuLinks={[...menuLinks, ...footer.links]} />
-      )}
+      {menuLinks && <MobileNavigation menuLinks={menuLinks} />}
 
       {/* Accounts, country selector + cart toggle */}
       <HeaderActions />
