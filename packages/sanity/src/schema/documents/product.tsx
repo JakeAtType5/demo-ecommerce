@@ -31,8 +31,8 @@ const GROUPS = [
     title: 'SEO',
   },
   {
-    name: 'manufacturing',
-    title: 'Manufacture',
+    name: 'options',
+    title: 'Options',
   },
 ]
 
@@ -90,6 +90,49 @@ export default defineType({
       group: 'hero',
     }),
 
+    // tags
+    defineField({
+      name: 'tags',
+      title: 'Tags',
+      group: 'hero',
+      type: 'array',
+      of: [
+        {
+          type: 'reference',
+          name: 'styles',
+          title: 'Styles',
+          to: [
+            {
+              type: 'style',
+            },
+          ],
+          weak: true
+        },
+        {
+          type: 'reference',
+          name: 'colours',
+          title: 'Colours',
+          to: [
+            {
+              type: 'colour',
+            },
+          ],
+          weak: true
+        },
+        {
+          type: 'reference',
+          name: 'locations',
+          title: 'Locations',
+          to: [
+            {
+              type: 'location',
+            },
+          ],
+          weak: true
+        },
+      ]
+    }),
+
     // drop
     defineField({
       title: 'Drop',
@@ -105,19 +148,20 @@ export default defineType({
       }
     }),
 
-    // manufacturing
+    // max units
     defineField({
       name: 'maxUnits',
       title: 'Maximum Units',
       type: 'number',
-      group: 'manufacturing',
+      group: 'options',
       validation: (Rule) => Rule.positive().integer(),
     }),
 
+    // bundles
     defineField({
       name: 'bundles',
       title: 'Bundles',
-      group: 'manufacturing',
+      group: 'options',
       type: 'array',
       of: [
         {
@@ -145,6 +189,30 @@ export default defineType({
       group: 'story',
     }),
 
+    // shopify connection
+    defineField({
+      name: 'store',
+      title: 'Shopify',
+      type: 'shopifyProduct',
+      description: 'Product data from Shopify (read-only)',
+      group: 'shopifySync',
+    }),
+    // seo
+    defineField({
+      name: 'seo',
+      title: 'SEO',
+      type: 'seo.shopify',
+      group: 'seo',
+    }),
+    defineField({
+      name: 'slugProxy',
+      title: 'Slug',
+      type: 'proxyString',
+      options: {field: 'store.slug.current'},
+      group: 'seo',
+    }),
+    
+    // unused
     defineField({
       name: 'body',
       title: 'Body',
@@ -162,26 +230,6 @@ export default defineType({
       title: 'FAQs',
       description: 'Shown in addition to any material FAQs',
       type: 'internationalizedArrayFaqs',
-    }),
-    defineField({
-      name: 'store',
-      title: 'Shopify',
-      type: 'shopifyProduct',
-      description: 'Product data from Shopify (read-only)',
-      group: 'shopifySync',
-    }),
-    defineField({
-      name: 'seo',
-      title: 'SEO',
-      type: 'seo.shopify',
-      group: 'seo',
-    }),
-    defineField({
-      name: 'slugProxy',
-      title: 'Slug',
-      type: 'proxyString',
-      options: {field: 'store.slug.current'},
-      group: 'seo',
     }),
   ],
   orderings: [
