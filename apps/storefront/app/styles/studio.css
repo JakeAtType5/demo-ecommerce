@@ -205,7 +205,7 @@ body {
 
 @media screen and (min-width: 600px) {
   .mobile-only {
-    display: none;
+    display: none !important;
   }
 }
 
@@ -1259,23 +1259,17 @@ section#customise {
 
 
 /* Product collection */
-.product-collection {
+.products-collection {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 40px;
-}
-
-@media screen and (max-width: 460px) {
-  .product-collection {
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-  }
 }
 
 .product-card {
   background-color: var(--product-primary-color);
   padding: 16px 16px 12px 16px;
   border-radius: 4px;
+  transition: 0.3s;
 }
 
 .product-card img {
@@ -1295,7 +1289,7 @@ section#customise {
   color: var(--dark-grey);
 }
 
-.product-card:hover img {
+.product-card:hover {
   transform: scale(0.98);
 }
 
@@ -1304,18 +1298,37 @@ section#customise {
 }
 
 
+@media screen and (max-width: 460px) {
+  .products-collection {
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  .product-card .product-title {
+    margin-bottom: 4px;
+  }
+
+  .product-card .artist-title {
+    line-height: 130%;
+  }
+}
+
+
+
 
 /* All products */
-.products-grid {
+.products-hero {
   margin: 100px 0;
+  text-align: center;
 }
-/* 
-.products-grid .product-title {
-  margin-top: 100px;
-} */
 
-.products-grid .product-collection {
-  margin-top: 40px;
+.products-hero p, .products-hero h1 {
+  color: var(--dark-grey);
+}
+
+
+.products-grid .products-collection {
+  margin: 40px 0;
 }
 
 .collection-options {
@@ -1342,6 +1355,18 @@ section#customise {
 }
 
 
+.collection-mobile-filter {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background: #999;
+  justify-content: center;
+}
+
+.collection-mobile-filter svg {
+  height: 18px;
+}
+
 
 
 
@@ -1365,19 +1390,27 @@ section#customise {
   color: var(--light-grey);
 }
 
-.drop-collection {
+.drops-collection {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 120px;
-  margin-top: 24px;
-  margin-top: 40px;
+  gap: 40px;
+  margin: 40px 0;
 }
 
 .drop-card {
   background: #414141;
-  padding: 20px 20px 5px;
+  padding: 32px 24px 5px;
   border-radius: 4px;
   overflow: hidden;
+  transition: 0.4s;
+}
+
+.drop-card:hover {
+  transform: scale(0.98);
+}
+
+.drop-card:hover p.bold-24 {
+  text-decoration: underline;
 }
 
 .drop-card .image-container {
@@ -1387,7 +1420,7 @@ section#customise {
   display: flex;
   align-items: center;
   background: #D9D9D9;
-  margin: -20px -20px 10px -20px;
+  margin: -32px -24px 16px;
 }
 
 .drop-card p.bold-24 {
@@ -1404,6 +1437,21 @@ section#customise {
 }
 
 
+@media all and (max-width: 460px) {
+  .drops-hero {
+    margin-bottom: 15px;
+    margin-top: 40px;
+  }
+
+  .drops-hero p.semi-bold-24 {
+    font-size: 1.3rem !important;
+  }
+
+  .drops-collection {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
 
 
 /* Drop page */
@@ -1452,6 +1500,31 @@ section#customise {
   height: 16px;
 }
 
+@media all and (max-width: 460px) {
+  .drop-hero {
+    margin-top: -70px;
+    background: #383838;
+    margin-left: -5vW;
+    margin-right: -5vW;
+    padding: 90px 5vW 20px;
+  }
+
+  .drop-hero .video-player, .drop-hero .video-empty-state {
+    aspect-ratio: 1;
+  }
+
+  .drop-hero .drop-content {
+    grid-template-columns: 1fr;
+    gap: 4px;
+    margin-top: 8px;
+  }
+
+  .drop-prints {
+    margin-top: 40px;
+  }
+  
+}
+
 
 /* Video player*/
 .video-player {
@@ -1463,11 +1536,55 @@ section#customise {
 }
 
 
+.next-drop {
+  margin-left: auto;
+  align-items: flex-end;
+}
+
+.previous-drop {
+  margin-right: auto;
+  align-items: flex-start;
+}
+
+.next-drop, .previous-drop {
+  display: flex;
+  flex-direction: column;
+  transition: 0.3s;
+}
+
+.next-drop p.semi-bold-24, .previous-drop p.semi-bold-24 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--dark-grey);
+}
+
+.next-drop svg, .previous-drop svg {
+  height: 24px;
+  margin-top: 2px;
+  transition: 0.3s;
+}
+
+.next-drop:hover, .previous-drop:hover {
+  opacity: 0.8;
+}
+
+.next-drop:hover p.bold-24, .previous-drop:hover p.bold-24 {
+  text-decoration: underline;
+}
+
+@media all and (max-width: 460px) {
+  .next-drop svg, .previous-drop svg {
+    height: 20px;
+  }
+}
+
+
 /* Footer */
 footer {
   background: #fff;
   border-top: 1px solid #f0f0f0;
-  margin-bottom: 16px;
+  padding-bottom: 16px;
 }
 
 footer .content-wrapper {

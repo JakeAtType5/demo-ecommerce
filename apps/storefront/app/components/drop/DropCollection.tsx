@@ -103,7 +103,7 @@ export default function ProductCollection({
   const dropArray = Array.from(sortedDrops);
 
   return (
-    <div className={clsx("drop-collection", `--${style}-collection`)}>
+    <div className={clsx("drops-collection", `--${style}-collection`)}>
       {dropArray.map((drop) => (
         <DropCard key={drop._id} drop={drop} />
       ))}

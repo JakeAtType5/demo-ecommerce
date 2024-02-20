@@ -1,4 +1,4 @@
-import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
+import { faAngleDown, faSliders } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useLoaderData, useParams } from "@remix-run/react";
 import { defer, type LoaderFunctionArgs } from "@shopify/remix-oxygen";
@@ -44,7 +44,7 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
 
 export default function ProductHandle() {
   const { language, drops } = useLoaderData<typeof loader>();
-  console.log(drops);
+
   return (
     <SanityPreview
       data={drops}
@@ -62,7 +62,7 @@ export default function ProductHandle() {
           </section>
 
           <section className="drops-grid">
-            <div className="collection-options">
+            <div className="collection-options desktop-only">
               <div className="collection-filters semi-bold-20">
                 <div className="filter-dropdown">
                   style
@@ -84,6 +84,10 @@ export default function ProductHandle() {
                   <FontAwesomeIcon icon={faAngleDown} />
                 </div>
               </div>
+            </div>
+            <div className="button--large semi-bold-20 mobile-only collection-mobile-filter">
+              <FontAwesomeIcon icon={faSliders} />
+              Filter drops
             </div>
 
             <DropCollection drops={drops} style="grid" />

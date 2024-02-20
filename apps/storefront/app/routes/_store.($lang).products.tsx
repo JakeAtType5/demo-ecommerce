@@ -1,4 +1,4 @@
-import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
+import { faAngleDown, faSliders } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Await, useLoaderData } from "@remix-run/react";
 import { AnalyticsPageType, type SeoHandleFunction } from "@shopify/hydrogen";
@@ -79,37 +79,49 @@ export default function Index() {
   const { products } = useLoaderData<SerializeFrom<typeof loader>>();
 
   return (
-    <section className="products-grid">
-      <h1 className="bold-56">our prints.</h1>
-      <div className="collection-options">
-        <div className="collection-filters semi-bold-20">
-          <div className="filter-dropdown">
-            style <FontAwesomeIcon icon={faAngleDown} />
+    <>
+      <section className="products-hero">
+        <h1 className="bold-110">prints.</h1>
+        <p className="semi-bold-24">
+          weekly releases from our favourite artists.
+        </p>
+      </section>
+      <section className="products-grid">
+        <div className="collection-options desktop-only">
+          <div className="collection-filters semi-bold-20">
+            <div className="filter-dropdown">
+              style <FontAwesomeIcon icon={faAngleDown} />
+            </div>
+            <div className="filter-dropdown">
+              colour
+              <FontAwesomeIcon icon={faAngleDown} />
+            </div>
+            <div className="filter-dropdown">
+              availability
+              <FontAwesomeIcon icon={faAngleDown} />
+            </div>
           </div>
-          <div className="filter-dropdown">
-            colour
-            <FontAwesomeIcon icon={faAngleDown} />
-          </div>
-          <div className="filter-dropdown">
-            availability
-            <FontAwesomeIcon icon={faAngleDown} />
+
+          <div className="collection-sorting semi-bold-20">
+            <div className="filter-dropdown">
+              sort by: latest
+              <FontAwesomeIcon icon={faAngleDown} />
+            </div>
           </div>
         </div>
 
-        <div className="collection-sorting semi-bold-20">
-          <div className="filter-dropdown">
-            sort by: latest
-            <FontAwesomeIcon icon={faAngleDown} />
-          </div>
+        <div className="button--large semi-bold-20 mobile-only collection-mobile-filter">
+          <FontAwesomeIcon icon={faSliders} />
+          Filter art
         </div>
-      </div>
 
-      <ProductCollection
-        filter="upcoming available unavailable"
-        products={products}
-        style="grid"
-      />
-    </section>
+        <ProductCollection
+          filter="upcoming available unavailable"
+          products={products}
+          style="grid"
+        />
+      </section>
+    </>
     // <SanityPreview data={page} query={HOME_PAGE_QUERY} params={{ language }}>
     //   {(page) => (
     //     <Suspense>

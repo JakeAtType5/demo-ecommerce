@@ -91,7 +91,7 @@ export default function ProductCollection({
   const productArray = Array.from(sortedProducts);
 
   return (
-    <div className={clsx("product-collection", `--${style}-collection`)}>
+    <div className={clsx("products-collection", `--${style}-collection`)}>
       {productArray.map((product) => (
         <ProductCard key={product._id} product={product} />
       ))}
