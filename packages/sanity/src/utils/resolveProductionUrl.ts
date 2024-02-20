@@ -32,11 +32,11 @@ export const resolvePreviewUrl = (document: SanityDocumentLike) => {
 
     case 'product': {
       const slug = (document?.store as store)?.slug?.current
-      path = slug == null ? '/' : `/products/${slug}`
+      path = slug == null ? '/' : `/product/${slug}`
       break
     }
     
-    // JL: add drop, episode
+    // TODO: add drop, episode
     case 'collection': {
       const slug = (document?.store as store)?.slug?.current
       path = slug == null ? '/' : `/collections/${slug}`

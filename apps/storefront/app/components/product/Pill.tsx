@@ -45,7 +45,7 @@ export default function ProductPill({
   const { availableForSale, compareAtPrice, image, price } = firstVariant;
 
   return (
-    <Link onClick={onClick} to={`/products/${storefrontProduct.handle}`}>
+    <Link onClick={onClick} to={`/product/${storefrontProduct.handle}`}>
       <div
         className={clsx(
           "group flex h-[108px] gap-4 rounded-md border border-lightGray bg-white p-3 text-sm duration-500 ease-out",

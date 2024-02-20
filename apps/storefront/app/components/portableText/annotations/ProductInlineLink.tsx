@@ -181,7 +181,7 @@ function ProductInlineLinkContent({
           </BuyNowButton>
         )}
         {linkAction === "link" && (
-          <Link to={`/products/${handle}`}>{LinkContent}</Link>
+          <Link to={`/product/${handle}`}>{LinkContent}</Link>
         )}
       </span>
     </Tippy>

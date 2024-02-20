@@ -35,7 +35,7 @@ export default function ProductTile({ storefrontProduct, variantGid }: Props) {
   const productOptions = getProductOptionString(storefrontProduct.options);
 
   return (
-    <Link to={`/products/${storefrontProduct.handle}`}>
+    <Link to={`/product/${storefrontProduct.handle}`}>
       <div
         className={clsx(
           "group min-w-[12.5em] rounded-md bg-white p-5 transition-[border-radius] duration-500 ease-out",

@@ -142,7 +142,7 @@ export default function OrderRoute() {
                       <td className="w-full max-w-0 py-4 pl-0 pr-3 align-top sm:w-auto sm:max-w-none sm:align-middle">
                         <div className="flex gap-6">
                           <Link
-                            to={`/products/${
+                            to={`/product/${
                               lineItem.variant!.product!.handle
                             }`}
                           >

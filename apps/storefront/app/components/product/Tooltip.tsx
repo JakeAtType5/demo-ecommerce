@@ -54,7 +54,7 @@ export default function ProductTooltip({
       >
         <Link
           className="absolute left-0 top-0 h-full w-full"
-          to={`/products/${handle}`}
+          to={`/product/${handle}`}
         >
           {selectedVariant.image && (
             <Image
@@ -81,7 +81,7 @@ export default function ProductTooltip({
           {/* Title */}
           <Link
             className="font-bold hover:underline"
-            to={`/products/${handle}`}
+            to={`/product/${handle}`}
           >
             {title}
           </Link>

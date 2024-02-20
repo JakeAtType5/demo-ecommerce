@@ -64,7 +64,7 @@ export default function ProductCard({
       >
         <Link
           className="absolute left-0 top-0 h-full w-full"
-          to={`/products/${storefrontProduct.handle}`}
+          to={`/product/${storefrontProduct.handle}`}
         >
           {firstVariant.image && (
             <Image
@@ -122,7 +122,7 @@ export default function ProductCard({
                 "font-bold", //
                 "hover:underline"
               )}
-              to={`/products/${storefrontProduct.handle}`}
+              to={`/product/${storefrontProduct.handle}`}
             >
               {storefrontProduct.title}
             </Link>

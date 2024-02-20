@@ -34,7 +34,7 @@ export default function ProductTag({ productGid, variantGid }: Props) {
         />
       )}
     >
-      <Link to={`/products/${handle}`}>
+      <Link to={`/product/${handle}`}>
         <div
           className={clsx(
             "inline-flex place-content-center whitespace-nowrap rounded-xs bg-lightGray px-1.5 py-1 text-sm leading-none text-darkGray duration-200 ease-out",

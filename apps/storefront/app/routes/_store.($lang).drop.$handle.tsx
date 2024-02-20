@@ -5,6 +5,7 @@ import { SanityPreview } from "hydrogen-sanity";
 import invariant from "tiny-invariant";
 
 import DropMetadata from "~/components/drop/Metadata";
+import ProductCollection from "~/components/product/ProductCollection";
 import VideoPlayerPreview from "~/components/video/PreviewPlayer";
 import { baseLanguage } from "~/data/countries";
 import type { SanityDrop } from "~/lib/sanity";
@@ -126,6 +127,7 @@ export default function ProductHandle() {
 
           <section className="drop-prints product-section">
             <p className="semi-bold-24 section-header">Explore this drop</p>
+            <ProductCollection products={relatedProducts}></ProductCollection>
           </section>
         </>
       )}

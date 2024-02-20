@@ -166,7 +166,7 @@ const QUERY_SANITY = groq`
   ] {
     _updatedAt,
     "imageUrl": coalesce(seo.image.asset->url, store.previewImageUrl),
-    "url": $baseUrl + "/products/" + store.slug.current,
+    "url": $baseUrl + "/product/" + store.slug.current,
   },
 }
 `;

@@ -46,7 +46,7 @@ export default function ProductHotspot({
           left: `${x}%`,
           top: `${y}%`,
         }}
-        to={`/products/${storefrontProduct.handle}`}
+        to={`/product/${storefrontProduct.handle}`}
       >
         <div className="relative h-[4px] w-[4px] rounded-full bg-white" />
       </Link>
