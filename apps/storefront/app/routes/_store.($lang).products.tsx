@@ -11,13 +11,17 @@ import clsx from "clsx";
 import { SanityPreview } from "hydrogen-sanity";
 import { Suspense } from "react";
 
-import HomeHero from "~/components/heroes/Home";
-import ModuleGrid from "~/components/modules/ModuleGrid";
+import Filter from "~/components/collection/Filter";
 import ProductCollection from "~/components/product/ProductCollection";
-import type { SanityHeroHome, SanityHomePage } from "~/lib/sanity";
+import type { SanityFilter, SanityProductPreview } from "~/lib/sanity";
 import { fetchGids, notFound, validateLocale } from "~/lib/utils";
 import { ALL_PRODUCTS_QUERY } from "~/queries/sanity/product";
+import {
+  COLOURS_FOR_PRODUCT_QUERY,
+  STYLES_FOR_PRODUCT_QUERY,
+} from "~/queries/sanity/productFilters";
 import { INVENTORY_BY_PRODUCT_IDS } from "~/queries/shopify/product";
+
 // const seo: SeoHandleFunction<typeof loader> = ({ data }) => ({
 //   title: data?.page?.seo?.title || "Sanity x Hydrogen",
 //   description:
@@ -66,9 +70,21 @@ export async function loader({ context, params }: LoaderFunctionArgs) {
     };
   });
 
+  const styles = context.sanity.query<SanityFilter>({
+    query: STYLES_FOR_PRODUCT_QUERY,
+    cache,
+  });
+
+  const colours = context.sanity.query<SanityFilter>({
+    query: COLOURS_FOR_PRODUCT_QUERY,
+    cache,
+  });
+
   return defer({
     language,
     products,
+    styles,
+    colours,
     analytics: {
       pageType: AnalyticsPageType.home,
     },
@@ -76,37 +92,35 @@ export async function loader({ context, params }: LoaderFunctionArgs) {
 }
 
 export default function Index() {
-  const { products } = useLoaderData<SerializeFrom<typeof loader>>();
+  const { products, styles, colours } =
+    useLoaderData<SerializeFrom<typeof loader>>();
 
   return (
     <>
-      <section className="products-hero">
-        <h1 className="bold-110">prints.</h1>
-        <p className="semi-bold-24">
-          weekly releases from our favourite artists.
-        </p>
+      <section className="page-hero products-hero">
+        <h1 className="bold-110">artworks.</h1>
+        <p className="semi-bold-24">explore our full catalogue of artworks.</p>
       </section>
+
       <section className="products-grid">
         <div className="collection-options desktop-only">
           <div className="collection-filters semi-bold-20">
-            <div className="filter-dropdown">
-              style <FontAwesomeIcon icon={faAngleDown} />
-            </div>
-            <div className="filter-dropdown">
-              colour
-              <FontAwesomeIcon icon={faAngleDown} />
-            </div>
-            <div className="filter-dropdown">
-              availability
-              <FontAwesomeIcon icon={faAngleDown} />
-            </div>
+            <Suspense>
+              <Await resolve={styles}>
+                {(styles) => <Filter items={styles} title="Styles" />}
+              </Await>
+            </Suspense>
+            <Suspense>
+              <Await resolve={colours}>
+                {(colours) => <Filter items={colours} title="Colours" />}
+              </Await>
+            </Suspense>
+
+            <Filter title="Availability" />
           </div>
 
           <div className="collection-sorting semi-bold-20">
-            <div className="filter-dropdown">
-              sort by: latest
-              <FontAwesomeIcon icon={faAngleDown} />
-            </div>
+            <Filter title="Sort by: Latest" />
           </div>
         </div>
 

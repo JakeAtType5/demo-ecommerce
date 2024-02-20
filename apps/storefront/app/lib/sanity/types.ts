@@ -358,6 +358,13 @@ export type SanityProductPreview = {
   title: string;
 };
 
+export type SanityFilter = {
+  _id: string;
+  count: number;
+  title: string;
+  slug: string;
+}
+
 export type SanitySeo = {
   description?: string;
   image?: SanityAssetImage;

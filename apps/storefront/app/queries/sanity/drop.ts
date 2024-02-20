@@ -19,8 +19,6 @@ export const DROP_PAGE_QUERY = groq`
   }
 `;
 
-
-
 export const DROP_BY_NUMBER_QUERY = groq`
   *[
     _type == 'drop'

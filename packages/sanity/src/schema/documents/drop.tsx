@@ -63,6 +63,49 @@ export default defineType({
       group: 'content',
       title: 'Location'
     },
+      // tags
+      defineField({
+        name: 'tags',
+        title: 'Tags',
+        group: 'content',
+        type: 'array',
+        of: [
+          {
+            type: 'reference',
+            name: 'styles',
+            title: 'Styles',
+            to: [
+              {
+                type: 'style',
+              },
+            ],
+            weak: true
+          },
+          {
+            type: 'reference',
+            name: 'colours',
+            title: 'Colours',
+            to: [
+              {
+                type: 'colour',
+              },
+            ],
+            weak: true
+          },
+          {
+            type: 'reference',
+            name: 'locations',
+            title: 'Locations',
+            to: [
+              {
+                type: 'location',
+              },
+            ],
+            weak: true
+          },
+        ]
+      }),
+  
 
     // Episode
     defineField({
