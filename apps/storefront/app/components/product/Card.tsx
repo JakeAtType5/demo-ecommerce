@@ -64,7 +64,7 @@ export default function ProductCard({
       >
         <Link
           className="absolute left-0 top-0 h-full w-full"
-          to={`/product/${storefrontProduct.handle}`}
+          to={`/${storefrontProduct.handle}`}
         >
           {firstVariant.image && (
             <Image

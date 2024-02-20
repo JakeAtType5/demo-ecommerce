@@ -17,7 +17,7 @@ export default function DropPreview({ drop }: Props) {
         <DropMetadata
           location={drop.location}
           number={drop.number}
-          releaseDate={drop.release_date}
+          releaseDate={drop.releaseDate}
         />
 
         {drop.description && (

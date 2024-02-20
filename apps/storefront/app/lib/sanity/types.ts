@@ -352,7 +352,7 @@ export type SanityProductPreview = {
     minVariantPrice: number;
   };
   printImage: SanityAssetImage;
-  release_date?: Date;
+  releaseDate?: Date;
   slug: string;
   status?: string;
   title: string;
@@ -370,7 +370,7 @@ export type SanityDrop = {
   title: string;
   number?: number;
   description?: string;
-  release_date?: Date;
+  releaseDate?: Date;
   location?: string;
   seo: SanitySeo;
   slug: string;

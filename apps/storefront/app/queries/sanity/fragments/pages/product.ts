@@ -18,8 +18,8 @@ export const PRODUCT_PREVIEW = groq`
   "printImage": printImage {
     ${IMAGE}
   },
-  "release_date": drop->release_date,
-  "slug": store.slug.current,
+  "releaseDate": drop->release_date,
+  "slug": "/product/" + store.slug.current,
   "title": store.title,
 `;
 
@@ -48,7 +48,7 @@ export const PRODUCT_PAGE = groq`
     ${PORTABLE_TEXT}
   },
   ${SEO_SHOPIFY},
-  "slug": store.slug.current,
+  "slug": "/product/" + store.slug.current,
   ${SHARED_TEXT},
 `;
 

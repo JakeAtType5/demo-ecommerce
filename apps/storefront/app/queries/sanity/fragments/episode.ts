@@ -7,7 +7,7 @@ export const EPISODE = groq`
   _id,
   title,
   description,
-  release_date,
+  "releaseDate": release_date,
   "slug": "/video/" + slug.current,
   ${SEO},
   ${VIDEO}

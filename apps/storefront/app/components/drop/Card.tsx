@@ -45,7 +45,7 @@ export default function DropCard({ drop, style }: Props) {
         <DropMetadata
           location={drop.location}
           number={drop.number}
-          releaseDate={drop.release_date}
+          releaseDate={drop.releaseDate}
         />
       </Link>
     </div>

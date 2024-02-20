@@ -9,12 +9,12 @@ type Props = {
   style?: "collage" | "grid" | "row";
   idsToHide?: [];
   filter?: "upcoming available unavailable" | "upcoming" | "available";
-  sortBy?: "release_date";
+  sortBy?: "releaseDate";
 };
 
 export function sortProducts({ products, filter, sortBy }: Props) {
   // temp: remove products without release dates for testing
-  const validProducts = products.filter((x) => x.release_date);
+  const validProducts = products.filter((x) => x.releaseDate);
 
   const sortedProducts = sortBy
     ? validProducts.sort((a, b) => {
@@ -29,8 +29,8 @@ export function sortProducts({ products, filter, sortBy }: Props) {
   const now = new Date();
 
   sortedProducts.forEach((product) => {
-    const release_date = product.release_date && new Date(product.release_date);
-    const isUpcoming = release_date && release_date > now;
+    const releaseDate = product.releaseDate && new Date(product.releaseDate);
+    const isUpcoming = releaseDate && releaseDate > now;
 
     const isAvailable =
       product.inventory && product.inventory.availableForSale == true;

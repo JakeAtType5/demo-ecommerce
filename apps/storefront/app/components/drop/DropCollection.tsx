@@ -13,14 +13,14 @@ type Props = {
     | "upcoming"
     | "available"
     | "unavailable";
-  sortBy?: "release_date";
+  sortBy?: "releaseDate";
 };
 
 export function sortDrops({ drops, filter, sortBy }: Props) {
   // todo: THIS MUST FEED THROUGH TO THE QUERY, OR WE WILL HAVE BIG ISSUES WITH PAGINATION IN FUTURE!!
 
   // temp: remove products without release dates for testing
-  const validDrops = drops.filter((x) => x.release_date);
+  const validDrops = drops.filter((x) => x.releaseDate);
 
   const sortedDrops = sortBy
     ? validDrops.sort((a, b) => {
@@ -36,8 +36,8 @@ export function sortDrops({ drops, filter, sortBy }: Props) {
 
   // calculates the status of each drop, and adds it to the relevant array
   sortedDrops.forEach((drop) => {
-    const release_date = drop.release_date && new Date(drop.release_date);
-    const isUpcoming = release_date && release_date > now;
+    const releaseDate = drop.releaseDate && new Date(drop.releaseDate);
+    const isUpcoming = releaseDate && releaseDate > now;
 
     const isAvailable = true;
     // todo: query isAvailable

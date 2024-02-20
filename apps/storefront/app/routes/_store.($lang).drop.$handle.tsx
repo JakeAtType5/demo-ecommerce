@@ -119,7 +119,7 @@ export default function ProductHandle() {
                 <DropMetadata
                   location={page.location}
                   number={page.number}
-                  releaseDate={page.release_date}
+                  releaseDate={page?.releaseDate}
                 />
               </div>
             </div>

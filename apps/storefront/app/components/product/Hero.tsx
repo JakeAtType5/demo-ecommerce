@@ -43,7 +43,7 @@ export default function ProductHero({
   const { sanityDataset, sanityProjectID } = useRootLoaderData();
 
   const formattedReleaseDate = formatDate({
-    value: sanityProduct?.drop.release_date,
+    value: sanityProduct?.drop.releaseDate,
     format: "w do m @ h:00",
   });
 
@@ -107,10 +107,10 @@ export default function ProductHero({
 
         {/* Messages */}
         {isInStock && (
-          <div className="semi-bold-16 product-messages">
+          <div className="semi-bold-14 product-messages">
             <div className="product-message">
               <FontAwesomeIcon icon={faCheck} />
-              <p>Starts from £60.00</p>
+              <p>Starts from £160.00</p>
             </div>
             <div className="product-message">
               <FontAwesomeIcon icon={faCheck} />

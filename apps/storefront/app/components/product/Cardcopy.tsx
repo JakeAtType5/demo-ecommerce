@@ -24,7 +24,7 @@ export default function ProductCard({ product, style }: Props) {
         "--product-primary-color": `${product.printImage?.palette.vibrant.background}1f`,
       }}
     >
-      <Link to={`/product/${product.slug}`}>
+      <Link to={`${product.slug}`}>
         <div className="image-container">
           <SanityImage
             dataset={sanityDataset}

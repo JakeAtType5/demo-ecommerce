@@ -214,7 +214,7 @@ export default function ProductHandle() {
     (variant) => variant.availableForSale == true
   );
 
-  const releaseDate = new Date(page?.drop.release_date);
+  const releaseDate = new Date(page?.drop.releaseDate);
   const isFutureRelease = releaseDate > new Date();
 
   const [showCustomiseModal, setShowCustomiseModal] = useState(false);

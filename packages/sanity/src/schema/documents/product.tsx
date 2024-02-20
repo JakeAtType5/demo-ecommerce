@@ -58,13 +58,15 @@ export default defineType({
       },
     }),
 
-     // Hero
-     defineField({
+    // Hero
+    defineField({
       name: 'printImage',
       title: 'High-res image',
       type: 'image',
       group: 'hero',
     }),
+  
+    // Proxies for title / artist
      defineField({
       name: 'titleProxy',
       title: 'Title',
@@ -79,6 +81,8 @@ export default defineType({
       options: {field: 'store.vendor'},
       group: 'hero',
     }),
+  
+    // description
     defineField({
       name: 'description',
       title: 'Description',
@@ -158,7 +162,6 @@ export default defineType({
       title: 'FAQs',
       description: 'Shown in addition to any material FAQs',
       type: 'internationalizedArrayFaqs',
-
     }),
     defineField({
       name: 'store',

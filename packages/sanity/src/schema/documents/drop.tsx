@@ -40,6 +40,12 @@ export default defineType({
       validation: Rule => Rule.required()
     },
     {
+      name: 'previewImage',
+      title: 'High-res image',
+      type: 'image',
+      group: 'content',
+    },
+    {
       name: 'description',
       type: 'text',
       group: 'content',
@@ -71,7 +77,7 @@ export default defineType({
 
     // Prints
     defineField({
-      title: 'Prints',
+      title: 'Products',
       name: 'prints',
       group: 'prints',
       type: 'array',
