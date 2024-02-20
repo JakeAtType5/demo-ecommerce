@@ -59,6 +59,13 @@ body {
        font-style: normal;
 }
 
+
+.bold-110 {
+  font: 6.5rem "General Sans";
+  font-weight: 700;
+  letter-spacing: -3px;
+}
+
 .bold-56 {
   font: 3.5rem "General Sans";
   font-weight: 700;
@@ -1338,6 +1345,66 @@ section#customise {
 
 
 
+/* Drops */
+.drops-hero {
+  text-align: center;
+  margin: 100px 0;
+}
+
+.drops-hero .page-background {
+  background: #383838;
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+  z-index: -1;
+}
+
+.drops-hero p, .drops-hero h1 {
+  color: var(--light-grey);
+}
+
+.drop-collection {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 120px;
+  margin-top: 24px;
+  margin-top: 40px;
+}
+
+.drop-card {
+  background: #414141;
+  padding: 20px 20px 5px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.drop-card .image-container {
+  height: 225px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  background: #D9D9D9;
+  margin: -20px -20px 10px -20px;
+}
+
+.drop-card p.bold-24 {
+  color: var(--white);
+}
+
+.drop-card p.semi-bold-16 {
+  color: #bfbfbf;
+}
+
+.drop-card .drop-metadata {
+  color: #bfbfbf;
+  margin: 20px 0;
+}
+
+
+
 
 /* Drop page */
 .drop-hero {
@@ -1355,7 +1422,7 @@ section#customise {
 }
 
 .drop-hero .drop-content {
-  color: #C0C0C0;
+  color: var(--light-grey);
   display: grid;
   grid-template-columns: 1.5fr 1fr;
   gap: 50px;
@@ -1398,6 +1465,7 @@ section#customise {
 
 /* Footer */
 footer {
+  background: #fff;
   border-top: 1px solid #f0f0f0;
   margin-bottom: 16px;
 }

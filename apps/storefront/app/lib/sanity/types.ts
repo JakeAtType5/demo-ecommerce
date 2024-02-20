@@ -374,6 +374,7 @@ export type SanityDrop = {
   location?: string;
   seo: SanitySeo;
   slug: string;
+  status?: string;
   episode: any; //temp
   video: SanityVideo;
 };
