@@ -13,7 +13,7 @@ type Props = {
     | "upcoming"
     | "available"
     | "unavailable";
-  sortBy?: "releaseDate";
+  sortBy?: "number";
 };
 
 export function sortDrops({ drops, filter, sortBy }: Props) {
@@ -95,6 +95,7 @@ export default function ProductCollection({
   // now lets sort the products
   const sortedDrops = sortDrops({
     drops: filteredDrops,
+    sortBy: "number",
     filter: filter || "upcoming available unavailable",
   });
 

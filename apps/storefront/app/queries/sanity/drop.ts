@@ -18,3 +18,14 @@ export const DROP_PAGE_QUERY = groq`
     ${DROP}
   }
 `;
+
+
+
+export const DROP_BY_NUMBER_QUERY = groq`
+  *[
+    _type == 'drop'
+    && number == $number
+  ] | order(_updatedAt desc) [0]{
+    ${DROP}
+  }
+`;

@@ -1,3 +1,5 @@
+import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useLoaderData, useParams } from "@remix-run/react";
 import { SeoConfig, type SeoHandleFunction } from "@shopify/hydrogen";
 import { defer, type LoaderFunctionArgs } from "@shopify/remix-oxygen";
@@ -5,13 +7,14 @@ import { SanityPreview } from "hydrogen-sanity";
 import invariant from "tiny-invariant";
 
 import DropMetadata from "~/components/drop/Metadata";
+import { Link } from "~/components/Link";
 import ProductCollection from "~/components/product/ProductCollection";
 import VideoPlayerPreview from "~/components/video/PreviewPlayer";
 import { baseLanguage } from "~/data/countries";
 import type { SanityDrop } from "~/lib/sanity";
 import type { SanityProductPreview } from "~/lib/sanity";
 import { notFound, validateLocale } from "~/lib/utils";
-import { DROP_PAGE_QUERY } from "~/queries/sanity/drop";
+import { DROP_BY_NUMBER_QUERY, DROP_PAGE_QUERY } from "~/queries/sanity/drop";
 import { PRODUCTS_IN_DROP_QUERY } from "~/queries/sanity/product";
 
 const seo: SeoHandleFunction<typeof loader> = ({ data }) => ({
@@ -37,21 +40,41 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
     staleWhileRevalidate: 60,
   });
 
-  const [page] = await Promise.all([
-    context.sanity.query<SanityDrop>({
-      query: DROP_PAGE_QUERY,
-      params: {
-        slug: params.handle,
-        language,
-        baseLanguage,
-      },
-      cache,
-    }),
-  ]);
+  const page = await context.sanity.query<SanityDrop>({
+    query: DROP_PAGE_QUERY,
+    params: {
+      slug: params.handle,
+      language,
+      baseLanguage,
+    },
+    cache,
+  });
 
   if (!page) {
     throw notFound();
   }
+
+  const nextDrop = await context.sanity.query<SanityDrop>({
+    query: DROP_BY_NUMBER_QUERY,
+    params: {
+      number: Number(page.number) + 1,
+      language,
+      baseLanguage,
+    },
+    // cache,
+  });
+
+  console.log(nextDrop);
+
+  const previousDrop = await context.sanity.query<SanityDrop>({
+    query: DROP_BY_NUMBER_QUERY,
+    params: {
+      number: Number(page.number) - 1,
+      language,
+      baseLanguage,
+    },
+    // cache,
+  });
 
   // Fetch related print IDs from this drop
   const productsInDrop =
@@ -71,6 +94,8 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
     language,
     page,
     relatedProducts,
+    nextDrop,
+    previousDrop,
     // analytics: {
     //   pageType: AnalyticsPageType.product,
     //   resourceId: product.id,
@@ -80,8 +105,9 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
   });
 }
 
-export default function ProductHandle() {
-  const { language, page, relatedProducts } = useLoaderData<typeof loader>();
+export default function DropHandle() {
+  const { language, page, relatedProducts, nextDrop, previousDrop } =
+    useLoaderData<typeof loader>();
 
   const { handle } = useParams();
 
@@ -94,7 +120,7 @@ export default function ProductHandle() {
       {(page) => (
         <>
           <section className="drop-hero">
-            <div className="page-background" />
+            <div className="page-background desktop-only" />
             {page?.episode?.playBackId ? (
               <VideoPlayerPreview
                 playbackId={page.episode.playbackId}
@@ -125,9 +151,32 @@ export default function ProductHandle() {
             </div>
           </section>
 
-          <section className="drop-prints product-section">
-            <p className="semi-bold-24 section-header">Explore this drop</p>
-            <ProductCollection products={relatedProducts}></ProductCollection>
+          {relatedProducts?.length >= 1 && (
+            <section className="drop-prints product-section">
+              <p className="semi-bold-24 section-header">Explore this drop</p>
+              <ProductCollection products={relatedProducts}></ProductCollection>
+            </section>
+          )}
+
+          <section className="more-drops product-section">
+            {nextDrop && nextDrop._id && (
+              <Link to={nextDrop.slug} className="next-drop">
+                <p className="semi-bold-24">
+                  Next drop
+                  <FontAwesomeIcon icon={faAngleRight} />
+                </p>
+                <p className="bold-24">{nextDrop.title}</p>
+              </Link>
+            )}
+            {previousDrop && previousDrop._id && (
+              <Link to={previousDrop.slug} className="previous-drop">
+                <p className="semi-bold-24">
+                  <FontAwesomeIcon icon={faAngleLeft} />
+                  Previous drop
+                </p>
+                <p className="bold-24">{previousDrop.title}</p>
+              </Link>
+            )}
           </section>
         </>
       )}
