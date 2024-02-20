@@ -367,15 +367,16 @@ export type SanitySeo = {
 // DROPS
 export type SanityDrop = {
   _id: string;
-  title: string;
-  number?: number;
+  episode: any; //temp
   description?: string;
-  releaseDate?: Date;
   location?: string;
+  number?: number;
+  previewImage?: SanityAssetImage;
+  releaseDate?: Date;
   seo: SanitySeo;
   slug: string;
   status?: string;
-  episode: any; //temp
+  title: string;
   video: SanityVideo;
 };
 

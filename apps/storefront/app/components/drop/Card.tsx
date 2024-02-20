@@ -12,7 +12,7 @@ type Props = {
 };
 
 export default function DropCard({ drop, style }: Props) {
-  // const { sanityDataset, sanityProjectID } = useRootLoaderData();
+  const { sanityDataset, sanityProjectID } = useRootLoaderData();
 
   return (
     <div
@@ -27,13 +27,13 @@ export default function DropCard({ drop, style }: Props) {
     >
       <Link to={drop.slug}>
         <div className="image-container">
-          {/* <SanityImage
+          <SanityImage
             dataset={sanityDataset}
             layout="responsive"
             projectId={sanityProjectID}
             sizes={["30vw, 50vw"]}
             src={drop.previewImage?.asset?._ref}
-          /> */}
+          />
         </div>
 
         <p className="bold-24">{drop.title}</p>
