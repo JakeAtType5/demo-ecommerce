@@ -96,10 +96,10 @@ export default function Index() {
   const { products, styles, colours } =
     useLoaderData<SerializeFrom<typeof loader>>();
 
+  // expanses or collapses a filter set
   const [expandedFilter, setExpandedFilter] = useState();
-  const [expandedMobileMenu, setExpandedMobileMenu] = useState();
 
-  const toggleFilter = (event, filter) => {
+  const toggleExpandFilter = (event, filter) => {
     event.stopPropagation();
     if (expandedFilter === filter) {
       setExpandedFilter();
@@ -108,9 +108,12 @@ export default function Index() {
     }
   };
 
-  const resetFilters = () => {
+  const collapseFilters = () => {
     setExpandedFilter();
   };
+
+  // opens or closes the mobile option menu
+  const [expandedMobileMenu, setExpandedMobileMenu] = useState();
 
   const openMobileMenu = () => {
     document.body.classList.add("--prevent-scrolling");
@@ -122,8 +125,67 @@ export default function Index() {
     setExpandedMobileMenu(false);
   };
 
+  const [activeFilters, setActiveFilters] = useState({
+    styles: [],
+    colours: [],
+    availability: [],
+  });
+
+  // manages adding/removing filters
+  const addFilter = (type, filter) => {
+    const activeFiltersOfType = activeFilters[type];
+
+    if (!activeFiltersOfType.includes(filter)) {
+      activeFiltersOfType.push(filter);
+    }
+
+    setActiveFilters({
+      ...activeFilters,
+      [type]: activeFiltersOfType,
+    });
+
+    console.log('added');
+  };
+
+  const removeFilter = (type, filter) => {
+    let activeFiltersOfType = activeFilters[type];
+
+    if (activeFiltersOfType.includes(filter)) {
+      activeFiltersOfType = activeFiltersOfType.filter((x) => x !== filter);
+    }
+
+    setActiveFilters({
+      ...activeFilters,
+      [type]: activeFiltersOfType,
+    });
+
+    console.log('removed');
+
+  };
+
+  const toggleFilter = ({ event, type, filter }) => {
+    event.stopPropagation();
+
+    const activeFiltersOfType = activeFilters[type];
+
+    if (activeFiltersOfType.includes(filter)) {
+      removeFilter(type, filter);
+    } else {
+      addFilter(type, filter);
+    }
+  };
+
+  // resets all filters to default
+  const resetFilters = () => {
+    setActiveFilters({
+      styles: [],
+      colours: [],
+      availability: [],
+    });
+  };
+
   return (
-    <div onClick={() => resetFilters()}>
+    <div onClick={collapseFilters}>
       <section className="page-hero products-hero">
         <h1 className="bold-110">artworks.</h1>
         <p className="semi-bold-24">explore our full catalogue of artworks.</p>
@@ -143,7 +205,7 @@ export default function Index() {
             "collection-filters-background mobile-only",
             expandedMobileMenu ? "--is-visible" : ""
           )}
-          onClick={() => closeMobileMenu()}
+          onClick={closeMobileMenu}
         />
 
         <div
@@ -152,30 +214,31 @@ export default function Index() {
             expandedMobileMenu ? "--is-visible" : ""
           )}
         >
-          <Suspense>
-            <Await resolve={styles}>
-              {(styles) => (
-                <Filter
-                  items={styles}
-                  title="Styles"
-                  isExpanded={expandedFilter === "styles"}
-                  onClickHeading={(event) => toggleFilter(event, "styles")}
-                />
-              )}
-            </Await>
-          </Suspense>
-          <Suspense>
-            <Await resolve={colours}>
-              {(colours) => (
-                <Filter
-                  items={colours}
-                  title="Colours"
-                  isExpanded={expandedFilter === "colours"}
-                  onClickHeading={(event) => toggleFilter(event, "colours")}
-                />
-              )}
-            </Await>
-          </Suspense>
+          <Filter
+            items={styles}
+            title="Styles"
+            activeFilters={activeFilters.styles}
+            isExpanded={expandedFilter === "styles"}
+            onClickHeading={(event) => toggleExpandFilter(event, "styles")}
+            onClickFilter={(event, filter) => toggleFilter({
+                event,
+                filter,
+                type: "styles",
+            })}
+          />
+
+          <Filter
+            items={colours}
+            title="Colours"
+            activeFilters={activeFilters.colours}
+            isExpanded={expandedFilter === "colours"}
+            onClickHeading={(event) => toggleExpandFilter(event, "colours")}
+            onClickFilter={(event, filter) => toggleFilter({
+                event,
+                filter,
+                type: "colours",
+            })}
+          />
 
           <Filter title="Availability" />
 

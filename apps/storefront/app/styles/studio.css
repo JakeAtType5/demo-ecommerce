@@ -1424,12 +1424,24 @@ section#customise {
   pointer-events: none;
 }
 
-.filter-dropdown input[type=checkbox] {
-  appearance: none;
+.filter-dropdown > div.--is-selected {
+  color: var(--black);
+}
+
+.filter-dropdown .checkbox-container {
+  display: flex;
+  position: relative;
+  -moz-appearance: none;
   border: 1px solid #c8c8c8;
   width: 18px;
   height: 18px;
   border-radius: 2px;
+  align-items: center;
+  justify-content: center;
+}
+
+.filter-dropdown .checkbox-container svg {
+  height: 14px;
 }
 
 @media all and (max-width: 450px) {
