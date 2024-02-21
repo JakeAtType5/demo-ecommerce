@@ -115,53 +115,45 @@ export default function ProductHandle() {
           <section className="drops-grid">
             <div
               className={clsx(
-                "collection-options-background mobile-only",
+                "collection-filters-background mobile-only",
                 expandedMobileMenu ? "--is-visible" : ""
               )}
               onClick={() => closeMobileMenu()}
             />
             <div
               className={clsx(
-                "collection-options",
+                "collection-filters semi-bold-20",
                 expandedMobileMenu ? "--is-visible" : ""
               )}
             >
-              <div className="collection-filters semi-bold-20">
-                <Suspense>
-                  <Await resolve={styles}>
-                    {(styles) => (
-                      <Filter
-                        items={styles}
-                        title="Styles"
-                        isExpanded={expandedFilter === "styles"}
-                        onClickHeading={(event) =>
-                          toggleFilter(event, "styles")
-                        }
-                      />
-                    )}
-                  </Await>
-                </Suspense>
-                <Suspense>
-                  <Await resolve={locations}>
-                    {(locations) => (
-                      <Filter
-                        items={locations}
-                        title="Locations"
-                        isExpanded={expandedFilter === "locations"}
-                        onClickHeading={(event) =>
-                          toggleFilter(event, "locations")
-                        }
-                      />
-                    )}
-                  </Await>
-                </Suspense>
+              <Suspense>
+                <Await resolve={styles}>
+                  {(styles) => (
+                    <Filter
+                      items={styles}
+                      title="Styles"
+                      isExpanded={expandedFilter === "styles"}
+                      onClickHeading={(event) => toggleFilter(event, "styles")}
+                    />
+                  )}
+                </Await>
+              </Suspense>
+              <Suspense>
+                <Await resolve={locations}>
+                  {(locations) => (
+                    <Filter
+                      items={locations}
+                      title="Locations"
+                      isExpanded={expandedFilter === "locations"}
+                      onClickHeading={(event) =>
+                        toggleFilter(event, "locations")
+                      }
+                    />
+                  )}
+                </Await>
+              </Suspense>
 
-                <Filter title="Availability" />
-              </div>
-
-              <div className="collection-sorting semi-bold-20">
-                <Filter title="Sort by: Latest" />
-              </div>
+              <Filter title="Availability" />
 
               <button className="button--large semi-bold-20 mobile-only">
                 Apply

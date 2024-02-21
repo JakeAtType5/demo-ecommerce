@@ -140,7 +140,7 @@ export default function Index() {
       <section className="products-grid">
         <div
           className={clsx(
-            "collection-options-background mobile-only",
+            "collection-filters-background mobile-only",
             expandedMobileMenu ? "--is-visible" : ""
           )}
           onClick={() => closeMobileMenu()}
@@ -148,42 +148,36 @@ export default function Index() {
 
         <div
           className={clsx(
-            "collection-options",
+            "collection-filters semi-bold-20",
             expandedMobileMenu ? "--is-visible" : ""
           )}
         >
-          <div className="collection-filters semi-bold-20">
-            <Suspense>
-              <Await resolve={styles}>
-                {(styles) => (
-                  <Filter
-                    items={styles}
-                    title="Styles"
-                    isExpanded={expandedFilter === "styles"}
-                    onClickHeading={(event) => toggleFilter(event, "styles")}
-                  />
-                )}
-              </Await>
-            </Suspense>
-            <Suspense>
-              <Await resolve={colours}>
-                {(colours) => (
-                  <Filter
-                    items={colours}
-                    title="Colours"
-                    isExpanded={expandedFilter === "colours"}
-                    onClickHeading={(event) => toggleFilter(event, "colours")}
-                  />
-                )}
-              </Await>
-            </Suspense>
+          <Suspense>
+            <Await resolve={styles}>
+              {(styles) => (
+                <Filter
+                  items={styles}
+                  title="Styles"
+                  isExpanded={expandedFilter === "styles"}
+                  onClickHeading={(event) => toggleFilter(event, "styles")}
+                />
+              )}
+            </Await>
+          </Suspense>
+          <Suspense>
+            <Await resolve={colours}>
+              {(colours) => (
+                <Filter
+                  items={colours}
+                  title="Colours"
+                  isExpanded={expandedFilter === "colours"}
+                  onClickHeading={(event) => toggleFilter(event, "colours")}
+                />
+              )}
+            </Await>
+          </Suspense>
 
-            <Filter title="Availability" />
-          </div>
-
-          <div className="collection-sorting semi-bold-20">
-            <Filter title="Sort by: Latest" />
-          </div>
+          <Filter title="Availability" />
 
           <button className="button--large semi-bold-20 mobile-only">
             Apply
