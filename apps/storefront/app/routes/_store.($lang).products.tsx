@@ -44,20 +44,39 @@ export async function loader({ context, params, request }: LoaderFunctionArgs) {
   const activeStyles = searchParams.get("styles");
   const activeColours = searchParams.get("colours");
 
-  console.log(searchParams);
-
   const cache = context.storefront.CacheCustom({
     mode: "public",
     maxAge: 60,
     staleWhileRevalidate: 60,
   });
 
+  const styles = await context.sanity.query<SanityFilter>({
+    query: STYLES_FOR_PRODUCT_QUERY,
+    cache,
+  });
+
+  const colours = await context.sanity.query<SanityFilter>({
+    query: COLOURS_FOR_PRODUCT_QUERY,
+    cache,
+  });
+
+  // gets an array of colour IDs from an array of colour slugs
+  const getFilterIDsFromSlugs = (activeFilters, allFilters) => {
+    if (!activeFilters || !allFilters) {
+      return null;
+    }
+
+    return allFilters
+      .filter((filter) => activeFilters.includes(filter.slug))
+      .map((filter) => filter._id);
+  };
+
   // Fetch available products from Sanity
   const sanityProducts = await context.sanity.query<SanityProductPreview>({
     query: ALL_PRODUCTS_QUERY,
     params: {
-      styles: activeStyles || null,
-      colours: activeColours || null,
+      styles: getFilterIDsFromSlugs(activeStyles, styles) || null,
+      colours: getFilterIDsFromSlugs(activeColours, colours) || null,
     },
     cache,
   });
@@ -81,16 +100,6 @@ export async function loader({ context, params, request }: LoaderFunctionArgs) {
       ...product,
       inventory: inventoryForId ? inventoryForId[0] : {},
     };
-  });
-
-  const styles = context.sanity.query<SanityFilter>({
-    query: STYLES_FOR_PRODUCT_QUERY,
-    cache,
-  });
-
-  const colours = context.sanity.query<SanityFilter>({
-    query: COLOURS_FOR_PRODUCT_QUERY,
-    cache,
   });
 
   return defer({
@@ -194,6 +203,8 @@ export default function Index() {
       availability: [],
     });
   };
+
+  const updateURLSearchParams = () => {};
 
   return (
     <div onClick={collapseFilters}>
