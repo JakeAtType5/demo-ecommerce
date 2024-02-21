@@ -1,4 +1,4 @@
-import { faAngleDown, faSliders } from "@fortawesome/free-solid-svg-icons";
+import { faSliders } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Await, useLoaderData } from "@remix-run/react";
 import { AnalyticsPageType, type SeoHandleFunction } from "@shopify/hydrogen";
@@ -10,6 +10,7 @@ import {
 import clsx from "clsx";
 import { SanityPreview } from "hydrogen-sanity";
 import { Suspense } from "react";
+import { useEffect, useState } from "react";
 
 import Filter from "~/components/collection/Filter";
 import ProductCollection from "~/components/product/ProductCollection";
@@ -95,24 +96,85 @@ export default function Index() {
   const { products, styles, colours } =
     useLoaderData<SerializeFrom<typeof loader>>();
 
+  const [expandedFilter, setExpandedFilter] = useState();
+  const [expandedMobileMenu, setExpandedMobileMenu] = useState();
+
+  const toggleFilter = (event, filter) => {
+    event.stopPropagation();
+    if (expandedFilter === filter) {
+      setExpandedFilter();
+    } else {
+      setExpandedFilter(filter);
+    }
+  };
+
+  const resetFilters = () => {
+    setExpandedFilter();
+  };
+
+  const openMobileMenu = () => {
+    document.body.classList.add("--prevent-scrolling");
+    setExpandedMobileMenu(true);
+  };
+
+  const closeMobileMenu = () => {
+    document.body.classList.remove("--prevent-scrolling");
+    setExpandedMobileMenu(false);
+  };
+
   return (
-    <>
+    <div onClick={() => resetFilters()}>
       <section className="page-hero products-hero">
         <h1 className="bold-110">artworks.</h1>
         <p className="semi-bold-24">explore our full catalogue of artworks.</p>
+
+        <button
+          className="button--large semi-bold-20 mobile-only collection-mobile-filter"
+          onClick={() => openMobileMenu()}
+        >
+          <FontAwesomeIcon icon={faSliders} />
+          Filter art
+        </button>
       </section>
 
       <section className="products-grid">
-        <div className="collection-options desktop-only">
+        <div
+          className={clsx(
+            "collection-options-background mobile-only",
+            expandedMobileMenu ? "--is-visible" : ""
+          )}
+          onClick={() => closeMobileMenu()}
+        />
+
+        <div
+          className={clsx(
+            "collection-options",
+            expandedMobileMenu ? "--is-visible" : ""
+          )}
+        >
           <div className="collection-filters semi-bold-20">
             <Suspense>
               <Await resolve={styles}>
-                {(styles) => <Filter items={styles} title="Styles" />}
+                {(styles) => (
+                  <Filter
+                    items={styles}
+                    title="Styles"
+                    isExpanded={expandedFilter === "styles"}
+                    onClickHeading={(event) => toggleFilter(event, "styles")}
+                  />
+                )}
               </Await>
             </Suspense>
             <Suspense>
               <Await resolve={colours}>
-                {(colours) => <Filter items={colours} title="Colours" />}
+                {(colours) => (
+                  <Filter
+                    items={colours}
+                    title="Colours"
+                    isExpanded={expandedFilter === "colours"}
+                    onClickHeading={(event) => toggleFilter(event, "colours")}
+                  />
+                )}
               </Await>
             </Suspense>
 
@@ -122,11 +184,10 @@ export default function Index() {
           <div className="collection-sorting semi-bold-20">
             <Filter title="Sort by: Latest" />
           </div>
-        </div>
 
-        <div className="button--large semi-bold-20 mobile-only collection-mobile-filter">
-          <FontAwesomeIcon icon={faSliders} />
-          Filter art
+          <button className="button--large semi-bold-20 mobile-only">
+            Apply
+          </button>
         </div>
 
         <ProductCollection
@@ -135,7 +196,7 @@ export default function Index() {
           style="grid"
         />
       </section>
-    </>
+    </div>
     // <SanityPreview data={page} query={HOME_PAGE_QUERY} params={{ language }}>
     //   {(page) => (
     //     <Suspense>
