@@ -34,9 +34,17 @@ import { INVENTORY_BY_PRODUCT_IDS } from "~/queries/shopify/product";
 //   seo,
 // };
 
-export async function loader({ context, params }: LoaderFunctionArgs) {
+export async function loader({ context, params, request }: LoaderFunctionArgs) {
   validateLocale({ context, params });
   const language = context.storefront.i18n.language.toLowerCase();
+
+  const searchParams = new URL(request.url).searchParams;
+  const cursor = searchParams.get("cursor");
+  const count = searchParams.get("count");
+  const activeStyles = searchParams.get("styles");
+  const activeColours = searchParams.get("colours");
+
+  console.log(searchParams);
 
   const cache = context.storefront.CacheCustom({
     mode: "public",
@@ -47,6 +55,10 @@ export async function loader({ context, params }: LoaderFunctionArgs) {
   // Fetch available products from Sanity
   const sanityProducts = await context.sanity.query<SanityProductPreview>({
     query: ALL_PRODUCTS_QUERY,
+    params: {
+      styles: activeStyles || null,
+      colours: activeColours || null,
+    },
     cache,
   });
 
@@ -144,7 +156,7 @@ export default function Index() {
       [type]: activeFiltersOfType,
     });
 
-    console.log('added');
+    updateURLSearchParams();
   };
 
   const removeFilter = (type, filter) => {
@@ -159,8 +171,7 @@ export default function Index() {
       [type]: activeFiltersOfType,
     });
 
-    console.log('removed');
-
+    updateURLSearchParams();
   };
 
   const toggleFilter = ({ event, type, filter }) => {
@@ -220,11 +231,13 @@ export default function Index() {
             activeFilters={activeFilters.styles}
             isExpanded={expandedFilter === "styles"}
             onClickHeading={(event) => toggleExpandFilter(event, "styles")}
-            onClickFilter={(event, filter) => toggleFilter({
+            onClickFilter={(event, filter) =>
+              toggleFilter({
                 event,
                 filter,
                 type: "styles",
-            })}
+              })
+            }
           />
 
           <Filter
@@ -233,16 +246,21 @@ export default function Index() {
             activeFilters={activeFilters.colours}
             isExpanded={expandedFilter === "colours"}
             onClickHeading={(event) => toggleExpandFilter(event, "colours")}
-            onClickFilter={(event, filter) => toggleFilter({
+            onClickFilter={(event, filter) =>
+              toggleFilter({
                 event,
                 filter,
                 type: "colours",
-            })}
+              })
+            }
           />
 
           <Filter title="Availability" />
 
-          <button className="button--large semi-bold-20 mobile-only">
+          <button
+            className="button--large semi-bold-20 mobile-only"
+            onClick={closeMobileMenu}
+          >
             Apply
           </button>
         </div>

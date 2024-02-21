@@ -25,16 +25,16 @@ export default function Filter({
 }: Props) {
   const renderItem = (item) => {
     const isSelected =
-      activeFilters && item.slug && activeFilters.includes(item.slug);
+      activeFilters && item._id && activeFilters.includes(item._id);
 
     return (
       <div
-        key={item.slug}
+        key={item._id}
         className={clsx(
           item.count == 0 ? "--is-disabled" : "",
           isSelected ? "--is-selected" : ""
         )}
-        onClick={(event) => onClickFilter(event, item.slug)}
+        onClick={(event) => onClickFilter(event, item._id)}
       >
         <div className="checkbox-container">
           {isSelected && <FontAwesomeIcon icon={faCheck} />}
@@ -60,7 +60,9 @@ export default function Filter({
 
             {items && (
               <div className="filter-dropdown">
-                {items.map((item) => renderItem(item))}
+                {items.map((item) => {
+                  return item?.count >= 1 ? renderItem(item) : "";
+                })}
               </div>
             )}
           </div>

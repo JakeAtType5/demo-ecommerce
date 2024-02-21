@@ -1337,7 +1337,7 @@ section#customise {
     background: #999;
     justify-content: center;
     margin: 0 auto;
-    margin-top: 12px;
+    margin-top: 16px;
   }
 
   .collection-mobile-filter svg {
@@ -1475,6 +1475,10 @@ section#customise {
     flex-direction: column;
     align-items: baseline;
     gap: 16px;
+  }
+
+  .filter:nth-child(3) {
+    margin-left: unset;
   }
 
   .collection-filters .button--large {
