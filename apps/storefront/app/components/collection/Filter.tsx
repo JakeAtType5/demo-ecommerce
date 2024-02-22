@@ -25,7 +25,9 @@ export default function Filter({
 }: Props) {
   const renderItem = (item) => {
     const isSelected =
-      activeFilters && item.slug && activeFilters.includes(item.slug);
+      activeFilters?.length > 0 &&
+      item.slug &&
+      activeFilters.some((filter) => filter == item.slug);
 
     return (
       <div
@@ -34,7 +36,9 @@ export default function Filter({
           item.count == 0 ? "--is-disabled" : "",
           isSelected ? "--is-selected" : ""
         )}
-        onClick={(event) => onClickFilter(event, item.slug)}
+        onClick={(event) =>
+          onClickFilter({ event, slug: item.slug })
+        }
       >
         <div className="checkbox-container">
           {isSelected && <FontAwesomeIcon icon={faCheck} />}

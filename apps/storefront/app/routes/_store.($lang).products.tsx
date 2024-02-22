@@ -1,6 +1,7 @@
+import style from "@demo-ecommerce/sanity/src/schema/documents/style";
 import { faSliders } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Await, useLoaderData } from "@remix-run/react";
+import { useLoaderData, useSearchParams } from "@remix-run/react";
 import { AnalyticsPageType, type SeoHandleFunction } from "@shopify/hydrogen";
 import {
   defer,
@@ -8,9 +9,7 @@ import {
   type SerializeFrom,
 } from "@shopify/remix-oxygen";
 import clsx from "clsx";
-import { SanityPreview } from "hydrogen-sanity";
-import { Suspense } from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import Filter from "~/components/collection/Filter";
 import ProductCollection from "~/components/product/ProductCollection";
@@ -41,8 +40,7 @@ export async function loader({ context, params, request }: LoaderFunctionArgs) {
   const searchParams = new URL(request.url).searchParams;
   const cursor = searchParams.get("cursor");
   const count = searchParams.get("count");
-  const activeStyles = searchParams.get("styles");
-  const activeColours = searchParams.get("colours");
+  const urlFilters = searchParams.get("filters")?.split("+");
 
   const cache = context.storefront.CacheCustom({
     mode: "public",
@@ -50,33 +48,64 @@ export async function loader({ context, params, request }: LoaderFunctionArgs) {
     staleWhileRevalidate: 60,
   });
 
-  const styles = await context.sanity.query<SanityFilter>({
-    query: STYLES_FOR_PRODUCT_QUERY,
-    cache,
-  });
-
-  const colours = await context.sanity.query<SanityFilter>({
-    query: COLOURS_FOR_PRODUCT_QUERY,
-    cache,
-  });
-
-  // gets an array of colour IDs from an array of colour slugs
-  const getFilterIDsFromSlugs = (activeFilters, allFilters) => {
-    if (!activeFilters || !allFilters) {
-      return null;
+  // todo: extract into helper
+  // gets an array of filter IDs from an array of slugs
+  const getFilterIDsFromSlugs = (slugs, allOptions) => {
+    if (!slugs || !allOptions) {
+      return [];
     }
 
-    return allFilters
-      .filter((filter) => activeFilters.includes(filter.slug))
+    return allOptions
+      .filter((filter) => slugs.includes(filter.slug))
       .map((filter) => filter._id);
   };
+
+  // fetch all possible styles
+  const stylesPlaceholder = await context.sanity.query<SanityFilter>({
+    query: STYLES_FOR_PRODUCT_QUERY,
+    params: {
+      colours: [],
+    },
+    cache,
+  });
+
+  // convert slugs from URL query into usable IDs
+  const styleIDsInSearchQuery = getFilterIDsFromSlugs(
+    urlFilters,
+    stylesPlaceholder
+  );
+
+  // gets all colour options that match the existing style URL param
+  const colours = await context.sanity.query<SanityFilter>({
+    query: COLOURS_FOR_PRODUCT_QUERY,
+    params: {
+      styles: styleIDsInSearchQuery.length > 0 ? styleIDsInSearchQuery : null,
+    },
+    cache,
+  });
+
+  // convert slugs from URL query into usable IDs
+  const colourIDsInSearchQuery =
+    getFilterIDsFromSlugs(urlFilters, colours) || [];
+
+  // query styles again but this time with the right colours
+  // to get accurate count data
+  const styles = await context.sanity.query<SanityFilter>({
+    query: STYLES_FOR_PRODUCT_QUERY,
+    params: {
+      colours:
+        colourIDsInSearchQuery.length > 0 ? colourIDsInSearchQuery : null,
+    },
+    cache,
+  });
 
   // Fetch available products from Sanity
   const sanityProducts = await context.sanity.query<SanityProductPreview>({
     query: ALL_PRODUCTS_QUERY,
     params: {
-      styles: getFilterIDsFromSlugs(activeStyles, styles) || null,
-      colours: getFilterIDsFromSlugs(activeColours, colours) || null,
+      styles: styleIDsInSearchQuery.length > 0 ? styleIDsInSearchQuery : null,
+      colours:
+        colourIDsInSearchQuery.length > 0 ? colourIDsInSearchQuery : null,
     },
     cache,
   });
@@ -107,6 +136,7 @@ export async function loader({ context, params, request }: LoaderFunctionArgs) {
     products,
     styles,
     colours,
+    urlFilters,
     analytics: {
       pageType: AnalyticsPageType.home,
     },
@@ -114,11 +144,11 @@ export async function loader({ context, params, request }: LoaderFunctionArgs) {
 }
 
 export default function Index() {
-  const { products, styles, colours } =
+  const { products, styles, colours, urlFilters } =
     useLoaderData<SerializeFrom<typeof loader>>();
 
   // expanses or collapses a filter set
-  const [expandedFilter, setExpandedFilter] = useState();
+  const [expandedFilter, setExpandedFilter] = useState(urlFilters);
 
   const toggleExpandFilter = (event, filter) => {
     event.stopPropagation();
@@ -146,65 +176,53 @@ export default function Index() {
     setExpandedMobileMenu(false);
   };
 
-  const [activeFilters, setActiveFilters] = useState({
-    styles: [],
-    colours: [],
-    availability: [],
-  });
+  const [activeFilters, setActiveFilters] = useState(urlFilters || []);
 
   // manages adding/removing filters
-  const addFilter = (type, filter) => {
-    const activeFiltersOfType = activeFilters[type];
-
-    if (!activeFiltersOfType.includes(filter)) {
-      activeFiltersOfType.push(filter);
+  const addFilter = (slug) => {
+    if (activeFilters.includes(slug)) {
+      return false;
     }
 
-    setActiveFilters({
-      ...activeFilters,
-      [type]: activeFiltersOfType,
-    });
-
-    updateURLSearchParams();
+    return [...activeFilters, slug];
   };
 
-  const removeFilter = (type, filter) => {
-    let activeFiltersOfType = activeFilters[type];
-
-    if (activeFiltersOfType.includes(filter)) {
-      activeFiltersOfType = activeFiltersOfType.filter((x) => x !== filter);
+  const removeFilter = (slug) => {
+    if (!activeFilters.includes(slug)) {
+      return false;
     }
 
-    setActiveFilters({
-      ...activeFilters,
-      [type]: activeFiltersOfType,
-    });
-
-    updateURLSearchParams();
+    return activeFilters.filter((x) => x !== slug);
   };
 
-  const toggleFilter = ({ event, type, filter }) => {
+  const toggleFilter = ({ event, slug }) => {
     event.stopPropagation();
 
-    const activeFiltersOfType = activeFilters[type];
+    const newFilters = activeFilters.includes(slug)
+      ? removeFilter(slug)
+      : addFilter(slug);
 
-    if (activeFiltersOfType.includes(filter)) {
-      removeFilter(type, filter);
-    } else {
-      addFilter(type, filter);
-    }
+    updateURLSearchParams(newFilters);
+
+    setActiveFilters(newFilters);
   };
 
-  // resets all filters to default
-  const resetFilters = () => {
-    setActiveFilters({
-      styles: [],
-      colours: [],
-      availability: [],
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // updates URL search parameters with active state
+  const updateURLSearchParams = (filters) => {
+    const params = new URLSearchParams();
+    if (filters.length) {
+      params.set("filters", filters.join("+"));
+    } else {
+      params.delete("filters");
+    }
+
+    setSearchParams(params, {
+      preventScrollReset: true,
+      replace: true,
     });
   };
-
-  const updateURLSearchParams = () => {};
 
   return (
     <div onClick={collapseFilters}>
@@ -239,14 +257,14 @@ export default function Index() {
           <Filter
             items={styles}
             title="Styles"
-            activeFilters={activeFilters.styles}
+            activeFilters={activeFilters}
             isExpanded={expandedFilter === "styles"}
             onClickHeading={(event) => toggleExpandFilter(event, "styles")}
-            onClickFilter={(event, filter) =>
+            onClickFilter={({ event, id, slug }) =>
               toggleFilter({
                 event,
-                filter,
-                type: "styles",
+                id,
+                slug,
               })
             }
           />
@@ -254,14 +272,14 @@ export default function Index() {
           <Filter
             items={colours}
             title="Colours"
-            activeFilters={activeFilters.colours}
+            activeFilters={activeFilters}
             isExpanded={expandedFilter === "colours"}
             onClickHeading={(event) => toggleExpandFilter(event, "colours")}
-            onClickFilter={(event, filter) =>
+            onClickFilter={({ event, id, slug }) =>
               toggleFilter({
                 event,
-                filter,
-                type: "colours",
+                id,
+                slug,
               })
             }
           />
