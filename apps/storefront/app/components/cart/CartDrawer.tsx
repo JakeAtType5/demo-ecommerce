@@ -106,10 +106,7 @@ function CartFooter({ cart }: { cart: Cart }) {
   return (
     <div className="cart-footer">
       <CartSummary cost={cart.cost} />
-
-      <div className="border-t border-gray p-4">
-        <CartActions cart={cart} />
-      </div>
+      <CartActions cart={cart} />
     </div>
   );
 }

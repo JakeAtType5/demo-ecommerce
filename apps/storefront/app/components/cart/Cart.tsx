@@ -1,4 +1,4 @@
-import { faCircle } from "@fortawesome/free-solid-svg-icons";
+import { faCircle, faTrash, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CartForm } from "@shopify/hydrogen";
 import type {
@@ -14,15 +14,9 @@ import {
   Money,
   ShopPayButton,
 } from "@shopify/hydrogen-react";
-import {
-  defer,
-  type LoaderFunctionArgs,
-  type SerializeFrom,
-} from "@shopify/remix-oxygen";
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 
-import Button, { defaultButtonStyles } from "~/components/elements/Button";
 import MinusCircleIcon from "~/components/icons/MinusCircle";
 import PlusCircleIcon from "~/components/icons/PlusCircle";
 import RemoveIcon from "~/components/icons/Remove";
@@ -36,11 +30,11 @@ import {
   getZone,
   shippingZones,
 } from "~/lib/shipping";
+import { formatDate } from "~/lib/utils";
 import { useRootLoaderData } from "~/root";
 
 import CartProductPreview from "../cart/CartProductPreview";
 import { Label } from "../global/Label";
-import { formatDate } from "~/lib/utils";
 
 export function CartLineItems({
   linesObj,
@@ -49,15 +43,39 @@ export function CartLineItems({
   linesObj: Cart["lines"] | undefined;
   sanityCartResults: SanityProductPreview[];
 }) {
+  const [shipping, setShipping] = useState({
+    city: "",
+    date: "",
+    price: 0,
+  });
+
+  const fetchShippingData = async () => {
+    const locationData = await getIpData();
+    const zone = getZone(locationData.country);
+    const daysToFulfil = 2 + zone.daysToShip;
+
+    const deliveryDate = addWorkingDays(daysToFulfil);
+
+    const formattedDeliveryDate = formatDate({
+      value: deliveryDate,
+      format: "w do m",
+    });
+
+    setShipping({
+      city: locationData.city,
+      date: formattedDeliveryDate,
+      price: zone.additionalFee,
+    });
+  };
+
+  useEffect(() => {
+    fetchShippingData();
+  }, []);
+
   const lines = flattenConnection(linesObj);
 
   return (
     <div className="cart-product-list" role="table" aria-label="Shopping cart">
-      {/* <div role="row" className="sr-only">
-        <div role="columnheader">Product image</div>
-        <div role="columnheader">Product details</div>
-        <div role="columnheader">Price</div>
-      </div> */}
       {lines.map((line) => {
         const sanityProduct = sanityCartResults.find(
           (sanityProduct) => (sanityProduct.gid = line.merchandise.product.id)
@@ -70,6 +88,29 @@ export function CartLineItems({
           />
         );
       })}
+
+      <div className="product-card cart-product-preview shipping-product-preview">
+        <div className="card-metadata">
+          {shipping?.city ? (
+            <>
+              <p className="semi-bold-14 product-title">
+                Delivery to {shipping.city}
+              </p>
+              <p className="semi-bold-14 artist-title">
+                Before {shipping.date}
+              </p>
+            </>
+          ) : (
+            <>
+              <FontAwesomeIcon icon={faCircle} beat />
+              <p>Calculating delivery time...</p>
+            </>
+          )}
+        </div>
+        <p className="semi-bold-14 product-price">
+          {shipping.price ? `£${shipping.price}` : "Free"}
+        </p>
+      </div>
     </div>
   );
 }
@@ -124,42 +165,24 @@ function LineItem({
 
   return (
     <div className={clsx("cart-row", deleting && "--is-deleted")}>
-      <CartProductPreview product={sanityProduct} key={lineItem.id} selectedOptions={merchandise.selectedOptions}>
-        <div className="semi-bold-14 product-price">
-          {updating ? (
-            <SpinnerIcon width={24} height={24} />
-          ) : (
-            <Money data={lineItem.cost.totalAmount} />
-          )}
+      <CartProductPreview
+        product={sanityProduct}
+        key={lineItem.id}
+        selectedOptions={merchandise.selectedOptions}
+      >
+        <div className="cart-row-column">
+          <div className="semi-bold-14 product-price">
+            {updating ? (
+              <SpinnerIcon width={24} height={24} />
+            ) : (
+              <Money data={lineItem.cost.totalAmount} />
+            )}
+          </div>
+          {/* <ItemRemoveButton lineIds={[lineItem.id]} /> */}
         </div>
       </CartProductPreview>
 
-      <div className="body-text-12">
-        <ItemRemoveButton lineIds={[lineItem.id]} />
-        <a>Customise</a>
-      </div>
     </div>
-
-    // <div
-    //   role="row"
-    //   className={clsx("cart-line-item", deleting && "opacity-50")}
-    // >
-
-    //     {/* Options */}
-    //     {!hasDefaultVariantOnly && (
-    //       <ul className="mt-1 space-y-1 text-xs text-darkGray">
-    //         {merchandise.selectedOptions.map(({ name, value }) => (
-    //           <li key={name}>
-    //             {name}: {value}
-    //           </li>
-    //         ))}
-    //       </ul>
-    //     )}
-    //   </div>
-
-    //   {/* Quantity */}
-    //   <CartItemQuantity line={lineItem} submissionQuantity={updating} />
-    // </div>
   );
 }
 
@@ -229,48 +252,16 @@ function ItemRemoveButton({ lineIds }: { lineIds: CartLine["id"][] }) {
       action={CartForm.ACTIONS.LinesRemove}
       inputs={{ lineIds }}
     >
-      <button
-        className="disabled:pointer-events-all disabled:cursor-wait"
-        type="submit"
-      >
-        <a>Remove</a>
-        {/* <RemoveIcon /> */}
+      <button type="submit">
+        {/* <a>Remove</a> */}
+        <FontAwesomeIcon icon={faTrash} />
+
       </button>
     </CartForm>
   );
 }
 
 export function CartSummary({ cost }: { cost: CartCost }) {
-  const [shipping, setShipping] = useState({
-    city: "",
-    date: "",
-    price: 0,
-  });
-
-  const fetchShippingData = async () => {
-    const locationData = await getIpData();
-    const zone = getZone(locationData.country);
-    // extract static number to delivery helpers and config
-    const daysToFulfil = 2 + zone.daysToShip;
-
-    const deliveryDate = addWorkingDays(daysToFulfil);
-
-    const formattedDeliveryDate = formatDate({
-      value: deliveryDate,
-      format: "w do m",
-    });
-
-    setShipping({
-      city: locationData.city,
-      date: formattedDeliveryDate,
-      price: zone.additionalFee,
-    });
-  };
-
-  useEffect(() => {
-    fetchShippingData();
-  }, []);
-
   return (
     <>
       <div className="cart-totals">
@@ -282,7 +273,40 @@ export function CartSummary({ cost }: { cost: CartCost }) {
             "-"
           )}
         </p>
-        {/* <p className="semi-bold-16">Subtotal</p>
+      </div>
+    </>
+  );
+}
+
+export function CartActions({ cart }: { cart: Cart }) {
+  const { storeDomain } = useRootLoaderData();
+
+  if (!cart || !cart.checkoutUrl) return null;
+
+  const shopPayLineItems = flattenConnection(cart.lines).map((line) => ({
+    id: line.merchandise.id,
+    quantity: line.quantity,
+  }));
+
+  return (
+    <div className="cart-actions">
+      <a href={cart.checkoutUrl}>
+        <button className="button--large semi-bold-16">
+          Proceed to Checkout
+        </button>
+      </a>
+    </div>
+  );
+}
+
+/* <ShopPayButton
+        className={clsx([defaultButtonStyles({ tone: "shopPay" }), "w-1/2"])}
+        variantIdsAndQuantities={shopPayLineItems}
+        storeDomain={storeDomain}
+      /> */
+/* <Label _key="cart.checkout" /> */
+
+/* <p className="semi-bold-16">Subtotal</p>
         <p className="semi-bold-16">
           {cost?.subtotalAmount?.amount ? (
             <Money data={cost?.subtotalAmount} />
@@ -305,11 +329,9 @@ export function CartSummary({ cost }: { cost: CartCost }) {
           ) : (
             "-"
           )}
-        </p> */}
-      </div>
+        </p> */
 
-      <div role="table" aria-label="Cost summary" className="text-sm">
-        {/* <div
+/* <div
           className="flex justify-between border-t border-gray p-4"
           role="row"
         >
@@ -323,66 +345,8 @@ export function CartSummary({ cost }: { cost: CartCost }) {
               "-"
             )}
           </span>
-        </div> */}
+        </div> */
 
-        <div className="product-message">
-          {shipping?.city ? (
-            <>
-              <p>
-                {shipping.price == 0
-                  ? "Free delivery "
-                  : `£${shipping.price} delivery `}
-                to {shipping.city} by {shipping.date}
-              </p>
-            </>
-          ) : (
-            <>
-              <FontAwesomeIcon icon={faCircle} beat />
-              <p>Calculating delivery time...</p>
-            </>
-          )}
-        </div>
-
-        {/* <div
-          role="row"
-          className="flex justify-between border-t border-gray p-4"
-        >
-          <span className="text-darkGray" role="rowheader">
-            <Label _key="cart.shipping" />
-          </span>
-          <span role="cell" className="font-bold uppercase">
-            <Label _key="cart.calculatedAtCheckout" />
-          </span>
-        </div> */}
-      </div>
-    </>
-  );
-}
-
-export function CartActions({ cart }: { cart: Cart }) {
-  const { storeDomain } = useRootLoaderData();
-
-  if (!cart || !cart.checkoutUrl) return null;
-
-  const shopPayLineItems = flattenConnection(cart.lines).map((line) => ({
-    id: line.merchandise.id,
-    quantity: line.quantity,
-  }));
-
-  return (
-    <div className="cart-actions">
-      {/* <ShopPayButton
-        className={clsx([defaultButtonStyles({ tone: "shopPay" }), "w-1/2"])}
-        variantIdsAndQuantities={shopPayLineItems}
-        storeDomain={storeDomain}
-      /> */}
-      {/* <Label _key="cart.checkout" /> */}
-
-      <a href={cart.checkoutUrl}>
-        <button className="button--large semi-bold-16">
-          Proceed to Checkout
-        </button>
-      </a>
-    </div>
-  );
-}
+//   {/* Quantity */}
+//   <CartItemQuantity line={lineItem} submissionQuantity={updating} />
+// </div>

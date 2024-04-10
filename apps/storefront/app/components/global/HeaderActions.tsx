@@ -58,27 +58,25 @@ export default function HeaderActions(navIsOpen: boolean) {
       </Link>
 
       {/* Cart */}
-      <div className="ml-2 mr-4 flex h-full items-center justify-center py-4">
-        <Await resolve={cart}>
-          {(cart) => (
-            <>
-              <CartToggle
-                cart={cart as Cart}
-                isOpen={isOpen}
-                openDrawer={openDrawer}
-                closeDrawer={closeDrawer}
-              />
+      <Await resolve={cart}>
+        {(cart) => (
+          <>
+            <CartToggle
+              cart={cart as Cart}
+              isOpen={isOpen}
+              openDrawer={openDrawer}
+              closeDrawer={closeDrawer}
+            />
 
-              <CartDrawer
-                cart={cart as Cart}
-                open={isOpen}
-                onClose={closeDrawer}
-                sanityCartResults={sanityCartResults}
-              />
-            </>
-          )}
-        </Await>
-      </div>
+            <CartDrawer
+              cart={cart as Cart}
+              open={isOpen}
+              onClose={closeDrawer}
+              sanityCartResults={sanityCartResults}
+            />
+          </>
+        )}
+      </Await>
     </div>
   );
 }

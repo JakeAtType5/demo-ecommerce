@@ -28,6 +28,7 @@ export default function CartToggle({
       <Await resolve={cart}>
         {(data) => (
           <FontAwesomeIcon
+            className={"cart-toggle"}
             icon={faShoppingBag}
             aria-expanded={isOpen}
             aria-controls="cart"
