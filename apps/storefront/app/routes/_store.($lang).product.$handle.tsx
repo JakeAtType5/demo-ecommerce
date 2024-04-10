@@ -43,7 +43,7 @@ import {
   getIpData,
   getZone,
   shippingZones,
-} from "~/lib/delivery-utils";
+} from "~/lib/shipping";
 import type {
   SanityFaqs,
   SanityProductPage,
