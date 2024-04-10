@@ -21,7 +21,5 @@
     "turbo": "^1.10.16",
     "vercel": "^32.5.3"
   },
-  "packageManager": "npm@10.2.3",
-  "dependencies": {
-  }
+  "packageManager": "npm@10.2.3"
 }

@@ -33,3 +33,12 @@ export const ALL_PRODUCTS_QUERY = groq`
     ${PRODUCT_PREVIEW}
   }
 `;
+
+export const PRODUCTS_BY_SHOPIFY_ID = groq`
+  *[
+    _type == 'product'
+    && store.gid in $ids
+  ] | {
+    ${PRODUCT_PREVIEW}
+  }
+`;

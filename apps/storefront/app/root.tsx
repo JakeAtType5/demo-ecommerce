@@ -34,7 +34,8 @@ import { COLLECTION_QUERY_ID } from "~/queries/shopify/collection";
 import type { I18nLocale } from "~/types/shopify";
 
 import { baseLanguage } from "./data/countries";
-import { SanityLayout } from "./lib/sanity";
+import { SanityLayout, SanityProductPreview } from "./lib/sanity";
+import { PRODUCTS_BY_SHOPIFY_ID } from "./queries/sanity/product";
 
 export const meta: MetaFunction = () => [
   {
@@ -78,12 +79,30 @@ export async function loader({ context }: LoaderFunctionArgs) {
 
   const selectedLocale = context.storefront.i18n as I18nLocale;
 
+  const cartResults = await cart.get();
+
+  const lineIDs = cartResults?.lines.edges.map(
+    (x) => x.node.merchandise.product.id
+  );
+
+  // Fetch cart products from Sanity
+  const sanityCartResults = lineIDs
+    ? await context.sanity.query<SanityProductPreview>({
+        query: PRODUCTS_BY_SHOPIFY_ID,
+        params: {
+          ids: lineIDs,
+        },
+        cache,
+      })
+    : [];
+
   return defer({
     analytics: {
       shopifySalesChannel: ShopifySalesChannel.hydrogen,
       shopId: shop.shop.id,
     },
-    cart: cart.get(),
+    cart: cartResults,
+    sanityCartResults,
     layout,
     notFoundCollection: layout?.notFoundPage?.collectionGid
       ? context.storefront.query<{ collection: Collection }>(

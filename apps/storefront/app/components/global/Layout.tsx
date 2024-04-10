@@ -1,11 +1,10 @@
-
 import { usePreviewContext } from "hydrogen-sanity";
 
+import CartStateWrapper from "~/components/global/CartStateWrapper";
 import Footer from "~/components/global/Footer";
 import Header from "~/components/global/Header";
+import Main from "~/components/global/Main";
 import { PreviewBanner } from "~/components/preview/PreviewBanner";
-
-
 
 type LayoutProps = {
   backgroundColor?: string;
@@ -44,13 +43,12 @@ export function Layout({ backgroundColor, children }: LayoutProps) {
   // );
 
   return (
-    <>
+    <CartStateWrapper>
       <div className="content-wrapper">
         <Header />
-        <main role="main">{children}</main>
+        <Main>{children}</Main>
+        <Footer />
       </div>
-
-      <Footer />
-    </>
+    </CartStateWrapper>
   );
 }

@@ -1,3 +1,5 @@
+import { faCircle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CartForm } from "@shopify/hydrogen";
 import type {
   Cart,
@@ -12,7 +14,13 @@ import {
   Money,
   ShopPayButton,
 } from "@shopify/hydrogen-react";
+import {
+  defer,
+  type LoaderFunctionArgs,
+  type SerializeFrom,
+} from "@shopify/remix-oxygen";
 import clsx from "clsx";
+import { useEffect, useState } from "react";
 
 import Button, { defaultButtonStyles } from "~/components/elements/Button";
 import MinusCircleIcon from "~/components/icons/MinusCircle";
@@ -21,25 +29,46 @@ import RemoveIcon from "~/components/icons/Remove";
 import SpinnerIcon from "~/components/icons/Spinner";
 import { Link } from "~/components/Link";
 import { useCartFetchers } from "~/hooks/useCartFetchers";
+import { SanityProductPreview } from "~/lib/sanity/types";
+import {
+  addWorkingDays,
+  getIpData,
+  getZone,
+  shippingZones,
+} from "~/lib/shipping";
 import { useRootLoaderData } from "~/root";
 
+import CartProductPreview from "../cart/CartProductPreview";
 import { Label } from "../global/Label";
+import { formatDate } from "~/lib/utils";
 
 export function CartLineItems({
   linesObj,
+  sanityCartResults,
 }: {
   linesObj: Cart["lines"] | undefined;
+  sanityCartResults: SanityProductPreview[];
 }) {
   const lines = flattenConnection(linesObj);
+
   return (
-    <div className="flex-grow px-8" role="table" aria-label="Shopping cart">
-      <div role="row" className="sr-only">
+    <div className="cart-product-list" role="table" aria-label="Shopping cart">
+      {/* <div role="row" className="sr-only">
         <div role="columnheader">Product image</div>
         <div role="columnheader">Product details</div>
         <div role="columnheader">Price</div>
-      </div>
+      </div> */}
       {lines.map((line) => {
-        return <LineItem key={line.id} lineItem={line} />;
+        const sanityProduct = sanityCartResults.find(
+          (sanityProduct) => (sanityProduct.gid = line.merchandise.product.id)
+        );
+        return (
+          <LineItem
+            key={line.id}
+            lineItem={line}
+            sanityProduct={sanityProduct}
+          />
+        );
       })}
     </div>
   );
@@ -47,8 +76,10 @@ export function CartLineItems({
 
 function LineItem({
   lineItem,
+  sanityProduct,
 }: {
   lineItem: CartLine | ComponentizableCartLine;
+  sanityProduct: SanityProductPreview;
 }) {
   const { merchandise } = lineItem;
 
@@ -92,65 +123,43 @@ function LineItem({
     firstVariant.name === "Title" && firstVariant.value === "Default Title";
 
   return (
-    <div
-      role="row"
-      className={clsx(
-        "flex items-center border-b border-lightGray py-3 last:border-b-0",
-        deleting && "opacity-50"
-      )}
-    >
-      {/* Image */}
-      <div role="cell" className="mr-3 aspect-square w-[66px] flex-shrink-0">
-        {merchandise.image && (
-          <Link to={`/products/${merchandise.product.handle}`}>
-            <Image
-              className="rounded"
-              data={merchandise.image}
-              width={110}
-              height={110}
-              alt={merchandise.title}
-            />
-          </Link>
-        )}
-      </div>
+    <div className={clsx("cart-row", deleting && "--is-deleted")}>
+      <CartProductPreview product={sanityProduct} key={lineItem.id} selectedOptions={merchandise.selectedOptions}>
+        <div className="semi-bold-14 product-price">
+          {updating ? (
+            <SpinnerIcon width={24} height={24} />
+          ) : (
+            <Money data={lineItem.cost.totalAmount} />
+          )}
+        </div>
+      </CartProductPreview>
 
-      {/* Title */}
-      <div className="semi-bold-16">
-        <Link
-          to={`/products/${merchandise.product.handle}`}
-          className="text-sm font-bold hover:underline"
-        >
-          {merchandise.product.title} by {merchandise.product.vendor}
-        </Link>
-
-        {/* Options */}
-        {!hasDefaultVariantOnly && (
-          <ul className="mt-1 space-y-1 text-xs text-darkGray">
-            {merchandise.selectedOptions.map(({ name, value }) => (
-              <li key={name}>
-                {name}: {value}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-
-      {/* Quantity */}
-      <CartItemQuantity line={lineItem} submissionQuantity={updating} />
-
-      {/* Price */}
-      <div className="ml-4 mr-6 flex min-w-[4rem] justify-end text-sm font-bold leading-none">
-        {updating ? (
-          <SpinnerIcon width={24} height={24} />
-        ) : (
-          <Money data={lineItem.cost.totalAmount} />
-        )}
-      </div>
-
-      <div role="cell" className="flex flex-col items-end justify-between">
+      <div className="body-text-12">
         <ItemRemoveButton lineIds={[lineItem.id]} />
+        <a>Customise</a>
       </div>
     </div>
+
+    // <div
+    //   role="row"
+    //   className={clsx("cart-line-item", deleting && "opacity-50")}
+    // >
+
+    //     {/* Options */}
+    //     {!hasDefaultVariantOnly && (
+    //       <ul className="mt-1 space-y-1 text-xs text-darkGray">
+    //         {merchandise.selectedOptions.map(({ name, value }) => (
+    //           <li key={name}>
+    //             {name}: {value}
+    //           </li>
+    //         ))}
+    //       </ul>
+    //     )}
+    //   </div>
+
+    //   {/* Quantity */}
+    //   <CartItemQuantity line={lineItem} submissionQuantity={updating} />
+    // </div>
   );
 }
 
@@ -224,17 +233,83 @@ function ItemRemoveButton({ lineIds }: { lineIds: CartLine["id"][] }) {
         className="disabled:pointer-events-all disabled:cursor-wait"
         type="submit"
       >
-        <RemoveIcon />
+        <a>Remove</a>
+        {/* <RemoveIcon /> */}
       </button>
     </CartForm>
   );
 }
 
 export function CartSummary({ cost }: { cost: CartCost }) {
+  const [shipping, setShipping] = useState({
+    city: "",
+    date: "",
+    price: 0,
+  });
+
+  const fetchShippingData = async () => {
+    const locationData = await getIpData();
+    const zone = getZone(locationData.country);
+    // extract static number to delivery helpers and config
+    const daysToFulfil = 2 + zone.daysToShip;
+
+    const deliveryDate = addWorkingDays(daysToFulfil);
+
+    const formattedDeliveryDate = formatDate({
+      value: deliveryDate,
+      format: "w do m",
+    });
+
+    setShipping({
+      city: locationData.city,
+      date: formattedDeliveryDate,
+      price: zone.additionalFee,
+    });
+  };
+
+  useEffect(() => {
+    fetchShippingData();
+  }, []);
+
   return (
     <>
+      <div className="cart-totals">
+        <p className="semi-bold-16">Total</p>
+        <p className="semi-bold-16">
+          {cost?.subtotalAmount?.amount ? (
+            <Money data={cost?.subtotalAmount} />
+          ) : (
+            "-"
+          )}
+        </p>
+        {/* <p className="semi-bold-16">Subtotal</p>
+        <p className="semi-bold-16">
+          {cost?.subtotalAmount?.amount ? (
+            <Money data={cost?.subtotalAmount} />
+          ) : (
+            "-"
+          )}
+        </p>
+        <p className="semi-bold-16">Tax</p>
+        <p className="semi-bold-16">
+          {cost?.totalTaxAmount?.amount ? (
+            <Money data={cost?.totalTaxAmount} />
+          ) : (
+            "-"
+          )}
+        </p>
+        <p className="semi-bold-16">Duty & delivery</p>
+        <p className="semi-bold-16">
+          {cost?.totalDutyAmount?.amount ? (
+            <Money data={cost?.totalDutyAmount} />
+          ) : (
+            "-"
+          )}
+        </p> */}
+      </div>
+
       <div role="table" aria-label="Cost summary" className="text-sm">
-        <div
+        {/* <div
           className="flex justify-between border-t border-gray p-4"
           role="row"
         >
@@ -248,9 +323,27 @@ export function CartSummary({ cost }: { cost: CartCost }) {
               "-"
             )}
           </span>
+        </div> */}
+
+        <div className="product-message">
+          {shipping?.city ? (
+            <>
+              <p>
+                {shipping.price == 0
+                  ? "Free delivery "
+                  : `£${shipping.price} delivery `}
+                to {shipping.city} by {shipping.date}
+              </p>
+            </>
+          ) : (
+            <>
+              <FontAwesomeIcon icon={faCircle} beat />
+              <p>Calculating delivery time...</p>
+            </>
+          )}
         </div>
 
-        <div
+        {/* <div
           role="row"
           className="flex justify-between border-t border-gray p-4"
         >
@@ -260,7 +353,7 @@ export function CartSummary({ cost }: { cost: CartCost }) {
           <span role="cell" className="font-bold uppercase">
             <Label _key="cart.calculatedAtCheckout" />
           </span>
-        </div>
+        </div> */}
       </div>
     </>
   );
@@ -277,18 +370,19 @@ export function CartActions({ cart }: { cart: Cart }) {
   }));
 
   return (
-    <div className="flex w-full gap-3">
-      <ShopPayButton
+    <div className="cart-actions">
+      {/* <ShopPayButton
         className={clsx([defaultButtonStyles({ tone: "shopPay" }), "w-1/2"])}
         variantIdsAndQuantities={shopPayLineItems}
         storeDomain={storeDomain}
-      />
-      <Button
-        to={cart.checkoutUrl}
-        className={clsx([defaultButtonStyles(), "w-1/2"])}
-      >
-        <Label _key="cart.checkout" />
-      </Button>
+      /> */}
+      {/* <Label _key="cart.checkout" /> */}
+
+      <a href={cart.checkoutUrl}>
+        <button className="button--large semi-bold-16">
+          Proceed to Checkout
+        </button>
+      </a>
     </div>
   );
 }

@@ -11,6 +11,7 @@ import {
 } from "~/components/cart/Cart";
 import Button from "~/components/elements/Button";
 import CloseIcon from "~/components/icons/Close";
+import { SanityProductPreview } from "~/lib/sanity/types";
 
 import { Label } from "../global/Label";
 
@@ -25,63 +26,31 @@ function CartDrawer({
   open,
   onClose,
   cart,
+  sanityCartResults,
 }: {
   open: boolean;
   onClose: () => void;
   cart: Cart;
+  sanityCartResults: SanityProductPreview[];
 }) {
   return (
     <Suspense>
       <Await resolve={cart}>
         {(data) => (
-          <Transition appear show={open} as={Fragment}>
-            <Dialog as="div" className="relative z-50" onClose={onClose}>
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-500"
-                enterFrom="opacity-0"
-                enterTo="opacity-100"
-                leave="ease-in duration-500"
-                leaveFrom="opacity-100"
-                leaveTo="opacity-0"
-              >
-                <div
-                  aria-hidden="true"
-                  className="pointer-events-none fixed inset-0 z-40 bg-black bg-opacity-20"
+          <div className={open ? "cart-drawer --is-open" : "cart-drawer"}>
+            <CartHeader numLines={data?.totalQuantity} onClose={onClose} />
+            {data?.totalQuantity > 0 ? (
+              <>
+                <CartLineItems
+                  linesObj={data.lines}
+                  sanityCartResults={sanityCartResults}
                 />
-              </Transition.Child>
-
-              <Transition.Child
-                as={Fragment}
-                enter="ease-in-out duration-500"
-                enterFrom="translate-x-full"
-                enterTo="translate-x-0"
-                leave="ease-in-out duration-500"
-                leaveFrom="translate-x-0"
-                leaveTo="translate-x-full"
-              >
-                <Dialog.Panel
-                  className={clsx(
-                    "rounded-l-none fixed bottom-0 left-0 right-0 top-0 z-40 flex h-full w-full flex-col overflow-y-auto bg-white md:bottom-auto md:left-auto md:w-[470px]",
-                    "md:rounded-l-xl"
-                  )}
-                >
-                  <CartHeader
-                    numLines={data?.totalQuantity}
-                    onClose={onClose}
-                  />
-                  {data?.totalQuantity > 0 ? (
-                    <>
-                      <CartLineItems linesObj={data.lines} />
-                      <CartFooter cart={data} />
-                    </>
-                  ) : (
-                    <CartEmpty onClose={onClose} />
-                  )}
-                </Dialog.Panel>
-              </Transition.Child>
-            </Dialog>
-          </Transition>
+                <CartFooter cart={data} />
+              </>
+            ) : (
+              <CartEmpty onClose={onClose} />
+            )}
+          </div>
         )}
       </Await>
     </Suspense>
@@ -98,10 +67,12 @@ export function useDrawer(openDefault = false) {
 
   function openDrawer() {
     setIsOpen(true);
+    document.body.classList.add("--prevent-scrolling");
   }
 
   function closeDrawer() {
     setIsOpen(false);
+    document.body.classList.remove("--prevent-scrolling");
   }
 
   return {
@@ -119,14 +90,10 @@ function CartHeader({
   onClose: () => void;
 }) {
   return (
-    <header
-      className={clsx(
-        "sticky top-0 flex h-header-sm items-center justify-between px-8",
-        "lg:h-header-lg"
-      )}
-    >
-      <div className="text-xl font-bold leading-none">
-        <Label _key="cart.title" /> {numLines > 0 && `(${numLines})`}
+    <header className="cart-header">
+      <div className="semi-bold-20">
+        {/* <Label _key="cart.title" /> {numLines > 0 && `(${numLines})`} */}
+        Your order
       </div>
       <button type="button" onClick={onClose}>
         <CloseIcon />
@@ -137,27 +104,27 @@ function CartHeader({
 
 function CartFooter({ cart }: { cart: Cart }) {
   return (
-    <footer className="sticky bottom-0">
-      <div className="relative flex flex-col">
-        <CartSummary cost={cart.cost} />
+    <div className="cart-footer">
+      <CartSummary cost={cart.cost} />
 
-        <div className="border-t border-gray p-4">
-          <CartActions cart={cart} />
-        </div>
+      <div className="border-t border-gray p-4">
+        <CartActions cart={cart} />
       </div>
-    </footer>
+    </div>
   );
 }
 
 function CartEmpty({ onClose }: { onClose: () => void }) {
   return (
-    <div className="flex flex-col px-8 pt-6">
-      <p className="mb-4 text-lg font-bold">
-        <Label _key="cart.empty" />
+    <div className="cart-empty-state">
+      <p className="semi-bold-14">
+        You have not added anything to your order yet.
       </p>
-      <Button onClick={onClose} type="button">
-        <Label _key="cart.continueShopping" />
-      </Button>
+
+      <button className="button--large semi-bold-16" onClick={onClose}>
+        Continue browsing
+      </button>
     </div>
   );
 }
+/* <Label _key="cart.empty" /> */

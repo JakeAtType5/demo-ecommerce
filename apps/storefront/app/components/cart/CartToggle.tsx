@@ -8,12 +8,18 @@ type Props = {
   cart: Cart;
   isOpen: boolean;
   openDrawer: () => void;
+  closeDrawer: () => void;
 };
 
 /**
  * A client component that defines the behavior when a user toggles a cart
  */
-export default function CartToggle({ cart, isOpen, openDrawer }: Props) {
+export default function CartToggle({
+  cart,
+  isOpen,
+  openDrawer,
+  closeDrawer,
+}: Props) {
   // JL: This will need more work to render a count component
   return (
     <Suspense
@@ -26,7 +32,7 @@ export default function CartToggle({ cart, isOpen, openDrawer }: Props) {
             aria-expanded={isOpen}
             aria-controls="cart"
             onClick={() => {
-              openDrawer();
+              !isOpen ? openDrawer() : closeDrawer();
             }}
           >
             {data?.totalQuantity || 0}
