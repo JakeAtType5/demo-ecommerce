@@ -359,10 +359,10 @@ export type SanityProductPreview = {
 };
 
 export type SanityFilter = {
-  _id: string;
-  count: number;
+  _id?: string;
+  count?: number;
   title: string;
-  slug: string;
+  slug?: string;
 }
 
 export type SanitySeo = {

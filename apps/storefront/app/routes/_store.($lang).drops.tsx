@@ -11,6 +11,7 @@ import invariant from "tiny-invariant";
 import Filter from "~/components/collection/Filter";
 import DropCollection from "~/components/drop/DropCollection";
 import { baseLanguage } from "~/data/countries";
+import { getSanityIDsFromSlugs } from "~/lib/filters";
 import type { SanityDrop } from "~/lib/sanity";
 import { notFound, validateLocale } from "~/lib/utils";
 import { DROPS_QUERY } from "~/queries/sanity/drop";
@@ -29,11 +30,53 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
     staleWhileRevalidate: 60,
   });
 
+  const searchParams = new URL(request.url).searchParams;
+  const urlFilters = searchParams.get("filters")?.split("+");
+
+  // fetch all possible styles
+  const stylesPlaceholder = await context.sanity.query<SanityFilter>({
+    query: STYLES_FOR_DROP_QUERY,
+    params: {
+      colours: [],
+    },
+    cache,
+  });
+
+  // convert slugs from URL query into usable IDs
+  const styleIDsInSearchQuery = getSanityIDsFromSlugs(
+    urlFilters,
+    stylesPlaceholder
+  );
+
+  // gets all location options that match the existing style URL param
+  const locations = await context.sanity.query<SanityFilter>({
+    query: LOCATIONS_FOR_DROP_QUERY,
+    params: {
+      styles: styleIDsInSearchQuery.length > 0 ? styleIDsInSearchQuery : null,
+    },
+    cache,
+  });
+
+  // convert slugs from URL query into usable IDs
+  const locationIDsInSearchQuery =
+    getSanityIDsFromSlugs(urlFilters, locations) || [];
+
+  const styles = await context.sanity.query<SanityFilter>({
+    query: STYLES_FOR_DROP_QUERY,
+    params: {
+      locations:
+        locationIDsInSearchQuery.length > 0 ? locationIDsInSearchQuery : null,
+    },
+    cache,
+  });
+
+  // Fetch available products from Sanity
   const drops = await context.sanity.query<SanityDrop>({
     query: DROPS_QUERY,
     params: {
-      language,
-      baseLanguage,
+      styles: styleIDsInSearchQuery.length > 0 ? styleIDsInSearchQuery : null,
+      locations:
+        locationIDsInSearchQuery.length > 0 ? locationIDsInSearchQuery : null,
     },
     cache,
   });
@@ -41,16 +84,6 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
   if (!drops) {
     throw notFound();
   }
-
-  const styles = context.sanity.query<SanityFilter>({
-    query: STYLES_FOR_DROP_QUERY,
-    cache,
-  });
-
-  const locations = context.sanity.query<SanityFilter>({
-    query: LOCATIONS_FOR_DROP_QUERY,
-    cache,
-  });
 
   return defer({
     language,

@@ -13,6 +13,7 @@ import { useState } from "react";
 
 import Filter from "~/components/collection/Filter";
 import ProductCollection from "~/components/product/ProductCollection";
+import { getSanityIDsFromSlugs } from "~/lib/filters";
 import type { SanityFilter, SanityProductPreview } from "~/lib/sanity";
 import { fetchGids, notFound, validateLocale } from "~/lib/utils";
 import { ALL_PRODUCTS_QUERY } from "~/queries/sanity/product";
@@ -38,8 +39,8 @@ export async function loader({ context, params, request }: LoaderFunctionArgs) {
   const language = context.storefront.i18n.language.toLowerCase();
 
   const searchParams = new URL(request.url).searchParams;
-  const cursor = searchParams.get("cursor");
-  const count = searchParams.get("count");
+  // const cursor = searchParams.get("cursor");
+  // const count = searchParams.get("count");
   const urlFilters = searchParams.get("filters")?.split("+");
 
   const cache = context.storefront.CacheCustom({
@@ -47,18 +48,6 @@ export async function loader({ context, params, request }: LoaderFunctionArgs) {
     maxAge: 60,
     staleWhileRevalidate: 60,
   });
-
-  // todo: extract into helper
-  // gets an array of filter IDs from an array of slugs
-  const getFilterIDsFromSlugs = (slugs, allOptions) => {
-    if (!slugs || !allOptions) {
-      return [];
-    }
-
-    return allOptions
-      .filter((filter) => slugs.includes(filter.slug))
-      .map((filter) => filter._id);
-  };
 
   // fetch all possible styles
   const stylesPlaceholder = await context.sanity.query<SanityFilter>({
@@ -70,7 +59,7 @@ export async function loader({ context, params, request }: LoaderFunctionArgs) {
   });
 
   // convert slugs from URL query into usable IDs
-  const styleIDsInSearchQuery = getFilterIDsFromSlugs(
+  const styleIDsInSearchQuery = getSanityIDsFromSlugs(
     urlFilters,
     stylesPlaceholder
   );
@@ -86,10 +75,8 @@ export async function loader({ context, params, request }: LoaderFunctionArgs) {
 
   // convert slugs from URL query into usable IDs
   const colourIDsInSearchQuery =
-    getFilterIDsFromSlugs(urlFilters, colours) || [];
+    getSanityIDsFromSlugs(urlFilters, colours) || [];
 
-  // query styles again but this time with the right colours
-  // to get accurate count data
   const styles = await context.sanity.query<SanityFilter>({
     query: STYLES_FOR_PRODUCT_QUERY,
     params: {
