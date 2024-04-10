@@ -1,4 +1,8 @@
-import { faCircle, faTrash, faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCircle,
+  faTrash,
+  faTrashCan,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CartForm } from "@shopify/hydrogen";
 import type {
@@ -178,10 +182,17 @@ function LineItem({
               <Money data={lineItem.cost.totalAmount} />
             )}
           </div>
-          {/* <ItemRemoveButton lineIds={[lineItem.id]} /> */}
         </div>
       </CartProductPreview>
 
+      <div className="product-actions">
+        <a className="body-text-12">Customise</a>
+        {deleting ? (
+          <SpinnerIcon width={24} height={24} />
+        ) : (
+          <ItemRemoveButton lineIds={[lineItem.id]} />
+        )}
+      </div>
     </div>
   );
 }
@@ -253,9 +264,7 @@ function ItemRemoveButton({ lineIds }: { lineIds: CartLine["id"][] }) {
       inputs={{ lineIds }}
     >
       <button type="submit">
-        {/* <a>Remove</a> */}
-        <FontAwesomeIcon icon={faTrash} />
-
+        <a className="body-text-12">Remove from order</a>
       </button>
     </CartForm>
   );

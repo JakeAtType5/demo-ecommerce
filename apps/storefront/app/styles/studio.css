@@ -1922,6 +1922,28 @@ footer .footer-bar .social-links {
   height: 14px;
 }
 
+.cart-row .product-actions {
+  display: none;
+}
+
+.cart-row:hover .product-actions, .cart-row.--is-deleted .product-actions {
+  display: block;
+}
+
+.cart-row .product-actions form {
+  display: inline;
+}
+
+.cart-row .product-actions a {
+  margin-right: 12px;
+  cursor: pointer;
+}
+
+.cart-row .product-actions a:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
 .shipping-product-preview {
   background: #f7f7f7;
   pointer-events: none;
