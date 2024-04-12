@@ -22,12 +22,12 @@ export default function HeaderActions(navIsOpen: boolean) {
   // Grab all the fetchers that are adding to cart
   const addToCartFetchers = useCartFetchers(CartForm.ACTIONS.LinesAdd);
 
-  // // When the fetchers array changes, open the drawer if there is an add to cart action
-  // useEffect(() => {
-  //   if (addToCartFetchers[0] && addToCartFetchers[0].state === "submitting")
-  //     openDrawer();
-  //   return;
-  // }, [addToCartFetchers, openDrawer]);
+  // When the fetchers array changes, open the drawer if there is an add to cart action
+  useEffect(() => {
+    if (addToCartFetchers[0] && addToCartFetchers[0].state === "loading")
+      openDrawer();
+    return;
+  }, [addToCartFetchers, openDrawer]);
 
   return (
     <div className="navigation-actions">
