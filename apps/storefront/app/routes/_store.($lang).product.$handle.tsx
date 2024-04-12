@@ -246,8 +246,10 @@ export default function ProductHandle() {
   };
 
   useEffect(() => {
-    fetchShippingData();
-  }, []);
+    if (!shipping?.city) {
+      fetchShippingData();
+    }
+  }, [shipping]);
 
   const SECTIONS = [
     {

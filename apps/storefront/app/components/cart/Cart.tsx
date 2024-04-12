@@ -73,8 +73,10 @@ export function CartLineItems({
   };
 
   useEffect(() => {
-    fetchShippingData();
-  }, []);
+    if (!shipping?.city) {
+      fetchShippingData();
+    }
+  }, [shipping]);
 
   const lines = flattenConnection(linesObj);
 
@@ -131,6 +133,7 @@ function LineItem({
   const updatingItems = useCartFetchers(CartForm.ACTIONS.LinesUpdate);
   const removingItems = useCartFetchers(CartForm.ACTIONS.LinesRemove);
 
+  console.log(removingItems);
   // Check if the line item is being updated, as we want to show the new quantity as optimistic UI
   let updatingQty;
   const updating =
@@ -197,64 +200,64 @@ function LineItem({
   );
 }
 
-function CartItemQuantity({
-  line,
-  submissionQuantity,
-}: {
-  line: CartLine | ComponentizableCartLine;
-  submissionQuantity: number | undefined;
-}) {
-  if (!line || typeof line?.quantity === "undefined") return null;
-  const { id: lineId, quantity } = line;
+// function CartItemQuantity({
+//   line,
+//   submissionQuantity,
+// }: {
+//   line: CartLine | ComponentizableCartLine;
+//   submissionQuantity: number | undefined;
+// }) {
+//   if (!line || typeof line?.quantity === "undefined") return null;
+//   const { id: lineId, quantity } = line;
 
-  // // The below handles optimistic updates for the quantity
-  const lineQuantity = submissionQuantity ? submissionQuantity : quantity;
+//   // // The below handles optimistic updates for the quantity
+//   const lineQuantity = submissionQuantity ? submissionQuantity : quantity;
 
-  const prevQuantity = Number(Math.max(0, lineQuantity - 1).toFixed(0));
-  const nextQuantity = Number((lineQuantity + 1).toFixed(0));
+//   const prevQuantity = Number(Math.max(0, lineQuantity - 1).toFixed(0));
+//   const nextQuantity = Number((lineQuantity + 1).toFixed(0));
 
-  return (
-    <div className="flex items-center gap-2">
-      <UpdateCartButton lines={[{ id: lineId, quantity: prevQuantity }]}>
-        <button
-          aria-label="Decrease quantity"
-          value={prevQuantity}
-          disabled={quantity <= 1}
-        >
-          <MinusCircleIcon />
-        </button>
-      </UpdateCartButton>
+//   return (
+//     <div className="flex items-center gap-2">
+//       <UpdateCartButton lines={[{ id: lineId, quantity: prevQuantity }]}>
+//         <button
+//           aria-label="Decrease quantity"
+//           value={prevQuantity}
+//           disabled={quantity <= 1}
+//         >
+//           <MinusCircleIcon />
+//         </button>
+//       </UpdateCartButton>
 
-      <div className="min-w-[1rem] text-center text-sm font-bold leading-none text-black">
-        {lineQuantity}
-      </div>
+//       <div className="min-w-[1rem] text-center text-sm font-bold leading-none text-black">
+//         {lineQuantity}
+//       </div>
 
-      <UpdateCartButton lines={[{ id: lineId, quantity: nextQuantity }]}>
-        <button aria-label="Increase quantity" value={prevQuantity}>
-          <PlusCircleIcon />
-        </button>
-      </UpdateCartButton>
-    </div>
-  );
-}
+//       <UpdateCartButton lines={[{ id: lineId, quantity: nextQuantity }]}>
+//         <button aria-label="Increase quantity" value={prevQuantity}>
+//           <PlusCircleIcon />
+//         </button>
+//       </UpdateCartButton>
+//     </div>
+//   );
+// }
 
-function UpdateCartButton({
-  children,
-  lines,
-}: {
-  children: React.ReactNode;
-  lines: CartLineUpdateInput[];
-}) {
-  return (
-    <CartForm
-      route="/cart"
-      action={CartForm.ACTIONS.LinesUpdate}
-      inputs={{ lines }}
-    >
-      {children}
-    </CartForm>
-  );
-}
+// function UpdateCartButton({
+//   children,
+//   lines,
+// }: {
+//   children: React.ReactNode;
+//   lines: CartLineUpdateInput[];
+// }) {
+//   return (
+//     <CartForm
+//       route="/cart"
+//       action={CartForm.ACTIONS.LinesUpdate}
+//       inputs={{ lines }}
+//     >
+//       {children}
+//     </CartForm>
+//   );
+// }
 
 function ItemRemoveButton({ lineIds }: { lineIds: CartLine["id"][] }) {
   return (
