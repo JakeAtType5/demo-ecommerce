@@ -15,7 +15,7 @@ export default function Header() {
 
   return (
     <header className="navigation-bar" role="banner">
-      <p className="bold-24 rfc-logo">Rfc.</p>
+      <p className="bold-24 rfc-logo">Ready.</p>
 
       {/* <NavigationTabs /> */}
       {menuLinks && (

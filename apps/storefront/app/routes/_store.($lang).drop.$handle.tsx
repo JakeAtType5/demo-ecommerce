@@ -4,9 +4,11 @@ import { useLoaderData, useParams } from "@remix-run/react";
 import { SeoConfig, type SeoHandleFunction } from "@shopify/hydrogen";
 import { defer, type LoaderFunctionArgs } from "@shopify/remix-oxygen";
 import { SanityPreview } from "hydrogen-sanity";
+import { useContext, useEffect } from "react";
 import invariant from "tiny-invariant";
 
 import DropMetadata from "~/components/drop/Metadata";
+import { ThemeStateContext } from "~/components/global/ThemeStateWrapper";
 import { Link } from "~/components/Link";
 import ProductCollection from "~/components/product/ProductCollection";
 import VideoPlayerPreview from "~/components/video/PreviewPlayer";
@@ -61,10 +63,8 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
       language,
       baseLanguage,
     },
-    // cache,
+    cache,
   });
-
-  console.log(nextDrop);
 
   const previousDrop = await context.sanity.query<SanityDrop>({
     query: DROP_BY_NUMBER_QUERY,
@@ -73,7 +73,7 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
       language,
       baseLanguage,
     },
-    // cache,
+    cache,
   });
 
   // Fetch related print IDs from this drop
@@ -106,6 +106,11 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
 }
 
 export default function DropHandle() {
+  const { setTheme } = useContext(ThemeStateContext);
+  useEffect(() => {
+    setTheme("dark");
+  }, [setTheme]);
+
   const { language, page, relatedProducts, nextDrop, previousDrop } =
     useLoaderData<typeof loader>();
 

@@ -27,10 +27,11 @@ import {
 } from "@shopify/remix-oxygen";
 import clsx from "clsx";
 import { SanityPreview } from "hydrogen-sanity";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useContext, useEffect, useState } from "react";
 import invariant from "tiny-invariant";
 
 import DropPreview from "~/components/drop/Preview";
+import { ThemeStateContext } from "~/components/global/ThemeStateWrapper";
 import PortableText from "~/components/portableText/PortableText";
 import CustomiseProduct from "~/components/product/Customise";
 import ProductHero from "~/components/product/Hero";
@@ -38,17 +39,17 @@ import Materials from "~/components/product/Materials";
 import ProductCollection from "~/components/product/ProductCollection";
 import StickyProductHeader from "~/components/product/StickyHeader";
 import { baseLanguage } from "~/data/countries";
+import type {
+  SanityFaqs,
+  SanityProductPage,
+  SanityProductPreview,
+} from "~/lib/sanity";
 import {
   addWorkingDays,
   getIpData,
   getZone,
   shippingZones,
 } from "~/lib/shipping";
-import type {
-  SanityFaqs,
-  SanityProductPage,
-  SanityProductPreview,
-} from "~/lib/sanity";
 import {
   fetchGids,
   fetchGidsForProductIds,
@@ -198,6 +199,12 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
 }
 
 export default function ProductHandle() {
+  const { setTheme } = useContext(ThemeStateContext);
+
+  useEffect(() => {
+    setTheme("light");
+  }, [setTheme]);
+
   const {
     language,
     page,

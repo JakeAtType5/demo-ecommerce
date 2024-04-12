@@ -250,11 +250,15 @@ body.--prevent-scrolling {
 
 /* Navigation */
 .content-wrapper {
-  max-width: 1200px;
+  max-width: 1600px;
   padding: 0 5vW;
   width: 100%;
   margin: 0 auto;
   margin-top: 40px;
+}
+
+.dark-theme .rfc-logo {
+  color: #fff;
 }
 
 .navigation-bar {
@@ -281,6 +285,11 @@ body.--prevent-scrolling {
   backdrop-filter: blur(10px);
   height: 52px;
   box-sizing: border-box;
+}
+
+.dark-theme .navigation-links {
+  background: none;
+  gap: 72px;
 }
 
 .navigation-links a {
@@ -311,11 +320,14 @@ body.--prevent-scrolling {
   cursor: pointer;
 }
 
+.dark-theme .navigation-actions svg {
+  color: #aeaeae !important;
+}
+
 .navigation-actions svg:hover, .burger-icon svg:hover, .fullscreen-navigation .header svg:hover { 
   transform: scale(0.9);
   opacity: 0.8;
 }
-
 
 .navigation-actions svg:active { 
   transform: scale(0.85);
@@ -1626,16 +1638,32 @@ section#customise {
 /* Drop page */
 .drop-hero {
   margin-top: 60px;
+  position: relative;
 }
 
 .drop-hero .page-background {
-  background: #383838;
-  width: 100%;
-  height: 870px;
+  width: 100vW;
   position: absolute;
   left: 0;
   top: 0;
   z-index: -1;
+  background: #121212;
+  height: calc(100% + 190px);
+  transform: translateY(-190px);
+
+  width: 100vW;
+}
+
+@media all and (min-width: 1600px) {
+  .drop-hero .page-background {
+    margin-left: calc(((100vW - 1600px + 10vW) / 2)* -1);
+  }
+}
+
+@media all and (max-width: 1600px) {
+  .drop-hero .page-background {
+    margin-left: calc((100vW - 100% - 5vW)* -1);
+  }
 }
 
 .drop-hero .drop-content {
@@ -1643,14 +1671,26 @@ section#customise {
   display: grid;
   grid-template-columns: 1.5fr 1fr;
   gap: 50px;
-  margin-top: 20px;
+  margin-top: 36px;
+  padding-bottom: 36px;
+}
+
+.drop-hero .drop-title {
+  line-height: 1;
 }
 
 .drop-hero .video-empty-state {
   aspect-ratio: 2;
   background: #000;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
 }
 
+.drop-hero .video-empty-state p {
+  color: var(--light-grey);
+}
 
 .drop-metadata {
   display: flex;
@@ -1754,9 +1794,6 @@ footer {
   background: #fff;
   border-top: 1px solid #f0f0f0;
   padding-bottom: 16px;
-}
-
-footer .content-wrapper {
   display: grid;
   grid-template-columns: 3fr 1fr 1fr;
 }
@@ -1799,10 +1836,11 @@ footer .footer-bar .social-links {
 }
 
 @media all and (max-width: 465px) {
-  footer .content-wrapper {
+  footer {
     grid-template-columns: 1fr 1fr;
     gap: 32px 0;
     margin-top: 32px;
+    padding-top: 32px;
   }
 
   footer .footer-logo {
