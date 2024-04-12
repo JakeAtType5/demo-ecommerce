@@ -10,7 +10,7 @@ export default function ThemeStateProvider({ children }) {
 
   return (
     <ThemeStateContext.Provider value={{ theme, setTheme }}>
-      <div className={`${theme}-theme content-wrapper`}>{children}</div>
+      <div className={`${theme}-theme`}>{children}</div>
     </ThemeStateContext.Provider>
   );
 }

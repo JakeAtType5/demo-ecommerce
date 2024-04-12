@@ -298,10 +298,10 @@ export default function ProductHandle() {
           )}
           style={{
             "--product-primary-color": `${page.printImage?.palette.vibrant.background}1c`,
-            "--product-secondary-color": `${page.printImage?.palette.vibrant.background}1f`,
+            "--product-primary-color-faded": `${page.printImage?.palette.vibrant.background}08`,
           }}
         >
-          {/* Customise Modal */}
+          {/* Customise Modal
           {showCustomiseModal && isInStock && !isFutureRelease && (
             <Suspense>
               <Await
@@ -329,7 +329,7 @@ export default function ProductHandle() {
                 </section>
               </Await>
             </Suspense>
-          )}
+          )} */}
 
           <ProductHero
             sanityProduct={page as SanityProductPage}
@@ -340,6 +340,7 @@ export default function ProductHandle() {
             isInStock={isInStock}
             isFutureRelease={isFutureRelease}
             onCustomiseClick={() => setShowCustomiseModal(true)}
+            storefrontVariants={variants}
           />
 
           <StickyProductHeader

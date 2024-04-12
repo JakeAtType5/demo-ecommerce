@@ -15,19 +15,21 @@ export default function Header() {
 
   return (
     <header className="navigation-bar" role="banner">
-      <p className="bold-24 rfc-logo">Ready.</p>
+      <div className="content-wrapper">
 
-      {/* <NavigationTabs /> */}
-      {menuLinks && (
-        <Navigation
-          menuLinks={menuLinks}
-          className="desktop-only desktop-navigation navigation-links"
-        />
-      )}
-      {menuLinks && <MobileNavigation menuLinks={menuLinks} />}
+        {menuLinks && (
+          <Navigation
+            menuLinks={menuLinks}
+            className="desktop-only desktop-navigation navigation-links"
+          />
+        )}
+        {menuLinks && <MobileNavigation menuLinks={menuLinks} />}
 
-      {/* Accounts, country selector + cart toggle */}
-      <HeaderActions />
+        <p className="bold-24 rfc-logo">Ready.</p>
+
+        {/* Accounts, country selector + cart toggle */}
+        <HeaderActions />
+      </div>
     </header>
   );
 }
