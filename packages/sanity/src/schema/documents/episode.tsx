@@ -50,26 +50,6 @@ export default defineType({
       group: 'video',
       type: 'mux.video',
     },
-    // SEO
-    defineField({
-      name: 'seo',
-      title: 'SEO',
-      type: 'seo.page',
-      group: 'seo',
-    }),
-    defineField({
-      name: 'slug',
-      title: 'Slug',
-      type: 'slug',
-      group: 'seo',
-      options: {
-        source: 'title',
-        slugify: input => input
-          .toLowerCase()
-          .replace(/\s+/g, '-')
-          .slice(0, 200)
-      }
-    }),
   ],
 
   // orderings: [

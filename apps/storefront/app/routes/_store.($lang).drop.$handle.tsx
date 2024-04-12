@@ -49,7 +49,6 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
       language,
       baseLanguage,
     },
-    cache,
   });
 
   if (!page) {
@@ -63,7 +62,6 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
       language,
       baseLanguage,
     },
-    cache,
   });
 
   const previousDrop = await context.sanity.query<SanityDrop>({
@@ -126,7 +124,7 @@ export default function DropHandle() {
         <>
           <section className="drop-hero">
             <div className="page-background desktop-only" />
-            {page?.episode?.playBackId ? (
+            {page?.episode?.playbackId ? (
               <VideoPlayerPreview
                 playbackId={page.episode.playbackId}
                 assetId={page.episode.assetId}
