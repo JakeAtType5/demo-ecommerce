@@ -159,12 +159,11 @@ export default function ProductHero({
     }
   }, [selectedVariant, fetcher.data, fetcher?.state]);
 
-  console.log(storefrontProduct);
+  console.log(sanityProduct);
 
   const configurationIsSoldOut =
     errors &&
     errors.some((error) => error.message.includes("already sold out"));
-
 
   const cartIsOverMaxUnits =
     errors &&
@@ -179,9 +178,9 @@ export default function ProductHero({
         )}
 
         {/* Artist */}
-        {storefrontProduct?.vendor && (
+        {sanityProduct?.artist && (
           <p className="semi-bold-24 product-artist">
-            by {storefrontProduct.vendor}
+            by {sanityProduct.artist}
           </p>
         )}
 
@@ -318,30 +317,28 @@ export default function ProductHero({
                     )}
                   </>
                 ) : (
-                  <p className="semi-bold-14">
+                  <p className="semi-bold-14 error">
                     Due to exceptional demand, we have sold out of one of the
                     materials needed to build this order. Try another
-                    configuration or speak to one of our advisors to place a
-                    order.
+                    configuration.
                   </p>
                 )}
               </div>
             )}
 
             {!cartIsOverMaxUnits && configurationIsSoldOut && (
-              <p className="semi-bold-14">
+              <p className="semi-bold-14 error">
                 Sold Out <br />
-                Our workshop does not currently have all of the materials in
-                stock to build this custom order. <br />
+                Our workshop does not currently have the materials in stock to
+                build this custom order. <br />
                 <br /> Please speak to one of our advisors, who may be able to
                 offer further support.
               </p>
             )}
 
             {cartIsOverMaxUnits && (
-              <p className="semi-bold-14">
-                Over max units todo <br />
-                Todo
+              <p className="semi-bold-14 error">
+                For x, y, z reason we limit orders to just one per customer.<br />
               </p>
             )}
           </div>
@@ -352,7 +349,7 @@ export default function ProductHero({
           <div className="semi-bold-14 product-messages">
             <div className="product-message">
               <FontAwesomeIcon icon={faCheck} />
-              <p>Starts from £160.00</p>
+              <p>Starts from £{sanityProduct.priceRange.minVariantPrice}.00</p>
             </div>
             <div className="product-message">
               <FontAwesomeIcon icon={faCheck} />
@@ -406,7 +403,7 @@ export default function ProductHero({
             layout="responsive"
             projectId={sanityProjectID}
             sizes={["30vw, 100vw"]}
-            src={sanityProduct.printImage?.asset?._ref}
+            src={sanityProduct.artwork?.asset?._ref}
           />
         </div>
       </div>

@@ -35,7 +35,7 @@ export default function CartProductPreview({
         product.status === "unavailable" ? "--is-sold-out" : ""
       )}
       style={{
-        "--product-primary-color": `${product.printImage?.palette.vibrant.background}1f`,
+        "--product-primary-color": `${product.artwork?.palette.vibrant.background}1f`,
       }}
     >
       <Link to={`${product.slug}`}>
@@ -45,7 +45,7 @@ export default function CartProductPreview({
             layout="responsive"
             projectId={sanityProjectID}
             sizes={["30vw, 50vw"]}
-            src={product.printImage?.asset?._ref}
+            src={product.artwork?.asset?._ref}
           />
         </div>
         <div className="card-metadata">

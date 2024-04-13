@@ -297,40 +297,10 @@ export default function ProductHandle() {
             "color-theme"
           )}
           style={{
-            "--product-primary-color": `${page.printImage?.palette.vibrant.background}1c`,
-            "--product-primary-color-faded": `${page.printImage?.palette.vibrant.background}08`,
+            "--product-primary-color": `${page.artwork?.palette.vibrant.background}1c`,
+            "--product-primary-color-faded": `${page.artwork?.palette.vibrant.background}08`,
           }}
         >
-          {/* Customise Modal
-          {showCustomiseModal && isInStock && !isFutureRelease && (
-            <Suspense>
-              <Await
-                errorElement="There was a problem loading related products"
-                resolve={variants}
-              >
-                <section className="product-section" id="customise">
-                  <button
-                    className="semi-bold-16 back-button"
-                    onClick={() => setShowCustomiseModal(false)}
-                  >
-                    <FontAwesomeIcon icon={faAngleLeft} />
-                    back
-                  </button>
-
-                  <p className="semi-bold-24 section-header">
-                    Customise your print
-                  </p>
-
-                  <CustomiseProduct
-                    variants={variants}
-                    image={page.printImage}
-                    shipping={shipping}
-                  />
-                </section>
-              </Await>
-            </Suspense>
-          )} */}
-
           <ProductHero
             sanityProduct={page as SanityProductPage}
             storefrontProduct={product}
@@ -339,7 +309,6 @@ export default function ProductHandle() {
             shipping={shipping}
             isInStock={isInStock}
             isFutureRelease={isFutureRelease}
-            onCustomiseClick={() => setShowCustomiseModal(true)}
             storefrontVariants={variants}
           />
 

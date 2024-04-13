@@ -254,7 +254,7 @@ body.--prevent-scrolling {
   padding: 0 5vW;
   width: 100%;
   margin: 0 auto;
-  margin-top: 40px;
+  margin-top: 20px;
 }
 
 .navigation-bar {
@@ -537,6 +537,7 @@ body.--prevent-scrolling {
   color: var(--dark-grey);
   margin-top: 16px;
   max-width: 450px;
+  margin-bottom: 18px;
 }
 
 .product-hero .product-messages {
@@ -548,7 +549,7 @@ body.--prevent-scrolling {
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .product-message svg {
@@ -603,6 +604,7 @@ body.--prevent-scrolling {
   background: #fff;
   border-radius: 4px;
   box-shadow: rgba(255, 255, 255, 0.1) 0px 1px 1px inset, rgb(50 50 93 / 4%) 0px 50px 100px -20px, rgb(0 0 0 / 10%) 0px 30px 60px -30px;
+  height: 390px;
 }
 
 .customisation-input {
@@ -666,6 +668,11 @@ body.--prevent-scrolling {
 .customisation-form .button--large {
   width: 100%;
   padding: 12px 24px;
+}
+
+.customisation-form p.error {
+  margin-top: 24px;
+  color: #f23d34;
 }
 
 @media screen and (max-width: 460px) {

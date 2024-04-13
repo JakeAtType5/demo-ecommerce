@@ -323,13 +323,14 @@ export type SanityProductWithVariant = {
 
 export type SanityProductPage = {
   _id: string;
+  artist: string;
+  artwork: SanityAssetImage;
   bundles: [];
-  customProductOptions?: SanityCustomProductOption[];
+  // customProductOptions?: SanityCustomProductOption[];
   description: string;
   drop?: SanityDrop;
   gid: string;
   maxUnits: number;
-  printImage: SanityAssetImage;
   slug: string;
   seo: SanitySeo;
   story: PortableTextBlock[];
@@ -344,6 +345,7 @@ export type SanityProductPage = {
 export type SanityProductPreview = {
   _id: string;
   artist: string;
+  artwork: SanityAssetImage;
   description: string;
   gid: string;
   inventory: ProductInventory;
@@ -351,7 +353,6 @@ export type SanityProductPreview = {
     maxVariantPrice: number;
     minVariantPrice: number;
   };
-  printImage: SanityAssetImage;
   releaseDate?: Date;
   slug: string;
   status?: string;
