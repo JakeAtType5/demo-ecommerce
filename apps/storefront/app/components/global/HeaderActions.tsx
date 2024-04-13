@@ -24,7 +24,11 @@ export default function HeaderActions(navIsOpen: boolean) {
 
   // When the fetchers array changes, open the drawer if there is an add to cart action
   useEffect(() => {
-    if (addToCartFetchers[0] && addToCartFetchers[0].state === "loading")
+    if (
+      addToCartFetchers[0] &&
+      addToCartFetchers[0].state === "loading" &&
+      addToCartFetchers[0]?.data?.errors.length === 0
+    )
       openDrawer();
     return;
   }, [addToCartFetchers, openDrawer]);
