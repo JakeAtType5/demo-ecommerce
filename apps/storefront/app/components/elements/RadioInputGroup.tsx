@@ -1,6 +1,7 @@
 import clsx from "clsx";
 
 import RadioInput from "./RadioInput";
+import { ReactNode } from "react";
 
 type Props = {
   onClick: () => void;
@@ -9,9 +10,11 @@ type Props = {
   type: string;
   title: string;
   value: string;
+  children?: ReactNode;
 };
 
 export default function RadioInputGroup({
+  children,
   onClick,
   options,
   stage,
@@ -39,6 +42,7 @@ export default function RadioInputGroup({
             />
           );
         })}
+        {children}
       </div>
     </>
   );

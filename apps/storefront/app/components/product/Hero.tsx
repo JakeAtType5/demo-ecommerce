@@ -11,7 +11,7 @@ import type {
   ProductVariant,
 } from "@shopify/hydrogen/storefront-api-types";
 import clsx from "clsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import SanityImage from "~/components/media/SanityImage";
 import type { SanityProductPage } from "~/lib/sanity";
@@ -22,6 +22,7 @@ import { useRootLoaderData } from "~/root";
 import RadioInput from "../elements/RadioInput";
 import RadioInputGroup from "../elements/RadioInputGroup";
 import { AddToCartLink } from "./buttons/AddToCartButton";
+import ProductPrice from "./Price";
 
 type Props = {
   sanityProduct: SanityProductPage;
@@ -31,7 +32,6 @@ type Props = {
   anchorLinkID: string;
   isInStock: boolean;
   isFutureRelease: boolean;
-  onCustomiseClick?: () => void;
   shipping?: {
     price?: number;
     city?: string;
@@ -50,7 +50,6 @@ export default function ProductHero({
   isFutureRelease,
   isInStock,
   shipping,
-  onCustomiseClick,
 }: Props) {
   const { sanityDataset, sanityProjectID, cart } = useRootLoaderData();
   const fetcher = useFetcher();
@@ -80,21 +79,6 @@ export default function ProductHero({
   );
 
   const mounts = getMatchingOptionValues(allOptions, "Mount");
-
-  // resets the frame options to default
-  const setDefaultFrame = () => {
-    if (options.frame == "None" || options.frame == null) {
-      setOptions({
-        frame: "selected",
-        mount: null,
-        size: options.size,
-      });
-    }
-
-    if (stage == 2) {
-      setStage(stage + 1);
-    }
-  };
 
   // sets the frame and mount options to none
   const setNoFrame = () => {
@@ -143,15 +127,48 @@ export default function ProductHero({
     }
   });
 
+  useEffect(() => {
+    if (selectedVariant) {
+      if (!fetcher.data) return;
+
+      if (fetcher?.state === "loading") {
+        setErrors(fetcher?.data?.errors);
+      }
+
+      //   cart.then((cart) => {
+      //     const productIsInShopifyCart = isProductInCart(
+      //       cart,
+      //       selectedVariant?.product?.id
+      //     );
+
+      //     if (productIsInShopifyCart && !isInCart) {
+      //       console.log("just added");
+      //     }
+
+      //     if (!productIsInShopifyCart && isInCart) {
+      //       console.log("just deleted");
+      //     }
+
+      //     if (productIsInShopifyCart && isInCart) {
+      //       console.log("already in cart");
+      //     }
+
+      //     setIsInCart(isProductInCart(cart, selectedVariant.product.id));
+      //   });
+      // }
+    }
+  }, [selectedVariant, fetcher.data, fetcher?.state]);
+
+  console.log(storefrontProduct);
+
   const configurationIsSoldOut =
     errors &&
     errors.some((error) => error.message.includes("already sold out"));
 
+
   const cartIsOverMaxUnits =
     errors &&
-    errors.some((error) => error.message.includes("you can only add"));
-
-  const hasErrorMessages = configurationIsSoldOut || cartIsOverMaxUnits;
+    errors.some((error) => error.message.includes("You can only add"));
 
   return (
     <section className="product-hero" id={anchorLinkID}>
@@ -219,38 +236,6 @@ export default function ProductHero({
               <div
                 className={clsx(
                   stage >= 2 ? "--is-expanded" : "",
-                  "customisation-input"
-                )}
-              >
-                <p className="semi-bold-14">
-                  2. would you like us to frame your print?
-                </p>
-                <div className="radio-group">
-                  <RadioInput
-                    value="Yes"
-                    className={
-                      options.frame && options.frame != "None"
-                        ? "--is-selected"
-                        : ""
-                    }
-                    onClick={setDefaultFrame}
-                  />
-
-                  <RadioInput
-                    value="No"
-                    className={
-                      options.frame && options.frame == "None"
-                        ? "--is-selected"
-                        : ""
-                    }
-                    onClick={setNoFrame}
-                  />
-                </div>
-              </div>
-
-              <div
-                className={clsx(
-                  stage >= 3 && options.frame !== "None" ? "--is-expanded" : "",
                   "customisation-input",
                   "customisation-input--is-frame-options"
                 )}
@@ -258,41 +243,44 @@ export default function ProductHero({
                 <RadioInputGroup
                   onClick={updateSelection}
                   options={frames}
-                  stage={3}
-                  title="3. select a frame finish."
+                  stage={2}
+                  title="2. choose a frame."
                   value={options.frame}
                   type="frame"
-                />
+                >
+                  <RadioInput
+                    value="None"
+                    className={
+                      options.frame && options.frame == "None"
+                        ? "--is-selected"
+                        : ""
+                    }
+                    onClick={setNoFrame}
+                  />
+                </RadioInputGroup>
               </div>
 
               <div
                 className={clsx(
-                  stage >= 4 && options.frame !== "None" ? "--is-expanded" : "",
+                  stage >= 3 && options.frame !== "None" ? "--is-expanded" : "",
                   "customisation-input"
                 )}
               >
                 <RadioInputGroup
                   onClick={updateSelection}
                   options={mounts}
-                  stage={4}
-                  title="4. select a mount."
+                  stage={3}
+                  title="3. choose a mount."
                   type="mount"
                   value={options.mount}
                 />
               </div>
             </div>
 
-            {selectedVariant && (
+            {selectedVariant && !cartIsOverMaxUnits && (
               <div className="price-container">
                 {selectedVariant.availableForSale ? (
                   <>
-                    {/* <div className="price-item">
-                      <p className="semi-bold-14">Subtotal</p>
-                      <div className="money price semi-bold-14">
-                        {ProductPrices(selectedVariant)}
-                      </div>
-                    </div> */}
-
                     {/* <div className="price-item">
                       <p className="semi-bold-14">Shipping to {shipping.city} </p>
                       <div className="money price semi-bold-14">
@@ -303,7 +291,7 @@ export default function ProductHero({
                     <div className="price-item">
                       <p className="semi-bold-14">Total</p>
                       <div className="money price semi-bold-14">
-                        {/* {ProductPrices(selectedVariant)} */}
+                        <ProductPrice variant={selectedVariant} />
                       </div>
                     </div>
 
@@ -324,8 +312,8 @@ export default function ProductHero({
                         buttonClassName="semi-bold-20 button--large"
                       >
                         {fetcher?.state === "submitting"
-                          ? "Adding to cart..."
-                          : "Add to cart"}
+                          ? "Adding to your order..."
+                          : "Add to your order"}
                       </AddToCartLink>
                     )}
                   </>
@@ -338,6 +326,23 @@ export default function ProductHero({
                   </p>
                 )}
               </div>
+            )}
+
+            {!cartIsOverMaxUnits && configurationIsSoldOut && (
+              <p className="semi-bold-14">
+                Sold Out <br />
+                Our workshop does not currently have all of the materials in
+                stock to build this custom order. <br />
+                <br /> Please speak to one of our advisors, who may be able to
+                offer further support.
+              </p>
+            )}
+
+            {cartIsOverMaxUnits && (
+              <p className="semi-bold-14">
+                Over max units todo <br />
+                Todo
+              </p>
             )}
           </div>
         )}
@@ -381,20 +386,20 @@ export default function ProductHero({
 
       <div className="product-preview">
         <div className="image-container">
-        <div
-          className={clsx(
-            options.mount != null && `--is-${makeSafeClass(options.mount)}`,
-            "customisable-mount"
-          )}
-        />
+          <div
+            className={clsx(
+              options.mount != null && `--is-${makeSafeClass(options.mount)}`,
+              "customisable-mount"
+            )}
+          />
 
-        <div
-          className={clsx(
-            options.frame != null && `--is-${makeSafeClass(options.frame)}`,
-            "customisable-frame"
-          )}
-        />
-        
+          <div
+            className={clsx(
+              options.frame != null && `--is-${makeSafeClass(options.frame)}`,
+              "customisable-frame"
+            )}
+          />
+
           <SanityImage
             // crop={image?.crop}
             dataset={sanityDataset}
@@ -409,24 +414,6 @@ export default function ProductHero({
   );
 }
 
-// import clsx from "clsx";
-// import ProductForm from "~/components/product/Form";
-// import { Label } from "../global/Label";
-
-// export default function ProductWidget({
-//   sanityProduct,
-//   storefrontProduct,
-//   storefrontVariants,
-//   selectedVariant,
-//   analytics,
-// }: Props) {
-
-//   return (
-//   );
-// }
-
-// //   return (
-
 // //       {/* Sold out */}
 // //       {!availableForSale && (
 // //         <div className="mb-3 text-xs font-bold uppercase text-darkGray">
@@ -434,8 +421,11 @@ export default function ProductHero({
 // //         </div>
 // //       )}
 
-// //       {/* Prices */}
-// //       <ProductPrices
-// //         storefrontProduct={storefrontProduct}
-// //         selectedVariant={selectedVariant}
-// //       />
+// {isInCart && (
+//   <CartNotification
+//     title="Added to cart"
+//     description={`Order now to receive your order by ${shipping.date}. \n \n Unfortunately we cannot reserve this item for you until you have checked out. `}
+//     ctaLabel="Checkout"
+//     secondaryCtaLabel="Edit customisation"
+//   />
+// )}

@@ -503,7 +503,7 @@ body.--prevent-scrolling {
 }
 
 .product-hero .product-details {
-  width: 450px;
+  width: 400px;
 }
 
 .product-hero .image-container img {
@@ -516,8 +516,7 @@ body.--prevent-scrolling {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  width: 450px;
-  margin-top: 16px;
+  width: 400px;
 }
 
 .product-hero .button--large svg {
@@ -600,6 +599,10 @@ body.--prevent-scrolling {
 
 .customisation-form {
   margin-top: 32px;
+  padding: 20px;
+  background: #fff;
+  border-radius: 4px;
+  box-shadow: rgba(255, 255, 255, 0.1) 0px 1px 1px inset, rgb(50 50 93 / 4%) 0px 50px 100px -20px, rgb(0 0 0 / 10%) 0px 30px 60px -30px;
 }
 
 .customisation-input {
@@ -627,7 +630,7 @@ body.--prevent-scrolling {
   gap: 12px;
 }
 
-.radio-group .radio-item {
+.radio-item {
   border-radius: 8px;
   border: 1px solid #C6C6C6;
   padding: 8px 12px;
@@ -635,11 +638,11 @@ body.--prevent-scrolling {
   transition: 0.3s;
 }
 
-.radio-group .radio-item:hover {
+.radio-item:hover {
   background: var(--light-grey);
 }
 
-.radio-group .radio-item.--is-selected {
+.radio-item.--is-selected {
   background: var(--black);
   color: var(--white);
 }
@@ -673,6 +676,7 @@ body.--prevent-scrolling {
     gap: 16px;
     margin-top: 24px;
     align-items: unset;
+    background: unset;
   }
 
   .product-hero:before, .product-hero:after {
