@@ -92,7 +92,7 @@ export default function ProductCollection({
     ? drops.filter((product) => !idsToHide.includes(drop._id))
     : drops;
 
-  // now lets sort the products
+  // now lets sort the drops
   const sortedDrops = sortDrops({
     drops: filteredDrops,
     sortBy: "number",

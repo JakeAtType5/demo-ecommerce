@@ -36,7 +36,7 @@ export const resolvePreviewUrl = (document: SanityDocumentLike) => {
       break
     }
     
-    // TODO: add drop, episode
+    // TODO: add drop
     case 'collection': {
       const slug = (document?.store as store)?.slug?.current
       path = slug == null ? '/' : `/collections/${slug}`

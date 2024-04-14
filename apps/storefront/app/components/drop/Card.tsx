@@ -36,17 +36,19 @@ export default function DropCard({ drop, style }: Props) {
           />
         </div>
 
-        <p className="bold-24">{drop.title}</p>
+        <div className="drop-content">
+          <p className="bold-24">{drop.title}</p>
 
-        {drop.description && (
-          <p className="semi-bold-16 drop-description">{drop.description}</p>
-        )}
+          {drop.description && (
+            <p className="semi-bold-16 drop-description">{drop.description}</p>
+          )}
 
-        <DropMetadata
-          location={drop.location}
-          number={drop.number}
-          releaseDate={drop.releaseDate}
-        />
+          <DropMetadata
+            location={drop.location}
+            number={drop.number}
+            releaseDate={drop.releaseDate}
+          />
+        </div>
       </Link>
     </div>
   );

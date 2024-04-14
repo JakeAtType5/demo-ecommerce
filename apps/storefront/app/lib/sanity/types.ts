@@ -375,7 +375,6 @@ export type SanitySeo = {
 // DROPS
 export type SanityDrop = {
   _id: string;
-  episode: any; //temp
   description?: string;
   location?: string;
   number?: number;
@@ -386,6 +385,9 @@ export type SanityDrop = {
   status?: string;
   title: string;
   video: SanityVideo;
+  // playbackId: string;
+  // assetId: string;
+  // aspectRatio: string;
 };
 
 export type SanityVideo = {

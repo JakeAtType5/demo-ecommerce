@@ -1,16 +1,13 @@
 import groq from "groq";
 
-import { EPISODE } from "./episode";
 import { IMAGE } from "./image";
 import { SEO } from "./seo";
+import { VIDEO } from "./video";
 
 export const DROP = groq`
   _id,
   description,
   title,
-  episode -> {
-    ${EPISODE}
-  },
   location,
   number,
   "previewImage": previewImage {
@@ -19,4 +16,7 @@ export const DROP = groq`
   "releaseDate": release_date,
   "slug": "/drop/" + slug.current,
   ${SEO},
+  "video": video {
+    ${VIDEO}
+  }
 `;

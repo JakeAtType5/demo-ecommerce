@@ -10,6 +10,7 @@ import invariant from "tiny-invariant";
 import DropMetadata from "~/components/drop/Metadata";
 import { ThemeStateContext } from "~/components/global/ThemeStateWrapper";
 import { Link } from "~/components/Link";
+import SanityImage from "~/components/media/SanityImage";
 import ProductCollection from "~/components/product/ProductCollection";
 import VideoPlayerPreview from "~/components/video/PreviewPlayer";
 import { baseLanguage } from "~/data/countries";
@@ -18,6 +19,7 @@ import type { SanityProductPreview } from "~/lib/sanity";
 import { notFound, validateLocale } from "~/lib/utils";
 import { DROP_BY_NUMBER_QUERY, DROP_PAGE_QUERY } from "~/queries/sanity/drop";
 import { PRODUCTS_IN_DROP_QUERY } from "~/queries/sanity/product";
+import { useRootLoaderData } from "~/root";
 
 const seo: SeoHandleFunction<typeof loader> = ({ data }) => ({
   title: data?.page?.seo?.title || data?.page?.name,
@@ -49,6 +51,7 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
       language,
       baseLanguage,
     },
+    cache,
   });
 
   if (!page) {
@@ -62,6 +65,7 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
       language,
       baseLanguage,
     },
+    cache,
   });
 
   const previousDrop = await context.sanity.query<SanityDrop>({
@@ -83,6 +87,7 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
             dropId: page?._id,
             slug: page.slug,
           },
+          cache,
         })
       : {};
 
@@ -104,15 +109,12 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
 }
 
 export default function DropHandle() {
-  const { setTheme } = useContext(ThemeStateContext);
-  useEffect(() => {
-    setTheme("dark");
-  }, [setTheme]);
-
   const { language, page, relatedProducts, nextDrop, previousDrop } =
     useLoaderData<typeof loader>();
 
   const { handle } = useParams();
+
+  const { sanityDataset, sanityProjectID } = useRootLoaderData();
 
   return (
     <SanityPreview
@@ -123,12 +125,21 @@ export default function DropHandle() {
       {(page) => (
         <>
           <section className="drop-hero">
-            <div className="page-background desktop-only" />
-            {page?.episode?.playbackId ? (
+            <div className="drop-image">
+              <SanityImage
+                dataset={sanityDataset}
+                layout="responsive"
+                projectId={sanityProjectID}
+                sizes={["100vw"]}
+                src={page.previewImage?.asset?._ref}
+              />
+            </div>
+
+            {page?.video?.playbackId ? (
               <VideoPlayerPreview
-                playbackId={page.episode.playbackId}
-                assetId={page.episode.assetId}
-                duration={page.episode.duration}
+                playbackId={page.video.playbackId}
+                assetId={page.video.assetId}
+                duration={page.video.duration}
                 // startTime
               />
             ) : (

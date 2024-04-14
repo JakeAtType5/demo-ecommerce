@@ -1,5 +1,5 @@
 import {TagIcon} from '@sanity/icons'
-import {defineField, defineType} from 'sanity'
+import {defineType} from 'sanity'
 
 const GROUPS = [
   {
@@ -64,7 +64,7 @@ export default defineType({
       title: 'Location'
     },
       // tags
-      defineField({
+    {
         name: 'tags',
         title: 'Tags',
         group: 'content',
@@ -104,22 +104,18 @@ export default defineType({
             weak: true
           },
         ]
-      }),
-  
-
-    // Episode
-    defineField({
-      title: 'Episode',
-      name: 'episode',
-      group: 'content',
-      type: 'reference',
-      to: {
-        type: 'episode',
       },
-    }),
+
+    // video
+    {
+      title: 'Video file',
+      name: 'video',
+      group: 'content',
+      type: 'mux.video',
+    },
 
     // Prints
-    defineField({
+    {
       title: 'Products',
       name: 'prints',
       group: 'prints',
@@ -136,16 +132,16 @@ export default defineType({
         },
       ],
       validation: (Rule) => Rule.max(6),
-    }),
+    },
 
     // SEO
-    defineField({
+    {
       name: 'seo',
       title: 'SEO',
       type: 'seo.page',
       group: 'seo',
-    }),
-    defineField({
+    },
+    {
       name: 'slug',
       title: 'Slug',
       type: 'slug',
@@ -157,7 +153,7 @@ export default defineType({
           .replace(/\s+/g, '-')
           .slice(0, 200)
       }
-    }),
+    },
   ],
 
   // orderings: [

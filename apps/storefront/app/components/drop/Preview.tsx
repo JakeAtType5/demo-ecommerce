@@ -31,11 +31,11 @@ export default function DropPreview({ drop }: Props) {
         </Link>
       </div>
 
-      {drop?.episode?.playbackId ? (
+      {drop?.video?.playbackId ? (
         <VideoPlayerPreview
-          playbackId={drop.episode.playbackId}
-          assetId={drop.episode.assetId}
-          duration={drop.episode.duration}
+          playbackId={drop.video.playbackId}
+          assetId={drop.video.assetId}
+          duration={drop.video.duration}
           // startTime
         />
       ) : (

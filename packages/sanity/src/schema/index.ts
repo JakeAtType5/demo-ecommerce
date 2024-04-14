@@ -15,7 +15,6 @@ const annotations = [
 import collection from './documents/collection'
 import colour from './documents/colour'
 import drop from './documents/drop'
-import episode from './documents/episode'
 import location from './documents/location'
 import page from './documents/page'
 import person from './documents/person'
@@ -23,7 +22,7 @@ import product from './documents/product'
 import productVariant from './documents/productVariant'
 import style from './documents/style'
 
-const documents = [colour, collection, drop, episode, location, page, product, productVariant, person, style]
+const documents = [colour, collection, drop, location, page, product, productVariant, person, style]
 
 // Singleton document types
 import home from './singletons/home'

@@ -1,8 +1,8 @@
 import groq from "groq";
 
 export const VIDEO = groq`
-  "playbackId": video.asset->playbackId,
-  "assetId": video.asset->assetId,
-  "aspectRatio": video.asset->data.aspect_ratio,
-  "duration": video.asset->data.duration,
+  "playbackId": asset->playbackId,
+  "assetId": asset->assetId,
+  "aspectRatio": asset->data.aspect_ratio,
+  "duration": asset->data.duration,
 `;
