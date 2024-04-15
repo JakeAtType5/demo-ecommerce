@@ -2,7 +2,8 @@ import { faShoppingBag } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Await } from "@remix-run/react";
 import { Cart } from "@shopify/hydrogen/storefront-api-types";
-import { Suspense } from "react";
+import { Suspense, useContext } from "react";
+import { NavigationStateContext } from "../global/NavigationStateWrapper";
 
 type Props = {
   cart: Cart;
@@ -20,7 +21,26 @@ export default function CartToggle({
   openDrawer,
   closeDrawer,
 }: Props) {
+  const { navIsOpen, closeNav } = useContext(NavigationStateContext);
+
+  const toggleCart = () => {
+    if (navIsOpen) {
+      // first close cart drawer
+      closeNav();
+      // then open navigation
+      openDrawer();
+    } else {
+      // no cart to consider, so we just toggle
+      if (isOpen) {
+        closeDrawer();
+      } else {
+        openDrawer();
+      }
+    }
+  };
+
   // JL: This will need more work to render a count component
+
   return (
     <Suspense
       fallback={<FontAwesomeIcon icon={faShoppingBag}></FontAwesomeIcon>}
@@ -32,9 +52,7 @@ export default function CartToggle({
             icon={faShoppingBag}
             aria-expanded={isOpen}
             aria-controls="cart"
-            onClick={() => {
-              !isOpen ? openDrawer() : closeDrawer();
-            }}
+            onClick={toggleCart}
           >
             {data?.totalQuantity || 0}
           </FontAwesomeIcon>

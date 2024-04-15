@@ -1899,7 +1899,7 @@ footer .footer-bar .social-links {
 
 
 /* Cart */
-.--cart-is-open {
+.--cart-is-open, .--nav-is-open {
   filter: blur(100px);
   transition: 0.3s;
 }

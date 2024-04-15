@@ -76,7 +76,7 @@ export function useDrawer(openDefault = false) {
   }
 
   return {
-    isOpen,
+    cartIsOpen: isOpen,
     openDrawer,
     closeDrawer,
   };

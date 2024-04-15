@@ -1,12 +1,10 @@
 import { usePreviewContext } from "hydrogen-sanity";
-import { useContext, useEffect } from "react";
 
 import CartStateWrapper from "~/components/global/CartStateWrapper";
 import Footer from "~/components/global/Footer";
 import Header from "~/components/global/Header";
 import Main from "~/components/global/Main";
-import ThemeStateWrapper from "~/components/global/ThemeStateWrapper";
-import { ThemeStateContext } from "~/components/global/ThemeStateWrapper";
+import NavigationStateWrapper from "~/components/global/NavigationStateWrapper";
 import { PreviewBanner } from "~/components/preview/PreviewBanner";
 
 type LayoutProps = {
@@ -19,12 +17,12 @@ export function Layout({ backgroundColor, children }: LayoutProps) {
   //     {isPreview ? <PreviewBanner /> : <></>}
 
   return (
-    <ThemeStateWrapper>
+    <NavigationStateWrapper>
       <CartStateWrapper>
         <Header />
         <Main>{children}</Main>
         <Footer />
       </CartStateWrapper>
-    </ThemeStateWrapper>
+    </NavigationStateWrapper>
   );
 }

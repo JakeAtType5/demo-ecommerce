@@ -6,7 +6,7 @@ import { Cart } from "@shopify/hydrogen/storefront-api-types";
 import clsx from "clsx";
 import { useContext, useEffect } from "react";
 
-import { CartDrawer, useDrawer } from "~/components/cart/CartDrawer";
+import { CartDrawer } from "~/components/cart/CartDrawer";
 import CartToggle from "~/components/cart/CartToggle";
 import { CartStateContext } from "~/components/global/CartStateWrapper";
 import { CountrySelector } from "~/components/global/CountrySelector";
@@ -14,8 +14,8 @@ import { Link } from "~/components/Link";
 import { useCartFetchers } from "~/hooks/useCartFetchers";
 import { useRootLoaderData } from "~/root";
 
-export default function HeaderActions(navIsOpen: boolean) {
-  const { isOpen, openDrawer, closeDrawer } = useContext(CartStateContext);
+export default function HeaderActions() {
+  const { cartIsOpen, openDrawer, closeDrawer } = useContext(CartStateContext);
 
   const { cart, sanityCartResults } = useRootLoaderData();
 
@@ -67,14 +67,14 @@ export default function HeaderActions(navIsOpen: boolean) {
           <>
             <CartToggle
               cart={cart as Cart}
-              isOpen={isOpen}
+              isOpen={cartIsOpen}
               openDrawer={openDrawer}
               closeDrawer={closeDrawer}
             />
 
             <CartDrawer
               cart={cart as Cart}
-              open={isOpen}
+              open={cartIsOpen}
               onClose={closeDrawer}
               sanityCartResults={sanityCartResults}
             />

@@ -3,12 +3,19 @@ import { useContext } from "react";
 
 import { CartStateContext } from "~/components/global/CartStateWrapper";
 
+import { NavigationStateContext } from "./NavigationStateWrapper";
+
 export default function Main({ children }) {
-  const { isOpen, closeDrawer } = useContext(CartStateContext);
+  const { cartIsOpen, closeDrawer } = useContext(CartStateContext);
+  const { navIsOpen } = useContext(NavigationStateContext);
 
   return (
     <div
-      className={clsx(isOpen && "--cart-is-open", "content-wrapper")}
+      className={clsx(
+        cartIsOpen && "--cart-is-open",
+        navIsOpen && "--nav-is-open",
+        "content-wrapper"
+      )}
       onClick={closeDrawer}
     >
       <main role="main">{children}</main>

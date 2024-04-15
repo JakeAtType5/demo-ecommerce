@@ -1,7 +1,7 @@
 import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Transition } from "@headlessui/react";
-import { Fragment, useState } from "react";
+import { Fragment, useContext, useState } from "react";
 
 import { CountrySelector } from "~/components/global/CountrySelector";
 import Navigation from "~/components/global/Navigation";
@@ -9,27 +9,42 @@ import { Link } from "~/components/Link";
 import type { SanityMenuLink } from "~/lib/sanity";
 
 import { Label } from "./Label";
+import { CartStateContext } from "./CartStateWrapper";
 
 type Props = {
+  open: boolean;
   menuLinks: SanityMenuLink[];
+  onClose: () => void;
+  onOpen: () => void;
 };
 
-export default function MobileNavigation({ menuLinks }: Props) {
-  const [open, setOpen] = useState(false);
+export default function MobileNavigation({
+  onOpen,
+  onClose,
+  open,
+  menuLinks,
+}: Props) {
+  const { cartIsOpen, closeDrawer } = useContext(CartStateContext);
 
-  const handleClose = () => {
-    setOpen(false);
-    document.body.classList.remove("--prevent-scrolling");
-  };
-
-  const handleOpen = () => {
-    setOpen(true);
-    document.body.classList.add("--prevent-scrolling");
+  const toggleNavigation = () => {
+    if (cartIsOpen) {
+      // first close cart drawer
+      closeDrawer();
+      // then open navigation
+      onOpen();
+    } else {
+      // no cart to consider, so we just toggle
+      if (open) {
+        onClose();
+      } else {
+        onOpen();
+      }
+    }
   };
 
   return (
     <>
-      <button className="mobile-only burger-icon" onClick={handleOpen}>
+      <button className="mobile-only burger-icon" onClick={toggleNavigation}>
         <FontAwesomeIcon icon={faBars} />
       </button>
 
@@ -48,7 +63,7 @@ export default function MobileNavigation({ menuLinks }: Props) {
         <div className="fullscreen-navigation">
           {/* Header */}
           <header className="header">
-            <button type="button" onClick={handleClose}>
+            <button type="button" onClick={onClose}>
               <FontAwesomeIcon icon={faTimes} />
             </button>
           </header>
@@ -79,4 +94,24 @@ export default function MobileNavigation({ menuLinks }: Props) {
       </Transition>
     </>
   );
+}
+
+export function useNavigation(openDefault = false) {
+  const [isOpen, setIsOpen] = useState(openDefault);
+
+  function openNav() {
+    setIsOpen(true);
+    document.body.classList.add("--prevent-scrolling");
+  }
+
+  function closeNav() {
+    setIsOpen(false);
+    document.body.classList.remove("--prevent-scrolling");
+  }
+
+  return {
+    navIsOpen: isOpen,
+    openNav,
+    closeNav,
+  };
 }
