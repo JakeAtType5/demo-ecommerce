@@ -30,10 +30,9 @@ import { SanityPreview } from "hydrogen-sanity";
 import { Suspense, useContext, useEffect, useState } from "react";
 import invariant from "tiny-invariant";
 
-import DropPreview from "~/components/drop/Preview";
+import DropHero from "~/components/drop/Hero";
 import { ThemeStateContext } from "~/components/global/ThemeStateWrapper";
 import PortableText from "~/components/portableText/PortableText";
-import CustomiseProduct from "~/components/product/Customise";
 import ProductHero from "~/components/product/Hero";
 import Materials from "~/components/product/Materials";
 import ProductCollection from "~/components/product/ProductCollection";
@@ -199,12 +198,6 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
 }
 
 export default function ProductHandle() {
-  const { setTheme } = useContext(ThemeStateContext);
-
-  useEffect(() => {
-    setTheme("light");
-  }, [setTheme]);
-
   const {
     language,
     page,
@@ -223,8 +216,6 @@ export default function ProductHandle() {
 
   const releaseDate = new Date(page?.drop.releaseDate);
   const isFutureRelease = releaseDate > new Date();
-
-  const [showCustomiseModal, setShowCustomiseModal] = useState(false);
 
   const [shipping, setShipping] = useState({
     city: "",
@@ -292,10 +283,7 @@ export default function ProductHandle() {
     >
       {(page) => (
         <div
-          className={clsx(
-            showCustomiseModal && "--with-customisation-modal",
-            "color-theme"
-          )}
+          className="color-theme"
           style={{
             "--product-primary-color": `${page.artwork?.palette.vibrant.background}1c`,
             "--product-primary-color-faded": `${page.artwork?.palette.vibrant.background}08`,
@@ -318,7 +306,8 @@ export default function ProductHandle() {
             isInStock={isInStock}
             isFutureRelease={isFutureRelease}
             onCustomiseClick={() => {
-              setShowCustomiseModal(true);
+              // todo: trigger stage 1?? how to?
+              
               window.scrollTo(0, 0);
             }}
           />
@@ -327,7 +316,7 @@ export default function ProductHandle() {
           {page?.story && (
             <section className="product-section" id="the-story">
               <p className="semi-bold-24 section-header">
-                The story behind the art
+                The story
               </p>
               <PortableText blocks={page.story} />
             </section>
@@ -336,7 +325,7 @@ export default function ProductHandle() {
           {/* The Drop */}
           <section className="product-section" id="the-drop">
             <p className="semi-bold-24 section-header">Featured in</p>
-            {page?.drop && <DropPreview drop={page.drop} />}
+            {page?.drop && <DropHero drop={page.drop} />}
           </section>
 
           {/* Materials */}

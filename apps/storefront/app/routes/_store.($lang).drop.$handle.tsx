@@ -1,4 +1,4 @@
-import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
+import { faAngleLeft, faAngleRight, faPlay } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useLoaderData, useParams } from "@remix-run/react";
 import { SeoConfig, type SeoHandleFunction } from "@shopify/hydrogen";
@@ -8,7 +8,7 @@ import { SanityPreview } from "hydrogen-sanity";
 import { useContext, useEffect, useState } from "react";
 import invariant from "tiny-invariant";
 
-import DropMetadata from "~/components/drop/Metadata";
+import DropHero from "~/components/drop/Hero";
 import { ThemeStateContext } from "~/components/global/ThemeStateWrapper";
 import { Link } from "~/components/Link";
 import SanityImage from "~/components/media/SanityImage";
@@ -114,9 +114,6 @@ export default function DropHandle() {
     useLoaderData<typeof loader>();
 
   const { handle } = useParams();
-  const { sanityDataset, sanityProjectID } = useRootLoaderData();
-
-  const [isPlaying, setIsPlaying] = useState(false);
 
   return (
     <SanityPreview
@@ -126,7 +123,8 @@ export default function DropHandle() {
     >
       {(page) => (
         <>
-          <section className={clsx("drop-hero", isPlaying && "--is-playing")}>
+        <DropHero drop={page} />
+          {/* <section className={clsx("drop-hero", isPlaying && "--is-playing")}>
             <div className="drop-image">
               <SanityImage
                 dataset={sanityDataset}
@@ -136,6 +134,9 @@ export default function DropHandle() {
                 src={page.previewImage?.asset?._ref}
               />
             </div>
+
+            <FontAwesomeIcon icon={faPlay} />
+
 
             <div className="drop-video">
               {page?.video?.playbackId ? (
@@ -166,7 +167,7 @@ export default function DropHandle() {
                 />
               </div>
             </div>
-          </section>
+          </section> */}
 
           {relatedProducts?.length >= 1 && (
             <section className="drop-prints product-section">
