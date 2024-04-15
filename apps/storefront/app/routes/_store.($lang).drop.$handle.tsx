@@ -3,8 +3,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useLoaderData, useParams } from "@remix-run/react";
 import { SeoConfig, type SeoHandleFunction } from "@shopify/hydrogen";
 import { defer, type LoaderFunctionArgs } from "@shopify/remix-oxygen";
+import clsx from "clsx";
 import { SanityPreview } from "hydrogen-sanity";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import invariant from "tiny-invariant";
 
 import DropMetadata from "~/components/drop/Metadata";
@@ -113,8 +114,9 @@ export default function DropHandle() {
     useLoaderData<typeof loader>();
 
   const { handle } = useParams();
-
   const { sanityDataset, sanityProjectID } = useRootLoaderData();
+
+  const [isPlaying, setIsPlaying] = useState(false);
 
   return (
     <SanityPreview
@@ -124,7 +126,7 @@ export default function DropHandle() {
     >
       {(page) => (
         <>
-          <section className="drop-hero">
+          <section className={clsx("drop-hero", isPlaying && "--is-playing")}>
             <div className="drop-image">
               <SanityImage
                 dataset={sanityDataset}
@@ -135,19 +137,20 @@ export default function DropHandle() {
               />
             </div>
 
-            {page?.video?.playbackId ? (
-              <VideoPlayerPreview
-                playbackId={page.video.playbackId}
-                assetId={page.video.assetId}
-                duration={page.video.duration}
-                // startTime
-              />
-            ) : (
-              <div className="video-empty-state">
-                <p className="semi-bold-32">Video not found</p>
-              </div>
-            )}
-
+            <div className="drop-video">
+              {page?.video?.playbackId ? (
+                <VideoPlayerPreview
+                  playbackId={page.video.playbackId}
+                  assetId={page.video.assetId}
+                  duration={page.video.duration}
+                  // startTime
+                />
+              ) : (
+                <div className="video-empty-state">
+                  <p className="semi-bold-32">Video not found</p>
+                </div>
+              )}
+            </div>
             <div className="drop-content">
               <p className="drop-title bold-56">{page.title}</p>
               <div>
