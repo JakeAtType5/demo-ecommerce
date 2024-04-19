@@ -327,20 +327,20 @@ export type SanityProductPage = {
   artist: string;
   artwork: SanityAssetImage;
   bundles: [];
-  // customProductOptions?: SanityCustomProductOption[];
   description: string;
   drop?: SanityDrop;
+  gallery: PortableTextBlock[];
   gid: string;
   maxUnits: number;
   slug: string;
   seo: SanitySeo;
-  story: PortableTextBlock[];
+  notes: PortableTextBlock[];
   faqs: SanityFaqs;
-  sharedText: {
-    deliveryAndReturns: PortableTextBlock[];
-    deliverySummary: string;
-    environmentallyFriendly: string;
-  };
+  // sharedText: {
+  //   deliveryAndReturns: PortableTextBlock[];
+  //   deliverySummary: string;
+  //   environmentallyFriendly: string;
+  // };
 };
 
 export type SanityProductPreview = {
@@ -400,19 +400,6 @@ export type SanityVideo = {
   autoPlay?: "muted" | "any" | "none";
   theme?: "microvideo" | "classic";
   playerReference?: any;
-};
-
-export type SanityPerson = {
-  name: string;
-  slug: string;
-  bio: PortableTextBlock[];
-  image: SanityAssetImage;
-  seo: SanitySeo;
-};
-
-export type SanityPersonPage = SanityPerson & {
-  seo: SanitySeo;
-  products: SanityModuleProduct[];
 };
 
 export type SanityFaq = {

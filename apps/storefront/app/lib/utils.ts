@@ -21,7 +21,6 @@ import type {
   SanityHomePage,
   SanityModule,
   SanityPage,
-  SanityPersonPage,
   SanityProductPage,
 } from "~/lib/sanity";
 import { INVENTORY_BY_PRODUCT_IDS, PRODUCTS_QUERY } from "~/queries/shopify/product";
@@ -190,7 +189,6 @@ export async function fetchGids({
     | SanityPage
     | SanityCollectionPage
     | SanityProductPage
-    | SanityPersonPage;
   context: AppLoadContext;
 }) {
   const productGids = extract(`..[_type == "productWithVariant"].gid`, page);

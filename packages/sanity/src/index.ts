@@ -80,7 +80,7 @@ export function defineSanityConfig(config: SanityConfig) {
       }),
       languageFilter({
         supportedLanguages: LANGUAGES,
-        documentTypes: ['collection', 'product', 'person'],
+        documentTypes: ['collection', 'product'],
         filterField: (enclosingType, member, selectedLanguageIds) => {
           // Filter internationalized arrays
           if (

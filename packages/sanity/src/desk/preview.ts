@@ -3,7 +3,7 @@ import Iframe from 'sanity-plugin-iframe-pane'
 
 import {resolvePreviewUrl} from '../utils/resolveProductionUrl'
 
-const PREVIEW_TYPES = ['page', 'product', 'home', 'collection', 'person', 'drop']
+const PREVIEW_TYPES = ['page', 'product', 'home', 'collection', 'drop']
 
 export const previewPane = (S: StructureBuilder) => {
   return S.view

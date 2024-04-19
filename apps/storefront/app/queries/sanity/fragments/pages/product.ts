@@ -37,22 +37,16 @@ export const PRODUCT_PAGE = groq`
     ${DROP}
   },
   ${PRODUCT_FAQS},
-  "gid": store.gid,
-  maxUnits,
-  "priceRange": store.priceRange,
-  story[]{
+  gallery[]{
     ${PORTABLE_TEXT}
   },
+  "gid": store.gid,
+  maxUnits,
+  notes[]{
+    ${PORTABLE_TEXT}
+  },
+  "priceRange": store.priceRange,
   ${SEO_SHOPIFY},
   "slug": "/product/" + store.slug.current,
   ${SHARED_TEXT},
-`;
-
-// export const PRODUCT_PAGE = groq`
-//   "body": coalesce(body[_key == $language][0].value, body[_key == $baseLanguage][0].value)[] {
-//     ${PORTABLE_TEXT}
-//   },
-//   creators[]{
-//     ${CREATOR}
-//   },
-// `;
+`;  

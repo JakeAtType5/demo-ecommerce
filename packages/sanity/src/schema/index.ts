@@ -17,12 +17,11 @@ import colour from './documents/colour'
 import drop from './documents/drop'
 import location from './documents/location'
 import page from './documents/page'
-import person from './documents/person'
 import product from './documents/product'
 import productVariant from './documents/productVariant'
 import style from './documents/style'
 
-const documents = [colour, collection, drop, location, page, product, productVariant, person, style]
+const documents = [colour, collection, drop, location, page, product, productVariant, style]
 
 // Singleton document types
 import home from './singletons/home'
@@ -38,7 +37,6 @@ import simpleBlockContent from './blocks/simpleBlockContent'
 const blocks = [body, simpleBlockContent]
 
 // Object types
-import creator from './objects/creator'
 import customProductOptionColor from './objects/customProductOption/color'
 import customProductOptionSize from './objects/customProductOption/size'
 import faqs from './objects/faqs'
@@ -74,7 +72,6 @@ import shopifyProduct from './objects/shopifyProduct'
 import shopifyProductVariant from './objects/shopifyProductVariant'
 
 const objects = [
-  creator,
   customProductOptionColor,
   customProductOptionSize,
   faqs,

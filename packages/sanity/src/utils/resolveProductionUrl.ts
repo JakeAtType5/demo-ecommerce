@@ -42,12 +42,6 @@ export const resolvePreviewUrl = (document: SanityDocumentLike) => {
       path = slug == null ? '/' : `/collections/${slug}`
       break
     }
-
-    case 'person': {
-      const slug = (document?.slug as Slug)?.current
-      path = slug == null ? '/' : `/people/${slug}`
-      break
-    }
   }
 
   if (document?.language) {

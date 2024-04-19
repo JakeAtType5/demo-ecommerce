@@ -14,8 +14,8 @@ const GROUPS = [
     default: true
   },
   {
-    name: 'story',
-    title: 'Story'
+    name: 'content',
+    title: 'Content'
   },
   {
     name: 'drop',
@@ -94,7 +94,7 @@ export default defineType({
     defineField({
       name: 'tags',
       title: 'Tags',
-      group: 'hero',
+      group: 'content',
       type: 'array',
       of: [
         {
@@ -181,12 +181,25 @@ export default defineType({
       ]
     }),
 
-    // story
+    // // story
+    // defineField({
+    //   name: 'story',
+    //   title: 'Story',
+    //   type: 'body',
+    //   group: 'story',
+    // }),
+
     defineField({
-      name: 'story',
-      title: 'Story',
+      name: 'gallery',
+      title: 'Gallery',
       type: 'body',
-      group: 'story',
+      group: 'content',
+    }),
+    defineField({
+      name: 'notes',
+      type: 'simpleBlockContent',
+      group: 'content',
+      title: 'Curator Notes'
     }),
 
     // shopify connection
@@ -217,13 +230,6 @@ export default defineType({
       name: 'body',
       title: 'Body',
       type: 'internationalizedArrayBody',
-    }),
-    defineField({
-      name: 'creators',
-      title: 'Creators',
-      type: 'array',
-      of: [{type: 'creator'}],
-      validation: (rule) => rule.max(1),
     }),
     defineField({
       name: 'faqs',

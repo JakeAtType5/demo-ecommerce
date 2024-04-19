@@ -9,7 +9,6 @@ import drops from './drops'
 import home from './home'
 import locations from './locations'
 import pages from './pages'
-import people from './people'
 import products from './products'
 import settings from './settings'
 import styles from './styles'
@@ -36,7 +35,6 @@ const DOCUMENT_TYPES_IN_STRUCTURE = [
   'location',
   'media.tag',
   'page',
-  'person',
   'product',
   'productVariant',
   'settings',
@@ -60,8 +58,6 @@ export const structure: StructureResolver = (S, context) =>
       styles(S, context),
       colours(S, context),
       locations(S, context),
-      S.divider(),
-      people(S, context),
       S.divider(),
       settings(S, context),
       S.divider(),
