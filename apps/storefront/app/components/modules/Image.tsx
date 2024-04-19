@@ -36,10 +36,10 @@ export default function ImageModule({ value }: Props) {
   return (
     <div
       className={clsx(
-        "story-image",
+        "gallery-image",
         value.size && value.size === "halfWidth"
-          ? "--half-width"
-          : "--full-width",
+          ? "half-width-image"
+          : "full-width-image",
         value.position ? `--${value.position}-aligned` : "",
         value.variant ? `--${hyphenatedVariant}-variant` : "",
         value.contentPosition ? `--content-${hyphenatedContentPosition}` : ""

@@ -6,14 +6,6 @@ import type { SanityVideo } from "~/lib/sanity";
 import VideoPlayer from "./VideoPlayer";
 
 export default function VideoPlayerPreview(video: SanityVideo) {
-  const autoplayVideo = {
-    ...video,
-    ...{
-      autoPlay: "muted",
-      theme: "microvideo",
-    },
-  };
-
   const playerReference = createRef();
 
   const { ref, inView } = useInView({
@@ -35,7 +27,7 @@ export default function VideoPlayerPreview(video: SanityVideo) {
         playbackId={video.playbackId}
         assetId={video.assetId}
         duration={video.duration}
-        muted={true}
+        muted={false}
         theme="microvideo"
         playerReference={playerReference}
       />

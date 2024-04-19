@@ -1,3 +1,4 @@
+import product from "@demo-ecommerce/sanity/src/schema/annotations/product";
 import clsx from "clsx";
 
 import type { SanityProductPreview } from "~/lib/sanity";
@@ -15,6 +16,7 @@ type Props = {
 export function sortProducts({ products, filter, sortBy }: Props) {
   // temp: remove products without release dates for testing
   const validProducts = products.filter((x) => x.releaseDate);
+  // const validProducts = products.filter((x) => x);
 
   const sortedProducts = sortBy
     ? validProducts.sort((a, b) => {
@@ -90,11 +92,20 @@ export default function ProductCollection({
   // finally convert to an array so we can actually use it in JSX
   const productArray = Array.from(sortedProducts);
 
+  console.log(productArray);
+  
   return (
-    <div className={clsx("products-collection", `--${style}-collection`)}>
-      {productArray.map((product) => (
-        <ProductCard key={product._id} product={product} />
-      ))}
+    <div className={clsx("products-collection", `--is-${style}`)}>
+      {productArray.length > 0 ? (
+        productArray.map((product) => (
+          <ProductCard key={product._id} product={product} style={style} />
+        ))
+      ) : (
+        <div className="collection-empty-state">
+          <p className="semi-bold-24">No products found</p>
+          <button className="button--small semi-bold-16">Back</button>
+        </div>
+      )}
     </div>
   );
 }

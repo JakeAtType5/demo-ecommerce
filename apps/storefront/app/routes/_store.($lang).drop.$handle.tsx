@@ -1,4 +1,4 @@
-import { faAngleLeft, faAngleRight, faPlay } from "@fortawesome/free-solid-svg-icons";
+import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useLoaderData, useParams } from "@remix-run/react";
 import { SeoConfig, type SeoHandleFunction } from "@shopify/hydrogen";
@@ -9,10 +9,12 @@ import { useContext, useEffect, useState } from "react";
 import invariant from "tiny-invariant";
 
 import DropHero from "~/components/drop/Hero";
-import { ThemeStateContext } from "~/components/global/ThemeStateWrapper";
+import Banner from "~/components/global/Banner";
 import { Link } from "~/components/Link";
 import SanityImage from "~/components/media/SanityImage";
+import PortableText from "~/components/portableText/PortableText";
 import ProductCollection from "~/components/product/ProductCollection";
+import RelatedProducts from "~/components/product/RelatedProducts";
 import VideoPlayerPreview from "~/components/video/PreviewPlayer";
 import { baseLanguage } from "~/data/countries";
 import type { SanityDrop } from "~/lib/sanity";
@@ -39,11 +41,11 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
   const { handle } = params;
   invariant(handle, "Missing handle param, check route filename");
 
-  const cache = context.storefront.CacheCustom({
-    mode: "public",
-    maxAge: 60,
-    staleWhileRevalidate: 60,
-  });
+  // const cache = context.storefront.CacheCustom({
+  //   mode: "public",
+  //   maxAge: 60,
+  //   staleWhileRevalidate: 60,
+  // });
 
   const page = await context.sanity.query<SanityDrop>({
     query: DROP_PAGE_QUERY,
@@ -52,7 +54,7 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
       language,
       baseLanguage,
     },
-    cache,
+    // cache,
   });
 
   if (!page) {
@@ -66,7 +68,7 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
       language,
       baseLanguage,
     },
-    cache,
+    // cache,
   });
 
   const previousDrop = await context.sanity.query<SanityDrop>({
@@ -76,7 +78,7 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
       language,
       baseLanguage,
     },
-    cache,
+    // cache,
   });
 
   // Fetch related print IDs from this drop
@@ -86,18 +88,17 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
           query: PRODUCTS_IN_DROP_QUERY,
           params: {
             dropId: page?._id,
-            slug: page.slug,
           },
-          cache,
+          // cache,
         })
       : {};
 
-  const relatedProducts = productsInDrop?.prints || [];
+  const products = productsInDrop?.prints || [];
 
   return defer({
     language,
     page,
-    relatedProducts,
+    products,
     nextDrop,
     previousDrop,
     // analytics: {
@@ -110,11 +111,10 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
 }
 
 export default function DropHandle() {
-  const { language, page, relatedProducts, nextDrop, previousDrop } =
+  const { language, page, nextDrop, previousDrop, products } =
     useLoaderData<typeof loader>();
 
   const { handle } = useParams();
-
   return (
     <SanityPreview
       data={page}
@@ -123,56 +123,35 @@ export default function DropHandle() {
     >
       {(page) => (
         <>
-        <DropHero drop={page} />
-          {/* <section className={clsx("drop-hero", isPlaying && "--is-playing")}>
-            <div className="drop-image">
-              <SanityImage
-                dataset={sanityDataset}
-                layout="responsive"
-                projectId={sanityProjectID}
-                sizes={["100vw"]}
-                src={page.previewImage?.asset?._ref}
-              />
-            </div>
+          {page.message && <Banner text={page.message} />}
 
-            <FontAwesomeIcon icon={faPlay} />
+          <DropHero drop={page} />
 
-
-            <div className="drop-video">
-              {page?.video?.playbackId ? (
-                <VideoPlayerPreview
-                  playbackId={page.video.playbackId}
-                  assetId={page.video.assetId}
-                  duration={page.video.duration}
-                  // startTime
-                />
-              ) : (
-                <div className="video-empty-state">
-                  <p className="semi-bold-32">Video not found</p>
-                </div>
-              )}
-            </div>
-            <div className="drop-content">
-              <p className="drop-title bold-56">{page.title}</p>
-              <div>
-                {page.description && (
-                  <p className="semi-bold-16 drop-description">
-                    {page.description}
-                  </p>
-                )}
-                <DropMetadata
-                  location={page.location}
-                  number={page.number}
-                  releaseDate={page?.releaseDate}
-                />
-              </div>
-            </div>
-          </section> */}
-
-          {relatedProducts?.length >= 1 && (
-            <section className="drop-prints product-section">
+          {products?.length >= 1 && (
+            <section className="drop-products narrow-section product-section">
               <p className="semi-bold-24 section-header">Explore this drop</p>
-              <ProductCollection products={relatedProducts}></ProductCollection>
+              <ProductCollection products={products} style="collage" />
+            </section>
+          )}
+
+          {page?.gallery && (
+            <section className="drop-gallery narrow-section product-section">
+              <p className="semi-bold-24 section-header">Behind the scenes</p>
+              <PortableText blocks={page.gallery} className="gallery" />
+            </section>
+          )}
+
+          {page?.notes && (
+            <section className="drop-notes very-narrow-section product-section">
+              <p className="semi-bold-24 section-header">Curator notes</p>
+              <PortableText blocks={page.notes} className="notes" />
+            </section>
+          )}
+
+          {page?.credits && (
+            <section className="drop-credits very-narrow-section product-section">
+              <p className="semi-bold-24 section-header">Credits</p>
+              <PortableText blocks={page.credits} className="credits" />
             </section>
           )}
 

@@ -5,7 +5,7 @@ import { DROP } from "./fragments/drop";
 export const DROPS_QUERY = groq`
   *[
     _type == "drop"
-  ] | order(_createdAt desc) {
+  ] | order(releaseDate desc) {
     ${DROP}
   }
 `;

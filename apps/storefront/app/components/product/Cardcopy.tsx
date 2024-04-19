@@ -6,12 +6,18 @@ import type { SanityProductPreview } from "~/lib/sanity";
 import { useRootLoaderData } from "~/root";
 
 type Props = {
+  children?: React.ReactNode;
   product: SanityProductPreview;
-  style: string;
+  style?: string;
 };
 
-export default function ProductCard({ product, style }: Props) {
+export default function ProductCard({ children, product, style }: Props) {
   const { sanityDataset, sanityProjectID } = useRootLoaderData();
+
+  const backgroundColor =
+    product.artwork?.palette.dominant.population > 2.7
+      ? `${product.artwork?.palette.dominant.background}12`
+      : `${product.artwork?.palette.lightMuted.background}12`;
 
   return (
     <div
@@ -21,7 +27,7 @@ export default function ProductCard({ product, style }: Props) {
         product.status === "unavailable" ? "--is-sold-out" : ""
       )}
       style={{
-        "--product-primary-color": `${product.printImage?.palette.vibrant.background}1f`,
+        "--product-primary-color": backgroundColor,
       }}
     >
       <Link to={`${product.slug}`}>
@@ -30,13 +36,21 @@ export default function ProductCard({ product, style }: Props) {
             dataset={sanityDataset}
             layout="responsive"
             projectId={sanityProjectID}
-            sizes={["30vw, 50vw"]}
-            src={product.printImage?.asset?._ref}
+            sizes={["50vw, 75vW"]}
+            src={product.artwork?.asset?._ref}
           />
         </div>
+        <div className="card-metadata">
+          <p className="bold-42 product-title">{product.title}</p>
+          <p className="italic-20 artist-title">By {product.artist}</p>
+          {style === "collage" && (
+            <p className="body-text-18 product-description">
+              {product.description}
+            </p>
+          )}
 
-        <p className="bold-24 product-title">{product.title}</p>
-        <p className="semi-bold-16 artist-title">by {product.artist}</p>
+          {children}
+        </div>
       </Link>
     </div>
   );

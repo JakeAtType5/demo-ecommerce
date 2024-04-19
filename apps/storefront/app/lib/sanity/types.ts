@@ -110,8 +110,9 @@ export type SanityHeroPage = {
 };
 
 export type SanityHomePage = {
-  hero?: SanityHeroHome;
-  modules: (SanityModuleImage | SanityModuleInstagram)[];
+  // hero?: SanityHeroHome;
+  heroTitle: string;
+  // modules: (SanityModuleImage | SanityModuleInstagram)[];
   seo: SanitySeo;
 };
 
@@ -375,19 +376,18 @@ export type SanitySeo = {
 // DROPS
 export type SanityDrop = {
   _id: string;
+  credits?: PortableTextBlock[];
   description?: string;
+  gallery: PortableTextBlock[];
   location?: string;
+  notes: PortableTextBlock[];
   number?: number;
-  previewImage?: SanityAssetImage;
+  message?: string;
   releaseDate?: Date;
   seo: SanitySeo;
   slug: string;
-  status?: string;
   title: string;
-  video: SanityVideo;
-  // playbackId: string;
-  // assetId: string;
-  // aspectRatio: string;
+  video?: SanityVideo;
 };
 
 export type SanityVideo = {

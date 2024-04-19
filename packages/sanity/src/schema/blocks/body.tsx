@@ -6,32 +6,32 @@ export default defineField({
   type: 'array',
   of: [
     {
-      lists: [
-        {title: 'Bullet', value: 'bullet'},
-        {title: 'Numbered', value: 'number'},
-      ],
+      // lists: [
+      //   {title: 'Bullet', value: 'bullet'},
+      //   {title: 'Numbered', value: 'number'},
+      // ],
       marks: {
-        decorators: [
-          {
-            title: 'Italic',
-            value: 'em',
-          },
-          {
-            title: 'Strong',
-            value: 'strong',
-          },
-        ],
+        // decorators: [
+        //   {
+        //     title: 'Italic',
+        //     value: 'em',
+        //   },
+        //   {
+        //     title: 'Strong',
+        //     value: 'strong',
+        //   },
+        // ],
         annotations: [
           // product
           {
             name: 'annotationProduct',
             type: 'annotationProduct',
           },
-          // Email
-          {
-            name: 'annotationLinkEmail',
-            type: 'annotationLinkEmail',
-          },
+          // // Email
+          // {
+          //   name: 'annotationLinkEmail',
+          //   type: 'annotationLinkEmail',
+          // },
           // Internal link
           {
             name: 'annotationLinkInternal',
@@ -48,18 +48,18 @@ export default defineField({
       type: 'block',
     },
     // Custom blocks
-    {
-      name: 'blockAccordion',
-      type: 'module.accordion',
-    },
-    {
-      name: 'blockCallout',
-      type: 'module.callout',
-    },
-    {
-      name: 'blockGrid',
-      type: 'module.grid',
-    },
+    // {
+    //   name: 'blockAccordion',
+    //   type: 'module.accordion',
+    // },
+    // {
+    //   name: 'blockCallout',
+    //   type: 'module.callout',
+    // },
+    // {
+    //   name: 'blockGrid',
+    //   type: 'module.grid',
+    // },
     {
       name: 'blockImage',
       type: 'module.image',

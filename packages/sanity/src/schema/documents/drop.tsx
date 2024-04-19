@@ -9,7 +9,11 @@ const GROUPS = [
   },
   {
     name: 'prints',
-    title: 'Prints'
+    title: 'Products'
+  },
+  {
+    name: 'episode',
+    title: 'Episode'
   },
   {
     name: 'seo',
@@ -24,7 +28,6 @@ export default defineType({
   icon: TagIcon,
   groups: GROUPS,
   fields: [
-    // Content
     {
       name: 'title',
       type: 'string',
@@ -40,12 +43,6 @@ export default defineType({
       validation: Rule => Rule.required()
     },
     {
-      name: 'previewImage',
-      title: 'High-res image',
-      type: 'image',
-      group: 'content',
-    },
-    {
       name: 'description',
       type: 'text',
       group: 'content',
@@ -58,12 +55,17 @@ export default defineType({
       title: 'Release Date'
     },
     {
+      name: 'message',
+      type: 'string',
+      group: 'content',
+      title: 'Banner Message'
+    },
+    {
       name: 'location',
       type: 'string',
       group: 'content',
       title: 'Location'
     },
-      // tags
     {
         name: 'tags',
         title: 'Tags',
@@ -105,16 +107,34 @@ export default defineType({
           },
         ]
       },
-
+      {
+        name: 'gallery',
+        title: 'Gallery',
+        type: 'body',
+        group: 'content',
+      },
+      {
+        name: 'notes',
+        type: 'simpleBlockContent',
+        group: 'content',
+        title: 'Curator Notes'
+      },
+      {
+        name: 'credits',
+        type: 'simpleBlockContent',
+        group: 'content',
+        title: 'Credits'
+      },
+    
     // video
     {
       title: 'Video file',
       name: 'video',
-      group: 'content',
+      group: 'episode',
       type: 'mux.video',
     },
 
-    // Prints
+    // Products
     {
       title: 'Products',
       name: 'prints',

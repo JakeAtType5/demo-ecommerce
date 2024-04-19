@@ -66,7 +66,7 @@ export default function PortableText({ blocks, centered, className }: Props) {
 
   const portableText = useMemo(() => {
     return (
-      <div className={clsx("story", className)}>
+      <div className={className}>
         <PortableTextReact value={blocks} components={components} />
       </div>
     );

@@ -14,16 +14,16 @@ export default {
           {title: 'Italic', value: 'em'},
         ],
         annotations: [
-          // product
-          {
-            name: 'annotationProduct',
-            type: 'annotationProduct',
-          },
-          // Email
-          {
-            name: 'annotationLinkEmail',
-            type: 'annotationLinkEmail',
-          },
+          // // product
+          // {
+          //   name: 'annotationProduct',
+          //   type: 'annotationProduct',
+          // },
+          // // Email
+          // {
+          //   name: 'annotationLinkEmail',
+          //   type: 'annotationLinkEmail',
+          // },
           // Internal link
           {
             name: 'annotationLinkInternal',

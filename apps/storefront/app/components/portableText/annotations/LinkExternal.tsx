@@ -1,3 +1,5 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLink } from "@fortawesome/free-solid-svg-icons";
 import type { PortableTextMarkComponentProps } from "@portabletext/react";
 import clsx from "clsx";
 
@@ -15,15 +17,14 @@ const LinkExternalAnnotation = ({ children, value }: Props) => {
 
   return (
     <a
-      className={clsx(
-        "inline-flex items-center underline transition-opacity duration-200",
-        "hover:opacity-60"
-      )}
       href={value?.url}
-      rel="noopener noreferrer"
+      rel="noopener"
       target={value?.newWindow ? "_blank" : "_self"}
     >
-      <>{children}</>
+      <>
+      {children}
+        <FontAwesomeIcon icon={faLink} />
+      </>
     </a>
   );
 };
