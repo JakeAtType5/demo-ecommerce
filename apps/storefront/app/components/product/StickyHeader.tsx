@@ -93,7 +93,7 @@ export default function StickyProductHeader({
         {isInStock && !isFutureRelease && (
           <button
             className="section-link semi-bold-16 button--small"
-            onClick={(e) => onCustomiseClick()}
+            onClick={() => onCustomiseClick()}
           >
             Customise
           </button>

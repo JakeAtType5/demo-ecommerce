@@ -63,6 +63,7 @@ import {
   PRODUCTS_IN_DROP_QUERY,
 } from "~/queries/sanity/product";
 import { PRODUCT_QUERY, VARIANTS_QUERY } from "~/queries/shopify/product";
+import Banner from "~/components/global/Banner";
 
 const seo: SeoHandleFunction<typeof loader> = ({ data }) => {
   const media = flattenConnection<MediaConnection>(data.product?.media).find(
@@ -214,8 +215,10 @@ export default function ProductHandle() {
     (variant) => variant.availableForSale == true
   );
 
-  const releaseDate = new Date(page?.drop.releaseDate);
-  const isFutureRelease = releaseDate > new Date();
+  const releaseDate = new Date(page?.drop?.releaseDate);
+  const isFutureRelease = page?.drop?.releaseDate
+    ? releaseDate > new Date()
+    : "";
 
   const [shipping, setShipping] = useState({
     city: "",
@@ -275,6 +278,11 @@ export default function ProductHandle() {
     },
   ];
 
+  const backgroundColor =
+  page.artwork?.palette.dominant.population > 2.7
+      ? `${page.artwork?.palette.dominant.background}`
+      : `${page.artwork?.palette.lightMuted.background}`;
+  
   return (
     <SanityPreview
       data={page}
@@ -283,12 +291,19 @@ export default function ProductHandle() {
     >
       {(page) => (
         <div
-          className="color-theme"
+          className="product-color-theme"
           style={{
-            "--product-primary-color": `${page.artwork?.palette.vibrant.background}1c`,
-            "--product-primary-color-faded": `${page.artwork?.palette.vibrant.background}08`,
+            "--product-primary-color": `${backgroundColor}1c`,
+            "--product-primary-color-faded": `${backgroundColor}08`,
           }}
         >
+          <Banner
+            text={
+              "Collectible museum-quality art from seriously talented upcoming artists."
+            }
+            className="--on-product-page"
+          />
+
           <ProductHero
             sanityProduct={page as SanityProductPage}
             storefrontProduct={product}
@@ -307,25 +322,39 @@ export default function ProductHandle() {
             isFutureRelease={isFutureRelease}
             onCustomiseClick={() => {
               // todo: trigger stage 1?? how to?
-              
               window.scrollTo(0, 0);
             }}
           />
 
           {/* Story */}
-          {page?.story && (
+          {/* {page?.story && (
             <section className="product-section" id="the-story">
               <p className="semi-bold-24 section-header">
                 The story
               </p>
               <PortableText blocks={page.story} />
             </section>
-          )}
+          )} */}
 
           {/* The Drop */}
           <section className="product-section" id="the-drop">
-            <p className="semi-bold-24 section-header">Featured in</p>
-            {page?.drop && <DropHero drop={page.drop} />}
+            <p className="semi-bold-24 section-header">The drop</p>
+            {page?.drop && <DropHero drop={page.drop} onlyHeader={true} />}
+
+            <Suspense>
+              <Await
+                errorElement="There was a problem loading products for this drop"
+                resolve={relatedProducts}
+              >
+                {relatedProducts?.length >= 1 && (
+                  <ProductCollection
+                    products={relatedProducts}
+                    style="row"
+                    idsToHide={[page._id]}
+                  />
+                )}
+              </Await>
+            </Suspense>
           </section>
 
           {/* Materials */}
@@ -333,27 +362,6 @@ export default function ProductHandle() {
             <p className="semi-bold-24 section-header">Materials</p>
             <Materials />
           </section>
-
-          {/* Related prints */}
-          <Suspense>
-            <Await
-              errorElement="There was a problem loading related products"
-              resolve={relatedProducts}
-            >
-              {relatedProducts?.length >= 1 && (
-                <section className="product-section" id="more-prints">
-                  <p className="semi-bold-24 section-header">
-                    More from this drop
-                  </p>
-                  <ProductCollection
-                    products={relatedProducts}
-                    style="row"
-                    idsToHide={[page._id]}
-                  />
-                </section>
-              )}
-            </Await>
-          </Suspense>
         </div>
       )}
     </SanityPreview>

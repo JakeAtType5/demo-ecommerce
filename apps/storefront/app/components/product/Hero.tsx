@@ -64,7 +64,7 @@ export default function ProductHero({
   });
 
   const formattedReleaseDate = formatDate({
-    value: sanityProduct?.drop.releaseDate,
+    value: sanityProduct?.drop?.releaseDate,
     format: "w do m @ h:00",
   });
 
@@ -159,8 +159,6 @@ export default function ProductHero({
     }
   }, [selectedVariant, fetcher.data, fetcher?.state]);
 
-  console.log(sanityProduct);
-
   const configurationIsSoldOut =
     errors &&
     errors.some((error) => error.message.includes("already sold out"));
@@ -169,24 +167,26 @@ export default function ProductHero({
     errors &&
     errors.some((error) => error.message.includes("You can only add"));
 
+  // was successfully added?
+  // if so, go back to stage 1
+
+
   return (
     <section className="product-hero" id={anchorLinkID}>
       <div className="product-details">
         {/* Title */}
-        {storefrontProduct?.title && (
-          <h1 className="bold-56 product-title">{storefrontProduct.title}</h1>
-        )}
+        <h1 className="bold-56 product-title">{storefrontProduct.title}</h1>
 
         {/* Artist */}
         {sanityProduct?.artist && (
-          <p className="semi-bold-24 product-artist">
-            by {sanityProduct.artist}
+          <p className="italic-20 product-artist">
+            By {sanityProduct.artist}
           </p>
         )}
 
         {/* Description */}
         {sanityProduct?.description && (
-          <p className="semi-bold-16 product-description">
+          <p className="body-text-16 product-description">
             {sanityProduct.description}
           </p>
         )}
@@ -353,7 +353,7 @@ export default function ProductHero({
             </div>
             <div className="product-message">
               <FontAwesomeIcon icon={faCheck} />
-              <p>1 of only {sanityProduct.maxUnits} editions printed</p>
+              <p>Only {sanityProduct.maxUnits} editions printed</p>
             </div>
             <div className="product-message">
               {shipping?.city ? (

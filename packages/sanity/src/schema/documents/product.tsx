@@ -65,7 +65,7 @@ export default defineType({
       type: 'image',
       group: 'hero',
     }),
-  
+
     // Proxies for title / artist
      defineField({
       name: 'titleProxy',
