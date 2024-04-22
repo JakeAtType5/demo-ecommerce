@@ -22,6 +22,10 @@ export function sortProducts({ products, availabilities, sortBy }: Props) {
       })
     : validProducts;
 
+  if (!availabilities?.length) {
+    return sortedProducts;
+  }
+
   const upcomingProducts = new Set();
   const availableProducts = new Set();
   const unavailableProducts = new Set();
@@ -51,10 +55,6 @@ export function sortProducts({ products, availabilities, sortBy }: Props) {
     unavailableProducts.add(product);
   });
 
-  if (!availabilities) {
-    return [];
-  }
-
   let mergedSet = new Set();
 
   availabilities.forEach((availability) => {
@@ -78,7 +78,7 @@ export default function ProductCollection({
   products,
   style,
   idsToHide,
-  availabilities
+  availabilities,
 }: Props) {
   // remove IDs that we've explicitly asked to take out
   const filteredProducts = idsToHide
@@ -96,7 +96,7 @@ export default function ProductCollection({
   
   const emptyStateMessage = "Refine or reset your search";
   return (
-    <div className={clsx("products-collection", `--is-${style}`)}>
+    <div className={`products-${style}-collection`}>
       {productArray.length > 0 ? (
         productArray.map((product) => (
           <ProductCard key={product._id} product={product} style={style} />
@@ -104,7 +104,7 @@ export default function ProductCollection({
       ) : (
         <div className="collection-empty-state">
           <p className="semi-bold-24">No artworks found</p>
-          <p className="semi-bold-18">{emptyStateMessage}</p>
+          <p className="semi-bold-16">{emptyStateMessage}</p>
         </div>
       )}
     </div>

@@ -138,8 +138,8 @@ export default function Index() {
 
   const availabilities = [
     {
-      title: "Upcoming Release",
-      slug: "upcomimg",
+      title: "Upcoming",
+      slug: "upcoming",
     },
     {
       title: "Available",
@@ -252,14 +252,14 @@ export default function Index() {
     <div onClick={collapseFilters}>
       <section className="page-hero products-hero">
         <h1 className="bold-110">artworks.</h1>
-        <p className="italic-24">explore our full catalogue of artworks.</p>
+        <p className="italic-24">browse our catalogue of artworks</p>
 
         <button
           className="button--large semi-bold-20 mobile-only collection-mobile-filter"
-          onClick={() => openMobileMenu()}
+          onClick={openMobileMenu}
         >
           <FontAwesomeIcon icon={faSliders} />
-          Filter art
+          Filter
         </button>
       </section>
 

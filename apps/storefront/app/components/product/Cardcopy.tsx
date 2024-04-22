@@ -41,8 +41,9 @@ export default function ProductCard({ children, product, style }: Props) {
           />
         </div>
         <div className="card-metadata">
-          <p className="bold-42 product-title">{product.title}</p>
-          <p className="italic-20 artist-title">By {product.artist}</p>
+          <p className="bold-24 mobile-only product-title">{product.title}</p>
+          <p className="bold-42 desktop-only product-title">{product.title}</p>
+          <p className="italic-20 artist-title">{product.artist}</p>
           {style === "collage" && (
             <p className="body-text-18 product-description">
               {product.description}
