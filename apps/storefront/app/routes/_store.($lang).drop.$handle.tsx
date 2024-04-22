@@ -142,7 +142,7 @@ export default function DropHandle() {
           )}
 
           {page?.notes && (
-            <section className="drop-notes very-narrow-section product-section">
+            <section className="curator-notes very-narrow-section product-section">
               <p className="semi-bold-24 section-header">Curator notes</p>
               <PortableText blocks={page.notes} className="notes" />
             </section>

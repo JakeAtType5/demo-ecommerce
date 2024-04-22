@@ -258,24 +258,24 @@ export default function ProductHandle() {
       target: "the-art",
     },
     {
-      label: "The Story",
-      target: "the-story",
-      condition: !!page?.story,
+      label: "Gallery",
+      target: "the-gallery",
+      condition: !!page?.gallery,
     },
     {
-      label: "The Drop",
-      target: "the-drop",
-      condition: !!page?.drop,
+      label: "The Story",
+      target: "the-story",
+      condition: !!page?.notes,
     },
     {
       label: "Materials",
       target: "materials",
     },
     {
-      label: "More from this drop",
-      target: "more-prints",
-      condition: relatedProducts.length > 0,
-    },
+      label: "The Drop",
+      target: "the-drop",
+      condition: !!page?.drop,
+    }
   ];
 
   const backgroundColor =
@@ -299,7 +299,7 @@ export default function ProductHandle() {
         >
           <Banner
             text={
-              "Collectible museum-quality art from seriously talented upcoming artists."
+              "Collectible museum-grade art from seriously talented artists."
             }
             className="--on-product-page"
           />
@@ -326,15 +326,28 @@ export default function ProductHandle() {
             }}
           />
 
+          {page?.gallery && (
+            <section className="drop-gallery product-section" id="the-gallery">
+              <p className="semi-bold-24 section-header">Gallery</p>
+              <PortableText blocks={page.gallery} className="gallery" />
+            </section>
+          )}
+
           {/* Story */}
-          {/* {page?.story && (
-            <section className="product-section" id="the-story">
+          {page?.notes && (
+            <section className="product-section curator-notes very-narrow-section" id="the-story">
               <p className="semi-bold-24 section-header">
                 The story
               </p>
-              <PortableText blocks={page.story} />
+              <PortableText blocks={page.notes} />
             </section>
-          )} */}
+          )}
+
+          {/* Materials */}
+          <section className="product-section" id="materials">
+            <p className="semi-bold-24 section-header">Materials</p>
+            <Materials />
+          </section>
 
           {/* The Drop */}
           <section className="product-section" id="the-drop">
@@ -355,12 +368,6 @@ export default function ProductHandle() {
                 )}
               </Await>
             </Suspense>
-          </section>
-
-          {/* Materials */}
-          <section className="product-section" id="materials">
-            <p className="semi-bold-24 section-header">Materials</p>
-            <Materials />
           </section>
         </div>
       )}
