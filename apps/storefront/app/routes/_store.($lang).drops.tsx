@@ -46,9 +46,7 @@ export default function Index() {
     >
       <section className="page-hero drops-hero">
         <h1 className="bold-110">drops.</h1>
-        <p className="semi-bold-24">
-          weekly releases from our favourite artists.
-        </p>
+        <p className="italic-24">weekly releases from our favourite artists.</p>
       </section>
 
       <section className="drops-grid">

@@ -170,7 +170,6 @@ export default function ProductHero({
   // was successfully added?
   // if so, go back to stage 1
 
-
   return (
     <section className="product-hero" id={anchorLinkID}>
       <div className="product-details">
@@ -179,9 +178,7 @@ export default function ProductHero({
 
         {/* Artist */}
         {sanityProduct?.artist && (
-          <p className="italic-20 product-artist">
-            By {sanityProduct.artist}
-          </p>
+          <p className="italic-20 product-artist">By {sanityProduct.artist}</p>
         )}
 
         {/* Description */}
@@ -338,7 +335,8 @@ export default function ProductHero({
 
             {cartIsOverMaxUnits && (
               <p className="semi-bold-14 error">
-                For x, y, z reason we limit orders to just one per customer.<br />
+                For x, y, z reason we limit orders to just one per customer.
+                <br />
               </p>
             )}
           </div>

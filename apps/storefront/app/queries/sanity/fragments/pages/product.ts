@@ -49,4 +49,4 @@ export const PRODUCT_PAGE = groq`
   ${SEO_SHOPIFY},
   "slug": "/product/" + store.slug.current,
   ${SHARED_TEXT},
-`;  
+`;
