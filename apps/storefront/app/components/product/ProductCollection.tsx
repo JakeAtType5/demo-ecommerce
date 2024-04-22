@@ -6,17 +6,15 @@ import type { SanityProductPreview } from "~/lib/sanity";
 import ProductCard from "./Cardcopy";
 
 type Props = {
+  availabilities?: string[];
   products: SanityProductPreview[];
   style?: "collage" | "grid" | "row";
   idsToHide?: [];
-  filter?: "upcoming available unavailable" | "upcoming" | "available";
   sortBy?: "releaseDate";
 };
 
-export function sortProducts({ products, filter, sortBy }: Props) {
-  // temp: remove products without release dates for testing
+export function sortProducts({ products, availabilities, sortBy }: Props) {
   const validProducts = products.filter((x) => x.releaseDate);
-  // const validProducts = products.filter((x) => x);
 
   const sortedProducts = sortBy
     ? validProducts.sort((a, b) => {
@@ -53,31 +51,34 @@ export function sortProducts({ products, filter, sortBy }: Props) {
     unavailableProducts.add(product);
   });
 
-  if (filter == "available") {
-    return availableProducts;
+  if (!availabilities) {
+    return [];
   }
 
-  if (filter == "upcoming") {
-    return upcomingProducts;
-  }
+  let mergedSet = new Set();
 
-  if (filter == "unavailable") {
-    return unavailableProducts;
-  }
+  availabilities.forEach((availability) => {
+    if (availability == "available") {
+      mergedSet = new Set([...mergedSet, ...availableProducts]);
+    }
 
-  if (filter == "upcoming available unavailable") {
-    return new Set([
-      ...upcomingProducts,
-      ...availableProducts,
-      ...unavailableProducts,
-    ]);
-  }
+    if (availability == "upcoming") {
+      mergedSet = new Set([...mergedSet, ...upcomingProducts]);
+    }
+
+    if (availability == "unavailable") {
+      mergedSet = new Set([...mergedSet, ...unavailableProducts]);
+    }
+  });
+
+  return mergedSet;
 }
 
 export default function ProductCollection({
   products,
   style,
   idsToHide,
+  availabilities
 }: Props) {
   // remove IDs that we've explicitly asked to take out
   const filteredProducts = idsToHide
@@ -87,13 +88,13 @@ export default function ProductCollection({
   // now lets sort the products
   const sortedProducts = sortProducts({
     products: filteredProducts,
-    filter: "upcoming available unavailable",
+    availabilities,
   });
-  // finally convert to an array so we can actually use it in JSX
-  const productArray = Array.from(sortedProducts);
 
-  console.log(productArray);
+  // convert the set to an array so we can actually use it in JSX
+  const productArray = Array.from(sortedProducts);
   
+  const emptyStateMessage = "Refine or reset your search";
   return (
     <div className={clsx("products-collection", `--is-${style}`)}>
       {productArray.length > 0 ? (
@@ -102,8 +103,8 @@ export default function ProductCollection({
         ))
       ) : (
         <div className="collection-empty-state">
-          <p className="semi-bold-24">No products found</p>
-          <button className="button--small semi-bold-16">Back</button>
+          <p className="semi-bold-24">No artworks found</p>
+          <p className="semi-bold-18">{emptyStateMessage}</p>
         </div>
       )}
     </div>

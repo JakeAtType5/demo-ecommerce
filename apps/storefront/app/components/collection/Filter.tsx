@@ -7,7 +7,8 @@ import { Suspense } from "react";
 import type { SanityFilter } from "~/lib/sanity";
 
 type Props = {
-  activeFilters?: string[];
+  activeItems?: string[];
+  className: string;
   items?: SanityFilter[];
   isExpanded?: boolean;
   onClickHeading?: () => void;
@@ -16,7 +17,8 @@ type Props = {
 };
 
 export default function Filter({
-  activeFilters,
+  activeItems,
+  className,
   items,
   isExpanded,
   onClickHeading,
@@ -25,9 +27,9 @@ export default function Filter({
 }: Props) {
   const renderItem = (item) => {
     const isSelected =
-      activeFilters?.length > 0 &&
+      activeItems?.length > 0 &&
       item.slug &&
-      activeFilters.some((filter) => filter == item.slug);
+      activeItems.some((activeItem) => activeItem == item.slug);
 
     return (
       <div
@@ -36,15 +38,13 @@ export default function Filter({
           item.count == 0 ? "--is-disabled" : "",
           isSelected ? "--is-selected" : ""
         )}
-        onClick={(event) =>
-          onClickFilter({ event, slug: item.slug })
-        }
+        onClick={(event) => onClickFilter({ event, slug: item.slug })}
       >
         <div className="checkbox-container">
           {isSelected && <FontAwesomeIcon icon={faCheck} />}
         </div>
         <p className="semi-bold-16">
-          {item.title} ({item.count})
+          {item.title} {item.count && `(${item.count})`}
         </p>
       </div>
     );
@@ -54,7 +54,9 @@ export default function Filter({
     <Suspense>
       <Await resolve={items}>
         {(items) => (
-          <div className={clsx("filter", isExpanded && "--is-expanded")}>
+          <div
+            className={clsx("filter", isExpanded && "--is-expanded", className)}
+           >
             <button
               className="filter-heading"
               onClick={(e) => onClickHeading(e)}
@@ -65,7 +67,9 @@ export default function Filter({
             {items && (
               <div className="filter-dropdown">
                 {items.map((item) => {
-                  return item?.count >= 1 ? renderItem(item) : "";
+                  return item.count == undefined || item?.count >= 1
+                    ? renderItem(item)
+                    : "";
                 })}
               </div>
             )}

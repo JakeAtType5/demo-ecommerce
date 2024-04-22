@@ -41,7 +41,8 @@ export async function loader({ context, params, request }: LoaderFunctionArgs) {
   const searchParams = new URL(request.url).searchParams;
   // const cursor = searchParams.get("cursor");
   // const count = searchParams.get("count");
-  const urlFilters = searchParams.get("filters")?.split("+");
+  const urlFilters = searchParams.get("filters")?.split(",");
+  const urlAvailabilityFilters = searchParams.get("availability")?.split(",");
 
   const cache = context.storefront.CacheCustom({
     mode: "public",
@@ -102,15 +103,15 @@ export async function loader({ context, params, request }: LoaderFunctionArgs) {
     INVENTORY_BY_PRODUCT_IDS,
     {
       variables: {
-        ids: sanityProducts?.map((product) => product.gid),
+        ids: sanityProducts?.map((product: { gid: any }) => product.gid),
       },
     }
   );
 
   // merges shopify and sanity data into a single object
-  const products = sanityProducts.map((product) => {
+  const products = sanityProducts.map((product: { gid: any }) => {
     const inventoryForId = shopifyInventories.products.filter(
-      (inventory) => inventory && inventory.id == product.gid
+      (inventory: { id: any }) => inventory && inventory.id == product.gid
     );
     return {
       ...product,
@@ -124,6 +125,7 @@ export async function loader({ context, params, request }: LoaderFunctionArgs) {
     styles,
     colours,
     urlFilters,
+    urlAvailabilityFilters,
     analytics: {
       pageType: AnalyticsPageType.home,
     },
@@ -131,17 +133,39 @@ export async function loader({ context, params, request }: LoaderFunctionArgs) {
 }
 
 export default function Index() {
-  const { products, styles, colours, urlFilters } =
+  const { products, styles, colours, urlFilters, urlAvailabilityFilters } =
     useLoaderData<SerializeFrom<typeof loader>>();
 
+  const availabilities = [
+    {
+      title: "Upcoming Release",
+      slug: "upcomimg",
+    },
+    {
+      title: "Available",
+      slug: "available",
+    },
+    {
+      title: "Sold Out",
+      slug: "unavailable",
+    },
+  ];
+
+  const availabilityFilter =
+    urlAvailabilityFilters && urlAvailabilityFilters.length
+      ? urlAvailabilityFilters
+      : ["upcoming", "available", "unavailable"];
+
   // expanses or collapses a filter set
-  const [expandedFilter, setExpandedFilter] = useState(urlFilters);
+  const [expandedFilter, setExpandedFilter] = useState();
 
   const toggleExpandFilter = (event, filter) => {
     event.stopPropagation();
     if (expandedFilter === filter) {
-      setExpandedFilter();
+      // collapse current filter
+      collapseFilters();
     } else {
+      // expand
       setExpandedFilter(filter);
     }
   };
@@ -163,46 +187,59 @@ export default function Index() {
     setExpandedMobileMenu(false);
   };
 
-  const [activeFilters, setActiveFilters] = useState(urlFilters || []);
-
-  // manages adding/removing filters
-  const addFilter = (slug) => {
-    if (activeFilters.includes(slug)) {
-      return false;
+  const addFilter = (slug: string, source: string[]) => {
+    if (source && source.length && source.includes(slug)) {
+      return source;
     }
 
-    return [...activeFilters, slug];
-  };
-
-  const removeFilter = (slug) => {
-    if (!activeFilters.includes(slug)) {
-      return false;
+    if (source) {
+      return [...source, slug];
+    } else {
+      return [slug];
     }
-
-    return activeFilters.filter((x) => x !== slug);
   };
 
-  const toggleFilter = ({ event, slug }) => {
+  const removeFilter = (slug: string, source: string[]) => {
+    if (source && !source.includes(slug)) {
+      return source;
+    }
+    return source.filter((x) => x !== slug);
+  };
+
+  const toggleFilter = ({ event, slug, source, type }) => {
     event.stopPropagation();
 
-    const newFilters = activeFilters.includes(slug)
-      ? removeFilter(slug)
-      : addFilter(slug);
+    const toggledFilters =
+      source && source.length && source.includes(slug)
+        ? removeFilter(slug, source)
+        : addFilter(slug, source);
 
-    updateURLSearchParams(newFilters);
-
-    setActiveFilters(newFilters);
+    if (type === "filters") {
+      // use new filters and existing availability filters
+      updateURLSearchParams(toggledFilters, urlAvailabilityFilters);
+    } else {
+      // use existing filters and new availability filters
+      updateURLSearchParams(urlFilters, toggledFilters);
+    }
   };
 
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // updates URL search parameters with active state
-  const updateURLSearchParams = (filters) => {
+  const updateURLSearchParams = (
+    filters: string[],
+    availabilities: string[]
+  ) => {
     const params = new URLSearchParams();
-    if (filters.length) {
-      params.set("filters", filters.join("+"));
+    if (filters && filters.length) {
+      params.set("filters", filters.join(","));
     } else {
       params.delete("filters");
+    }
+
+    if (availabilities && availabilities.length) {
+      params.set("availability", availabilities.join(","));
+    } else {
+      params.delete("availabilities");
     }
 
     setSearchParams(params, {
@@ -244,14 +281,15 @@ export default function Index() {
           <Filter
             items={styles}
             title="Styles"
-            activeFilters={activeFilters}
+            activeItems={urlFilters}
             isExpanded={expandedFilter === "styles"}
-            onClickHeading={(event) => toggleExpandFilter(event, "styles")}
-            onClickFilter={({ event, id, slug }) =>
+            onClickHeading={(e) => toggleExpandFilter(e, "styles")}
+            onClickFilter={({ event, slug }) =>
               toggleFilter({
                 event,
-                id,
                 slug,
+                source: urlFilters,
+                type: "filters",
               })
             }
           />
@@ -259,19 +297,35 @@ export default function Index() {
           <Filter
             items={colours}
             title="Colours"
-            activeFilters={activeFilters}
+            activeItems={urlFilters}
             isExpanded={expandedFilter === "colours"}
-            onClickHeading={(event) => toggleExpandFilter(event, "colours")}
-            onClickFilter={({ event, id, slug }) =>
+            onClickHeading={(e) => toggleExpandFilter(e, "colours")}
+            onClickFilter={({ event, slug }) =>
               toggleFilter({
                 event,
-                id,
                 slug,
+                source: urlFilters,
+                type: "filters",
               })
             }
           />
 
-          <Filter title="Availability" />
+          <Filter
+            title="Availability"
+            className="--is-right-aligned"
+            items={availabilities}
+            isExpanded={expandedFilter === "availability"}
+            onClickHeading={(e) => toggleExpandFilter(e, "availability")}
+            activeItems={urlAvailabilityFilters}
+            onClickFilter={({ event, slug }) =>
+              toggleFilter({
+                event,
+                slug,
+                source: urlAvailabilityFilters,
+                type: "availability",
+              })
+            }
+          />
 
           <button
             className="button--large semi-bold-20 mobile-only"
@@ -282,7 +336,7 @@ export default function Index() {
         </div>
 
         <ProductCollection
-          filter="upcoming available unavailable"
+          availabilities={availabilityFilter}
           products={products}
           style="grid"
         />

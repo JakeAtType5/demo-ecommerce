@@ -1444,6 +1444,10 @@ body.--prevent-scrolling {
   margin: 0;
 }
 
+.filter.--is-expanded.--is-right-aligned .filter-dropdown {
+  right: 0;
+}
+
 .filter-dropdown {
   position: absolute;
   background: #f0f0f0;
@@ -1464,6 +1468,10 @@ body.--prevent-scrolling {
   padding-bottom: 16px;
   cursor: pointer;
   align-items: center;
+}
+
+.filter-dropdown > div:last-child {
+  padding-bottom: unset;
 }
 
 .filter-dropdown > div:hover {
@@ -1562,7 +1570,18 @@ body.--prevent-scrolling {
   }
 }
 
+.collection-empty-state {
+  grid-column: 1 / 4;
+  background: #f6f6f6;
+  padding: 120px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
+.collection-empty-state .semi-bold-18 {
+  color: var(--dark-grey);
+}
 
 
 /* Drops */
