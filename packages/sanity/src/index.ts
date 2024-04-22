@@ -45,7 +45,7 @@ export function defineSanityConfig(config: SanityConfig) {
     throw new Error('Sanity Studio can only run in the browser. Please check that this file is not being imported into a worker or server bundle.')
   }
 
-  const {title = 'AKVA', preview, shopify, ...rest} = config
+  const {title = 'RFC', preview, shopify, ...rest} = config
 
   window[ENVIRONMENT] = {
     preview,
