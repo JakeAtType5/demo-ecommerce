@@ -606,7 +606,6 @@ body.--prevent-scrolling {
 .contextual-product-preview {
   background: #fff;
   padding: 8px;
-  border-radius: 2px;
 }
 
 /* Badges */
@@ -825,11 +824,26 @@ body.--prevent-scrolling {
 }
 
 @media screen and (max-width: 1300px) {
+  .product-hero {
+    grid-template-columns: 1fr 1fr;
+  }
+
   .product-preview .customisable-mount {
     border-width: 32px;
   }
+
+  .product-hero .image-container img {
+    padding: 32px;
+  }
 }
 
+
+@media screen and (max-width: 1000px) {
+  .product-hero {
+    padding: 60px;
+    gap: 50px;
+  }
+}
 
 .customisation-form {
   margin-top: 32px;
