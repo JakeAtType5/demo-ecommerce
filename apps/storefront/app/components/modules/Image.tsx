@@ -119,8 +119,6 @@ const ImageContent = ({ value }: Props) => {
         />
       </div>
 
-      {/* JL to look at why some are called here, and some in the above function */}
-
       {/* Call to action */}
       {value.variant === "callToAction" && (
         <div

@@ -21,10 +21,6 @@ export default function ProductHotspot({
 }: Props) {
   const storefrontProduct = useGid<Product>(productGid);
 
-  if (!storefrontProduct) {
-    return null;
-  }
-
   return (
     <Tippy
       placement="top"
@@ -38,17 +34,14 @@ export default function ProductHotspot({
       }}
     >
       <Link
-        className={clsx(
-          "absolute left-[50%] top-[50%] flex h-[26px] w-[26px] -translate-x-1/2 -translate-y-1/2 animate-pulse items-center justify-center rounded-full bg-offBlack duration-300 ease-out",
-          "hover:scale-125 hover:animate-none"
-        )}
+        className="hotspot"
         style={{
           left: `${x}%`,
           top: `${y}%`,
         }}
         to={`/product/${storefrontProduct.handle}`}
       >
-        <div className="relative h-[4px] w-[4px] rounded-full bg-white" />
+        <div className="circle" />
       </Link>
     </Tippy>
   );

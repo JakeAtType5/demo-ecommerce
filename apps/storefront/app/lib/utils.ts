@@ -23,7 +23,7 @@ import type {
   SanityPage,
   SanityProductPage,
 } from "~/lib/sanity";
-import { INVENTORY_BY_PRODUCT_IDS, PRODUCTS_QUERY } from "~/queries/shopify/product";
+import { INVENTORY_BY_PRODUCT_IDS, PRODUCTS_AND_COLLECTIONS, PRODUCTS_QUERY } from "~/queries/shopify/product";
 import { useRootLoaderData } from "~/root";
 import type { I18nLocale } from "~/types/shopify";
 
@@ -184,42 +184,30 @@ export async function fetchGids({
   page,
   context,
 }: {
-  page:
-    | SanityHomePage
-    | SanityPage
-    | SanityCollectionPage
-    | SanityProductPage
+  page: SanityHomePage | SanityPage | SanityCollectionPage | SanityProductPage;
   context: AppLoadContext;
 }) {
   const productGids = extract(`..[_type == "productWithVariant"].gid`, page);
   const collectionGids = extract(`..[_type == "collection"].gid`, page);
 
-  const { productsAndCollections } = await fetchGidsForProductIds({
-    ids: [...productGids, ...collectionGids],
-    context,
-  });
+  const productsAndCollections =
+    await context.storefront.query<StorefrontPayload>(
+      PRODUCTS_AND_COLLECTIONS,
+      {
+        variables: {
+          ids: [...productGids, ...collectionGids],
+        },
+      }
+    );
 
-  return productsAndCollections;
-}
+  const results = extract(`..[id?]`, productsAndCollections) as (
+    | Product
+    | Collection
+    | ProductVariant
+  )[];
 
-/**
- * Get data from Shopify for array of products
- */
-export async function fetchGidsForProductIds({
-  context,
-  ids,
-}: {
-  ids: [];
-  context: AppLoadContext;
-}) {
-  const { products } = await context.storefront.query<StorefrontPayload>(
-    INVENTORY_BY_PRODUCT_IDS,
-    {
-      variables: {
-        ids,
-      },
-    });
-  return extract(`..[id?]`, products) as Product[];
+  // temp: filters out query results that are coming back unexpectedly
+  return results.filter((x) => x.vendor);
 }
 
 // TODO: better typing?

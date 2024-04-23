@@ -31,6 +31,7 @@ import { Suspense, useContext, useEffect, useState } from "react";
 import invariant from "tiny-invariant";
 
 import DropHero from "~/components/drop/Hero";
+import Banner from "~/components/global/Banner";
 import { ThemeStateContext } from "~/components/global/ThemeStateWrapper";
 import PortableText from "~/components/portableText/PortableText";
 import ProductHero from "~/components/product/Hero";
@@ -51,7 +52,6 @@ import {
 } from "~/lib/shipping";
 import {
   fetchGids,
-  fetchGidsForProductIds,
   formatDate,
   notFound,
   useGids,
@@ -63,7 +63,6 @@ import {
   PRODUCTS_IN_DROP_QUERY,
 } from "~/queries/sanity/product";
 import { PRODUCT_QUERY, VARIANTS_QUERY } from "~/queries/shopify/product";
-import Banner from "~/components/global/Banner";
 
 const seo: SeoHandleFunction<typeof loader> = ({ data }) => {
   const media = flattenConnection<MediaConnection>(data.product?.media).find(
@@ -135,9 +134,6 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
     throw notFound();
   }
 
-  // Resolve any references to products on the Storefront API
-  const gids = fetchGids({ page, context });
-
   // fetch bundles
   // we use one bundles for each size option to overcome
   // shopify option limits for our customisation builder
@@ -181,12 +177,15 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
     price: selectedVariant.price.amount,
   };
 
+  // Resolve any references to products on the Storefront API
+  const gids = await fetchGids({ page, context });
+
   return defer({
     language,
     page,
     product,
     variants,
-    // gids,
+    gids,
     selectedVariant,
     relatedProducts,
     analytics: {
@@ -207,10 +206,10 @@ export default function ProductHandle() {
     selectedVariant,
     analytics,
     relatedProducts,
+    gids,
   } = useLoaderData<typeof loader>();
 
   const { handle } = useParams();
-
   const isInStock = variants.some(
     (variant) => variant.availableForSale == true
   );
@@ -275,14 +274,14 @@ export default function ProductHandle() {
       label: "The Drop",
       target: "the-drop",
       condition: !!page?.drop,
-    }
+    },
   ];
 
   const backgroundColor =
-  page.artwork?.palette.dominant.population > 2.7
+    page.artwork?.palette.dominant.population > 2.7
       ? `${page.artwork?.palette.dominant.background}`
       : `${page.artwork?.palette.lightMuted.background}`;
-  
+
   return (
     <SanityPreview
       data={page}
@@ -326,19 +325,25 @@ export default function ProductHandle() {
             }}
           />
 
-          {page?.gallery && (
-            <section className="drop-gallery product-section" id="the-gallery">
-              <p className="semi-bold-24 section-header">Gallery</p>
-              <PortableText blocks={page.gallery} className="gallery" />
-            </section>
-          )}
+          <Await resolve={gids}>
+            {page?.gallery && (
+              <section
+                className="drop-gallery product-section"
+                id="the-gallery"
+              >
+                <p className="semi-bold-24 section-header">Gallery</p>
+                <PortableText blocks={page.gallery} className="gallery" />
+              </section>
+            )}
+          </Await>
 
           {/* Story */}
           {page?.notes && (
-            <section className="product-section curator-notes very-narrow-section" id="the-story">
-              <p className="semi-bold-24 section-header">
-                The story
-              </p>
+            <section
+              className="product-section curator-notes very-narrow-section"
+              id="the-story"
+            >
+              <p className="semi-bold-24 section-header">The story</p>
               <PortableText blocks={page.notes} />
             </section>
           )}

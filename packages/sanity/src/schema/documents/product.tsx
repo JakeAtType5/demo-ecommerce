@@ -181,14 +181,6 @@ export default defineType({
       ]
     }),
 
-    // // story
-    // defineField({
-    //   name: 'story',
-    //   title: 'Story',
-    //   type: 'body',
-    //   group: 'story',
-    // }),
-
     defineField({
       name: 'gallery',
       title: 'Gallery',
