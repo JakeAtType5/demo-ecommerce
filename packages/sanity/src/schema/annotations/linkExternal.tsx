@@ -33,9 +33,7 @@ export default defineField({
       type: 'url',
       validation: (rule) => rule.required().uri({
         allowRelative: true,
-        allowCredentials: true,
-        relativeOnly: true,
-        // scheme: ['http', 'https'],
+        scheme: ['http', 'https'],
       }),
     },
     // Open in a new window
