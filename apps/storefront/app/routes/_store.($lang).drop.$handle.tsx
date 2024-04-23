@@ -1,6 +1,6 @@
 import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useLoaderData, useParams } from "@remix-run/react";
+import { Await, useLoaderData, useParams } from "@remix-run/react";
 import { SeoConfig, type SeoHandleFunction } from "@shopify/hydrogen";
 import { defer, type LoaderFunctionArgs } from "@shopify/remix-oxygen";
 import clsx from "clsx";
@@ -19,7 +19,7 @@ import VideoPlayerPreview from "~/components/video/PreviewPlayer";
 import { baseLanguage } from "~/data/countries";
 import type { SanityDrop } from "~/lib/sanity";
 import type { SanityProductPreview } from "~/lib/sanity";
-import { notFound, validateLocale } from "~/lib/utils";
+import { fetchGids, notFound, validateLocale } from "~/lib/utils";
 import { DROP_BY_NUMBER_QUERY, DROP_PAGE_QUERY } from "~/queries/sanity/drop";
 import { PRODUCTS_IN_DROP_QUERY } from "~/queries/sanity/product";
 import { useRootLoaderData } from "~/root";
@@ -95,12 +95,16 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
 
   const products = productsInDrop?.prints || [];
 
+  // Resolve any references to products on the Storefront API
+  const gids = await fetchGids({ page, context });
+
   return defer({
     language,
     page,
     products,
     nextDrop,
     previousDrop,
+    gids,
     // analytics: {
     //   pageType: AnalyticsPageType.product,
     //   resourceId: product.id,
@@ -111,7 +115,7 @@ export async function loader({ params, context, request }: LoaderFunctionArgs) {
 }
 
 export default function DropHandle() {
-  const { language, page, nextDrop, previousDrop, products } =
+  const { language, page, nextDrop, previousDrop, products, gids } =
     useLoaderData<typeof loader>();
 
   const { handle } = useParams();
@@ -134,12 +138,14 @@ export default function DropHandle() {
             </section>
           )}
 
-          {page?.gallery && (
-            <section className="drop-gallery narrow-section product-section">
-              <p className="semi-bold-24 section-header">Behind the scenes</p>
-              <PortableText blocks={page.gallery} className="gallery" />
-            </section>
-          )}
+          <Await resolve={gids}>
+            {page?.gallery && (
+              <section className="drop-gallery narrow-section product-section">
+                <p className="semi-bold-24 section-header">Behind the scenes</p>
+                <PortableText blocks={page.gallery} className="gallery" />
+              </section>
+            )}
+          </Await>
 
           {page?.notes && (
             <section className="curator-notes very-narrow-section product-section">
