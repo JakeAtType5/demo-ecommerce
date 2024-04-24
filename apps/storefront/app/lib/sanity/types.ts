@@ -115,6 +115,8 @@ export type SanityHomePage = {
   heroTitle: string;
   // modules: (SanityModuleImage | SanityModuleInstagram)[];
   seo: SanitySeo;
+  faqs: SanityFaq[];
+
 };
 
 export type SanityImageWithProductHotspots = {
@@ -411,7 +413,7 @@ export type SanityVideo = {
 
 export type SanityFaq = {
   _key: string;
-  _type: "group";
+  _type: "faq";
   title: string;
   body: PortableTextBlock[];
 };
