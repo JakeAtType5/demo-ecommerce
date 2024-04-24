@@ -66,6 +66,7 @@ import proxyString from './objects/proxyString'
 import seoHome from './objects/seo/home'
 import seoPage from './objects/seo/page'
 import seoShopify from './objects/seo/shopify'
+import separator from './objects/separator'
 import shopifyCollection from './objects/shopifyCollection'
 import shopifyCollectionRule from './objects/shopifyCollectionRule'
 import shopifyProduct from './objects/shopifyProduct'
@@ -98,6 +99,7 @@ const objects = [
   productOption,
   productWithVariant,
   proxyString,
+  separator,
   seoHome,
   seoPage,
   seoShopify,

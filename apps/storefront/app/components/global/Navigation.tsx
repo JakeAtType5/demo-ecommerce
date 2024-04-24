@@ -21,20 +21,30 @@ export default function Navigation({ className, menuLinks, title }: Props) {
       if (link._type === "collectionGroup") {
         return <CollectionGroup collectionGroup={link} key={link._key} />;
       }
-      if (link._type === "linkExternal") {
+
+      if (link._type === "linkExternal" && link.url[0] === "/") {
+        // relative links
         return (
-          <div className="flex items-center" key={link._key}>
-            <a
-              className="linkTextNavigation"
-              href={link.url}
-              rel="noreferrer"
-              target={link.newWindow ? "_blank" : "_self"}
-            >
-              {link.title}
-            </a>
-          </div>
+          <Link to={link.url} key={link._key}>
+            {link.title}
+          </Link>
         );
       }
+
+      if (link._type === "linkExternal" && link?.url[0] !== "/") {
+        // true external links
+        return (
+          <a
+            key={link._key}
+            href={link.url}
+            rel="noreferrer"
+            target={link.newWindow ? "_blank" : "_self"}
+          >
+            {link.title}
+          </a>
+        );
+      }
+
       if (link._type === "linkInternal") {
         // if (!link.slug) {
         //   return null;
@@ -46,6 +56,10 @@ export default function Navigation({ className, menuLinks, title }: Props) {
             {link.title}
           </Link>
         );
+      }
+
+      if (link._type === "separator") {
+        return <div key={link._key} className="separator" />;
       }
 
       return null;

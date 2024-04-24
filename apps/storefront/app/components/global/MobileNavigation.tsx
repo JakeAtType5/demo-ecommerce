@@ -1,4 +1,9 @@
-import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
+import {
+  faInstagram,
+  faTiktok,
+  faYoutube,
+} from "@fortawesome/free-brands-svg-icons";
+import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Transition } from "@headlessui/react";
 import { Fragment, useContext, useState } from "react";
@@ -8,8 +13,9 @@ import Navigation from "~/components/global/Navigation";
 import { Link } from "~/components/Link";
 import type { SanityMenuLink } from "~/lib/sanity";
 
-import { Label } from "./Label";
+import CloseIcon from "../icons/Close";
 import { CartStateContext } from "./CartStateWrapper";
+import { Label } from "./Label";
 
 type Props = {
   open: boolean;
@@ -49,27 +55,20 @@ export default function MobileNavigation({
       </button>
 
       <Transition show={open}>
-        {/* <Dialog onClose={handleClose}> */}
-        {/* Panel */}
-        {/* <Transition.Child
-          as={Fragment}
-          enter="ease-in-out duration-500"
-          enterFrom="-translate-x-full"
-          enterTo="translate-x-0"
-          leave="ease-in-out duration-500"
-          leaveFrom="translate-x-0"
-          leaveTo="-translate-x-full"
-        > */}
-        <div className="fullscreen-navigation">
-          {/* Header */}
+        <div className="mobile-navigation">
           <header className="header">
             <button type="button" onClick={onClose}>
-              <FontAwesomeIcon icon={faTimes} />
+              <CloseIcon />
             </button>
           </header>
 
-          {/* Links */}
           <Navigation menuLinks={menuLinks} className="navigation-links" />
+
+          <div className="social-links">
+            <FontAwesomeIcon icon={faInstagram} />
+            <FontAwesomeIcon icon={faTiktok} />
+            <FontAwesomeIcon icon={faYoutube} />
+          </div>
           {/* 
               <div className="space-y-1">
                 <Link
@@ -89,8 +88,6 @@ export default function MobileNavigation({
                 </div>
               </div> */}
         </div>
-        {/* </Transition.Child> */}
-        {/* </Dialog> */}
       </Transition>
     </>
   );

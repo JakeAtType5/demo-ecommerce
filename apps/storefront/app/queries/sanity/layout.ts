@@ -7,7 +7,10 @@ import { PORTABLE_TEXT } from "./fragments/portableText/portableText";
 export const LAYOUT_QUERY = groq`
   *[_type == 'settings' && _id == 'settings-' + $language] | order(_updatedAt desc) [0] {
     seo,
-    "menuLinks": menu.links[] {
+    "topLevelLinks": menu.links[] {
+      ${LINKS}
+    },
+    "expandedLinks": menu.expandedLinks[] {
       ${LINKS}
     },
     "companyLinks": footer.company_links[] {

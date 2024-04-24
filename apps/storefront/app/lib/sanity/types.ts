@@ -21,7 +21,8 @@ export type SanityLabel = {
 
 export type SanityLayout = {
   seo: SanitySeo;
-  menuLinks?: SanityMenuLink[];
+  topLevelLinks?: SanityMenuLink[];
+  expandedLinks?: SanityMenuLink[];
   companyLinks?: SanityMenuLink[];
   supportLinks?: SanityMenuLink[];
   footer?: {
@@ -141,10 +142,16 @@ export type SanityLinkInternal = {
   title: string;
 };
 
+export type SanitySeparator = {
+  _key: string;
+  _type: "separator";
+};
+
 export type SanityMenuLink =
   | SanityCollectionGroup
   | SanityLinkExternal
-  | SanityLinkInternal;
+  | SanityLinkInternal
+  | SanitySeparator;
 
 export type SanityModule =
   | SanityModuleAccordion

@@ -13,21 +13,21 @@ import { NavigationStateContext } from "./NavigationStateWrapper";
  */
 export default function Header() {
   const { layout } = useRootLoaderData();
-  const { menuLinks } = layout || {};
+  const { topLevelLinks, expandedLinks } = layout || {};
   const { navIsOpen, openNav, closeNav } = useContext(NavigationStateContext);
 
   return (
     <header className="navigation-bar" role="banner">
       <div className="content-wrapper">
-        {menuLinks && (
+        {topLevelLinks && (
           <Navigation
-            menuLinks={menuLinks}
+            menuLinks={topLevelLinks}
             className="desktop-only desktop-navigation navigation-links"
           />
         )}
-        {menuLinks && (
+        {expandedLinks && (
           <MobileNavigation
-            menuLinks={menuLinks}
+            menuLinks={expandedLinks}
             open={navIsOpen}
             onOpen={openNav}
             onClose={closeNav}

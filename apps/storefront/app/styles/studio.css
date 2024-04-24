@@ -178,7 +178,16 @@ body {
   }
 
   .bold-56 {
-    font-size: 2.5rem;
+    font-size: 2.6rem;
+    letter-spacing: -1.25px;
+    line-height: 1.25;
+  }
+
+  .italic-56 {
+    font: 2rem "Libre Bodoni";
+    font-weight: 300;
+    letter-spacing: -1.25px;
+    line-height: 1.4;
   }
 
   .semi-bold-24 {
@@ -356,14 +365,14 @@ body.--prevent-scrolling {
   position: relative;
 }
 
-.navigation-actions svg, .burger-icon svg, .fullscreen-navigation .header svg { 
+.navigation-actions svg, .burger-icon svg, .mobile-navigation .header svg { 
   height: 20px;
   color: var(--black);
   transition: 0.3s;
   cursor: pointer;
 }
 
-.navigation-actions svg:hover, .burger-icon svg:hover, .fullscreen-navigation .header svg:hover { 
+.navigation-actions svg:hover, .burger-icon svg:hover, .mobile-navigation .header svg:hover { 
   transform: scale(0.9);
   opacity: 0.8;
 }
@@ -377,37 +386,50 @@ body.--prevent-scrolling {
   background: none;
 }
 
-.fullscreen-navigation {
+.mobile-navigation {
   position: fixed;
   top: 92px;
   width: 90%;
   left: 50%;
   background: #fff;
   z-index: 10;
+  border-radius: 4px;
   padding: 20px;
   overflow: hidden;
   box-shadow: 0 1px 1px #ffffff1a inset, 0 50px 100px -20px #32325d40, 0 30px 60px -30px #0000002b;
   bottom: 20px;
   transform: translate(-50%);
+  display: flex;
+  flex-direction: column;
 }
 
-.fullscreen-navigation .header {
+.mobile-navigation .header {
   display: flex;
   justify-content: flex-end;
 }
 
-.fullscreen-navigation .header button {
+.mobile-navigation .header button {
   background: none;
   margin: 0;
   padding: 0;
 }
 
-.fullscreen-navigation .header button svg {
+.mobile-navigation .header button svg {
   color: var(--dark-grey);
 }
 
-.fullscreen-navigation .navigation-links a:nth-child(6) {
-  margin-top: 42px;
+.mobile-navigation .separator {
+  border-bottom: 1px solid #f9f9f9;
+}
+
+.mobile-navigation .social-links {
+  margin-top: auto;
+  display: flex;
+  gap: 20px;
+}
+
+.mobile-navigation .social-links svg {
+  height: 20px;
 }
 
 @media screen and (max-width: 460px) {
@@ -425,6 +447,7 @@ body.--prevent-scrolling {
 
   .burger-icon {
     order: 3;
+    height: 20px;
   }
 
   .navigation-actions {
@@ -433,47 +456,26 @@ body.--prevent-scrolling {
   }
 
   .navigation-links {
-    gap: 20px;
+    gap: 16px;
     padding: 0;
     flex-direction: column;
     font-size: 1.5rem;
-    box-shadow: none;
+    letter-spacing: -.3px;
     height: unset;
-    color: var(--dark-grey);
   }
 
-  .navigation-links a, .fullscreen-navigation .header button {
+  .mobile-navigation > div, .mobile-navigation header,  .mobile-navigation nav {
     animation: fadeIn 0.3s ease-in-out;
     animation-fill-mode: forwards;
     opacity: 0;
   }
 
-  .navigation-links a:nth-child(1) {
+  .navigation-links {
     animation-delay: 0.10s;
   }
 
-  .navigation-links a:nth-child(2) {
+  .mobile-navigation .social-links {
     animation-delay: 0.2s;
-  }
-
-  .navigation-links a:nth-child(3) {
-    animation-delay: 0.3s;
-  }
-
-  .navigation-links a:nth-child(4) {
-    animation-delay: 0.4s;
-  }
-
-  .navigation-links a:nth-child(5) {
-    animation-delay: 0.5s;
-  }
-
-  .navigation-links a:nth-child(6) {
-    animation-delay: 0.6s;
-  }
-
-  .navigation-links a:nth-child(7) {
-    animation-delay: 0.7s;
   }
 }
 
@@ -634,6 +636,10 @@ body.--prevent-scrolling {
   margin-bottom: 100px;
 }
 
+.homepage-hero a {
+  display: block;
+}
+
 .homepage-hero .italic-56 {
   margin-top: 48px;
 }
@@ -641,6 +647,21 @@ body.--prevent-scrolling {
 .homepage-hero a:hover {
   text-decoration: underline;
   opacity: 0.9;
+}
+
+
+@media all and (max-width: 460px) {
+  .homepage-hero {
+    padding: 0;
+  }
+
+  .homepage-hero .bold-56 {
+    max-width: 330px;
+  }
+
+  .homepage-hero .italic-56 {
+    margin-top: 24px;
+  }
 }
 
 .bento-grid {
@@ -678,7 +699,7 @@ body.--prevent-scrolling {
   background-color: var(--product-primary-color-faded);
 }
 
-@media and (max-width: 1400px) {
+@media all and (max-width: 1400px) {
   .product-hero {
     grid-template-columns: 1fr 1fr;
   }
@@ -2222,6 +2243,10 @@ footer .footer-bar .social-links {
 
 .cart-product-preview .product-title {
   margin-top: 6px;
+}
+
+.cart-product-preview .artist-title {
+  margin-top: unset;
 }
 
 .cart-product-preview .product-price {

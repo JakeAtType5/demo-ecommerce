@@ -9,6 +9,9 @@ export const LINKS = groq`
   (_type == 'collectionGroup') => {
     ${COLLECTION_GROUP}
   },
+  (_type == 'separator') => {
+    _type,
+  },
   (_type == 'linkGroup') => {
     _type,
     links[] {

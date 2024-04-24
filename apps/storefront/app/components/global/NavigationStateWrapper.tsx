@@ -1,6 +1,7 @@
-import { createContext } from "react";
+import { createContext, useEffect } from "react";
 
 import { useNavigation } from "./MobileNavigation";
+import { useLocation } from "@remix-run/react";
 
 export const NavigationStateContext = createContext({});
 
@@ -9,6 +10,12 @@ export const NavigationStateContext = createContext({});
  */
 export default function NavigationStateProvider({ children }) {
   const { navIsOpen, openNav, closeNav } = useNavigation();
+
+  const location = useLocation();
+
+  useEffect(() => {
+    closeNav();
+  }, [location]);
 
   return (
     <NavigationStateContext.Provider value={{ navIsOpen, openNav, closeNav }}>

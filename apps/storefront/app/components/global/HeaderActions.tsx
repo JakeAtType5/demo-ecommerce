@@ -46,9 +46,9 @@ export default function HeaderActions() {
       </div> */}
 
       {/* Search */}
-      <FontAwesomeIcon className="desktop-only" icon={faMagnifyingGlass} />
+      <FontAwesomeIcon icon={faMagnifyingGlass} />
 
-      {/* Account */}
+      {/* Account
       <Link
         className={clsx([
           "hidden h-[2.4rem] items-center rounded-sm bg-darkGray bg-opacity-0 p-2",
@@ -59,7 +59,7 @@ export default function HeaderActions() {
         to="/account"
       >
         <FontAwesomeIcon icon={faUser} />
-      </Link>
+      </Link> */}
 
       {/* Cart */}
       <Await resolve={cart}>

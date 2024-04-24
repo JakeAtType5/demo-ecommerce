@@ -1,10 +1,8 @@
-import {CogIcon, PackageIcon} from '@sanity/icons'
+import {CogIcon} from '@sanity/icons'
 import {defineField, defineType} from 'sanity'
 
 const TITLE = 'Settings'
-interface ProductOptions {
-  title: string
-}
+
 
 export default defineType({
   name: 'settings',
@@ -16,10 +14,6 @@ export default defineType({
       default: true,
       name: 'navigation',
       title: 'Navigation',
-    },
-    {
-      name: 'productOptions',
-      title: 'Product options',
     },
     {
       name: 'notFoundPage',
@@ -45,10 +39,22 @@ export default defineType({
         // Links
         defineField({
           name: 'links',
-          title: 'Links',
+          description: 'For Desktop',
+          title: 'Top Level Links',
           type: 'array',
           of: [
             {type: 'linkInternal'},
+            {type: 'linkExternal'},
+          ],
+        }),
+        defineField({
+          name: 'expandedLinks',
+          description: 'For Mobile, and expanded menu on Desktop',
+          title: 'Expanded Menu',
+          type: 'array',
+          of: [
+            {type: 'linkInternal'},
+            {type: 'separator'},
             {type: 'linkExternal'},
           ],
         }),
@@ -117,34 +123,34 @@ export default defineType({
         }),
       ],
     }),
-    // Custom product options
-    defineField({
-      name: 'customProductOptions',
-      title: 'Custom product options',
-      type: 'array',
-      group: 'productOptions',
-      of: [
-        {
-          name: 'customProductOption.color',
-          type: 'customProductOption.color',
-        },
-        {
-          name: 'customProductOption.size',
-          type: 'customProductOption.size',
-        },
-      ],
-      validation: (rule) =>
-        rule.custom((options: ProductOptions[] | undefined) => {
-          // Each product option type must have a unique title
-          if (options) {
-            const uniqueTitles = new Set(options.map((option) => option.title))
-            if (options.length > uniqueTitles.size) {
-              return 'Each product option type must have a unique title'
-            }
-          }
-          return true
-        }),
-    }),
+    // // Custom product options
+    // defineField({
+    //   name: 'customProductOptions',
+    //   title: 'Custom product options',
+    //   type: 'array',
+    //   group: 'productOptions',
+    //   of: [
+    //     {
+    //       name: 'customProductOption.color',
+    //       type: 'customProductOption.color',
+    //     },
+    //     {
+    //       name: 'customProductOption.size',
+    //       type: 'customProductOption.size',
+    //     },
+    //   ],
+    //   validation: (rule) =>
+    //     rule.custom((options: ProductOptions[] | undefined) => {
+    //       // Each product option type must have a unique title
+    //       if (options) {
+    //         const uniqueTitles = new Set(options.map((option) => option.title))
+    //         if (options.length > uniqueTitles.size) {
+    //           return 'Each product option type must have a unique title'
+    //         }
+    //       }
+    //       return true
+    //     }),
+    // }),
     // Not found page
     defineField({
       name: 'notFoundPage',
