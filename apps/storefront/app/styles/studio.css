@@ -359,6 +359,11 @@ body.--prevent-scrolling {
   text-decoration: underline;
 }
 
+.navigation-container .fa-ellipsis {
+  cursor: pointer;
+  height: 16px;
+}
+
 .rfc-logo {
   text-align: center;
 }
@@ -377,7 +382,7 @@ body.--prevent-scrolling {
   cursor: pointer;
 }
 
-.navigation-actions svg:hover, .burger-icon svg:hover, .expanded-navigation .header svg:hover { 
+.navigation-actions svg:hover, .burger-icon svg:hover, .expanded-navigation .header svg:hover, .navigation-container .fa-ellipsis:hover { 
   transform: scale(0.9);
   opacity: 0.8;
 }
