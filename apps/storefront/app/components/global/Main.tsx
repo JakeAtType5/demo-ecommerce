@@ -7,7 +7,12 @@ import { NavigationStateContext } from "./NavigationStateWrapper";
 
 export default function Main({ children }) {
   const { cartIsOpen, closeDrawer } = useContext(CartStateContext);
-  const { navIsOpen } = useContext(NavigationStateContext);
+  const { navIsOpen, closeNav } = useContext(NavigationStateContext);
+
+  const resetView = () => {
+    closeDrawer();
+    closeNav();
+  };
 
   return (
     <div
@@ -16,7 +21,7 @@ export default function Main({ children }) {
         navIsOpen && "--nav-is-open",
         "content-wrapper"
       )}
-      onClick={closeDrawer}
+      onClick={cartIsOpen || navIsOpen ? resetView : null}
     >
       <main role="main">{children}</main>
     </div>
