@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 
 import CollectionGroup from "~/components/global/collectionGroup/CollectionGroup";
 import { Link } from "~/components/Link";
@@ -72,4 +72,25 @@ export default function Navigation({ className, menuLinks, title }: Props) {
       {renderLinks()}
     </nav>
   );
+}
+
+
+export function useNavigation(openDefault = false) {
+  const [isOpen, setIsOpen] = useState(openDefault);
+
+  function openNav() {
+    setIsOpen(true);
+    document.body.classList.add("--prevent-scrolling");
+  }
+
+  function closeNav() {
+    setIsOpen(false);
+    document.body.classList.remove("--prevent-scrolling");
+  }
+
+  return {
+    navIsOpen: isOpen,
+    openNav,
+    closeNav,
+  };
 }

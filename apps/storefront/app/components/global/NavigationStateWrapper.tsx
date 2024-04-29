@@ -1,6 +1,6 @@
 import { createContext, useEffect } from "react";
 
-import { useNavigation } from "./MobileNavigation";
+import { useNavigation } from "./Navigation";
 import { useLocation } from "@remix-run/react";
 
 export const NavigationStateContext = createContext({});

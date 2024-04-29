@@ -1,9 +1,12 @@
+import { faEllipsisH } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useContext, useState } from "react";
 
 import HeaderActions from "~/components/global/HeaderActions";
 import HeaderBackground from "~/components/global/HeaderBackground";
-import MobileNavigation from "~/components/global/MobileNavigation";
+import ExpandedNavigation from "~/components/global/ExpandedNavigation";
 import Navigation from "~/components/global/Navigation";
+import { Link } from "~/components/Link";
 import { useRootLoaderData } from "~/root";
 
 import { NavigationStateContext } from "./NavigationStateWrapper";
@@ -19,25 +22,31 @@ export default function Header() {
   return (
     <header className="navigation-bar" role="banner">
       <div className="content-wrapper">
-        {topLevelLinks && (
-          <Navigation
-            menuLinks={topLevelLinks}
-            className="desktop-only desktop-navigation navigation-links"
-          />
-        )}
+        <div className="desktop-only navigation-container">
+          {topLevelLinks && (
+            <Navigation
+              menuLinks={topLevelLinks}
+              className="navigation-links"
+            />
+          )}
+          <FontAwesomeIcon icon={faEllipsisH} onClick={openNav} />
+        </div>
+
+        <Link to={"/index"} key={"logo"}>
+          <p className="bold-24 rfc-logo">Ready.</p>
+        </Link>
+
+        {/* Accounts, country selector + cart toggle */}
+        <HeaderActions />
+
         {expandedLinks && (
-          <MobileNavigation
+          <ExpandedNavigation
             menuLinks={expandedLinks}
             open={navIsOpen}
             onOpen={openNav}
             onClose={closeNav}
           />
         )}
-
-        <p className="bold-24 rfc-logo">Ready.</p>
-
-        {/* Accounts, country selector + cart toggle */}
-        <HeaderActions />
       </div>
     </header>
   );

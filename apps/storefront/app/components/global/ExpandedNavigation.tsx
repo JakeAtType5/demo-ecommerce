@@ -6,6 +6,7 @@ import {
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Transition } from "@headlessui/react";
+import clsx from "clsx";
 import { Fragment, useContext, useState } from "react";
 
 import { CountrySelector } from "~/components/global/CountrySelector";
@@ -24,7 +25,7 @@ type Props = {
   onOpen: () => void;
 };
 
-export default function MobileNavigation({
+export default function ExpandedNavigation({
   onOpen,
   onClose,
   open,
@@ -55,7 +56,7 @@ export default function MobileNavigation({
       </button>
 
       <Transition show={open}>
-        <div className="mobile-navigation">
+        <div className={clsx("expanded-navigation", open ? "--is-open" : "")}>
           <header className="header">
             <button type="button" onClick={onClose}>
               <CloseIcon />
@@ -91,24 +92,4 @@ export default function MobileNavigation({
       </Transition>
     </>
   );
-}
-
-export function useNavigation(openDefault = false) {
-  const [isOpen, setIsOpen] = useState(openDefault);
-
-  function openNav() {
-    setIsOpen(true);
-    document.body.classList.add("--prevent-scrolling");
-  }
-
-  function closeNav() {
-    setIsOpen(false);
-    document.body.classList.remove("--prevent-scrolling");
-  }
-
-  return {
-    navIsOpen: isOpen,
-    openNav,
-    closeNav,
-  };
 }
