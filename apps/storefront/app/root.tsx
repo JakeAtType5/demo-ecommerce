@@ -10,11 +10,7 @@ import {
   useMatches,
   useRouteError,
 } from "@remix-run/react";
-import {
-  Seo,
-  type SeoHandleFunction,
-  ShopifySalesChannel,
-} from "@shopify/hydrogen";
+import { type SeoHandleFunction, ShopifySalesChannel } from "@shopify/hydrogen";
 import { useNonce } from "@shopify/hydrogen";
 import type { Collection, Shop } from "@shopify/hydrogen/storefront-api-types";
 import {
@@ -134,7 +130,6 @@ export default function App() {
     <html lang={locale.language}>
       <head>
         <meta charSet="utf-8" />
-        <Seo />
         <Meta />
         <Links />
       </head>

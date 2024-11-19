@@ -8,7 +8,7 @@ type Props = {
  */
 export default function Banner({ className, text }: Props) {
   return (
-    <div className={`banner ${className}`}>
+    <div className={`banner ${className && className}`}>
       <div className="content-wrapper semi-bold-14">{text}</div>
     </div>
   );

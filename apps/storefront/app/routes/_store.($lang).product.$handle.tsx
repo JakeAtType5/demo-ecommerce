@@ -12,6 +12,7 @@ import {
   type SeoHandleFunction,
   ShopifyAnalyticsProduct,
 } from "@shopify/hydrogen";
+import { getSeoMeta } from "@shopify/hydrogen";
 import type {
   MediaConnection,
   MediaImage,
@@ -32,7 +33,6 @@ import invariant from "tiny-invariant";
 
 import DropHero from "~/components/drop/Hero";
 import Banner from "~/components/global/Banner";
-import { ThemeStateContext } from "~/components/global/ThemeStateWrapper";
 import PortableText from "~/components/portableText/PortableText";
 import ProductHero from "~/components/product/Hero";
 import Materials from "~/components/product/Materials";
@@ -64,32 +64,32 @@ import {
 } from "~/queries/sanity/product";
 import { PRODUCT_QUERY, VARIANTS_QUERY } from "~/queries/shopify/product";
 
-const seo: SeoHandleFunction<typeof loader> = ({ data }) => {
-  const media = flattenConnection<MediaConnection>(data.product?.media).find(
-    (media) => media.mediaContentType === "IMAGE"
-  ) as MediaImage | undefined;
+export const meta = ({ data }) => {
+  const mediaURL = data?.page?.seo?.image?.url;
+  const description = data?.page?.seo?.description ?? data?.page?.description;
 
-  return {
+  const seo = {
     title:
       data?.page?.seo?.title ??
       data?.product?.seo?.title ??
       data?.product?.title,
-    media: data?.page?.seo?.image ?? media?.image,
-    description:
-      data?.page?.seo?.description ??
-      data?.product?.seo?.description ??
-      data?.product?.description,
+    media: {
+      type: "image",
+      url: mediaURL,
+    },
+    description: description.trim() + " Only on Ready for Collection",
     jsonLd: {
       "@context": "https://schema.org",
       "@type": "Product",
       brand: data?.product?.vendor,
       name: data?.product?.title,
+      image: mediaURL,
+      description: description.trim(),
     },
-  } satisfies SeoConfig<Product>;
-};
+    url: `https://www.readyforcollection.com${data?.page.slug}`,
+  };
 
-export const handle = {
-  seo,
+  return getSeoMeta(seo);
 };
 
 export async function loader({ params, context, request }: LoaderFunctionArgs) {
@@ -203,7 +203,6 @@ export default function ProductHandle() {
     page,
     product,
     variants,
-    selectedVariant,
     analytics,
     relatedProducts,
     gids,

@@ -45,7 +45,7 @@ export function CartLineItems({
   sanityCartResults,
 }: {
   linesObj: Cart["lines"] | undefined;
-  sanityCartResults: SanityProductPreview[];
+  sanityCartResults?: SanityProductPreview[];
 }) {
   const [shipping, setShipping] = useState({
     city: "",
@@ -133,7 +133,6 @@ function LineItem({
   const updatingItems = useCartFetchers(CartForm.ACTIONS.LinesUpdate);
   const removingItems = useCartFetchers(CartForm.ACTIONS.LinesRemove);
 
-  console.log(removingItems);
   // Check if the line item is being updated, as we want to show the new quantity as optimistic UI
   let updatingQty;
   const updating =

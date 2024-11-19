@@ -75,6 +75,8 @@ export async function action({ request, context }: ActionFunctionArgs) {
       invariant(false, `${action} cart action is not defined`);
   }
 
+  console.log(result);
+
   /**
    * The Cart ID may change after each mutation. We need to update it each time in the session.
    */
@@ -123,7 +125,10 @@ export default function Cart() {
               {cart && (
                 <div className="mx-auto grid w-full max-w-6xl gap-8 pb-12 md:grid-cols-2 md:items-start md:gap-8 lg:gap-12">
                   <div className="flex-grow md:translate-y-4">
-                    <CartLineItems linesObj={cart.lines} />
+                    <CartLineItems
+                      linesObj={cart.lines}
+                      sanityCartResults={[]}
+                    />
                   </div>
                   <div className="fixed bottom-0 left-0 right-0 grid w-full gap-6 p-4 md:sticky md:top-[65px] md:translate-y-4 md:px-6">
                     <CartSummary cost={cart.cost} />

@@ -11,8 +11,12 @@ export default defineField({
   groups: [
     {
       default: true,
-      name: 'editorial',
-      title: 'Editorial',
+      name: 'hero',
+      title: 'Hero',
+    },
+    {
+      name: 'faqs',
+      title: 'FAQs',
     },
     {
       name: 'seo',
@@ -22,26 +26,18 @@ export default defineField({
   fields: [
     // Hero
     defineField({
-      name: 'hero',
-      title: 'Hero',
-      type: 'hero.home',
-      group: 'editorial',
+      name: 'heroTitle',
+      title: 'Hero Title',
+      type: 'string',
+      group: 'hero',
     }),
-    // Modules
     defineField({
-      name: 'modules',
-      title: 'Modules',
-      type: 'array',
-      of: [
-        {type: 'module.callout'},
-        {type: 'module.callToAction'},
-        {type: 'module.collection'},
-        {type: 'module.image'},
-        {type: 'module.instagram'},
-        {type: 'module.product'},
-      ],
-      group: 'editorial',
+      name: 'faqs',
+      title: 'FAQS',
+      type: 'faqs',
+      group: 'faqs',
     }),
+
     // SEO
     defineField({
       name: 'seo',
@@ -62,7 +58,6 @@ export default defineField({
     },
     prepare({language}) {
       return {
-        // media: icon,
         title: TITLE,
         subtitle: language.toUpperCase(),
       }

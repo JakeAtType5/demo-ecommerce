@@ -1,10 +1,9 @@
 import { faEllipsisH } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 
-import HeaderActions from "~/components/global/HeaderActions";
-import HeaderBackground from "~/components/global/HeaderBackground";
 import ExpandedNavigation from "~/components/global/ExpandedNavigation";
+import HeaderActions from "~/components/global/HeaderActions";
 import Navigation from "~/components/global/Navigation";
 import { Link } from "~/components/Link";
 import { useRootLoaderData } from "~/root";
